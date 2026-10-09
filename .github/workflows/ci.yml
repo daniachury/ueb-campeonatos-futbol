@@ -1,0 +1,47 @@
+name: CI
+
+# Se ejecuta en cada Pull Request hacia main. Debe estar en verde para poder hacer merge
+# (configurarlo como "required status check" en la protección de la rama main).
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write # para comentar la cobertura en el PR
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  calidad:
+    name: Lint, tipos, pruebas y build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Verificar tipos
+        run: npm run typecheck
+
+      - name: Pruebas con cobertura
+        run: npm run test:ci
+
+      - name: Comentar la cobertura en el PR
+        if: ${{ !cancelled() && hashFiles('coverage/coverage-summary.json') != '' }}
+        uses: davelosert/vitest-coverage-report-action@v2
+
+      - name: Build
+        run: npm run build

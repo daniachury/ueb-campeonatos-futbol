@@ -1,0 +1,6 @@
+# GitHub for Jira: indica a Jira qué tipo de entorno es cada entorno de GitHub Actions,
+# para que los despliegues aparezcan como "Production" en las historias.
+deployments:
+  environmentMapping:
+    production:
+      - 'production'
