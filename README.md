@@ -155,7 +155,9 @@ El módulo `torneos` ya recorre todas las capas (`GET /api/torneos`) y es el eje
 
 \* UEB-Proyect-10 pide sesión para ver torneos; `/api/torneos` pasa al grupo "con sesión" cuando esté el login (UEB-Proyect-04).
 
-`requireAuth` valida la cookie HttpOnly `sesion` contra la tabla `sesiones` (24 h, usuario activo): sin sesión responde 401 `NO_AUTENTICADO` y con la sesión vencida 401 `SESION_EXPIRADA` (UEB-Proyect-04).
+`requireAuth` valida la cookie HttpOnly `__Host-sesion` (Secure, Path=/, sin Domain) contra la tabla `sesiones` (24 h, usuario activo): sin sesión responde 401 `NO_AUTENTICADO` y con la sesión vencida 401 `SESION_EXPIRADA` (UEB-Proyect-04).
+
+`POST /api/auth/registro` admite 5 peticiones por minuto por IP (binding `LIMITE_DE_REGISTRO`, sección `ratelimits` de `wrangler.jsonc`); al pasarse responde 429 `DEMASIADAS_PETICIONES`.
 
 ### Formato de respuestas
 

@@ -19,6 +19,7 @@ import {
 import { COOKIE_DE_SESION } from '../../core/cookie-de-sesion';
 import type { AppEnv } from '../../core/env';
 import { AppError, errores } from '../../core/errors';
+import { limitarPeticionesPorIp } from '../../core/middleware/limite-de-peticiones';
 import { siFallaLaValidacion } from '../../core/validacion';
 import { ErrorCorreoYaRegistrado } from '../usuarios/aplicacion/errores/error-correo-ya-registrado';
 import {
@@ -42,6 +43,8 @@ import { crearSesionesService } from './sesiones.service';
 export const authRoutes = new Hono<AppEnv>()
   .post(
     '/registro',
+    // Evita que un mismo cliente cree cuentas sin parar.
+    limitarPeticionesPorIp('LIMITE_DE_REGISTRO'),
     zValidator('json', esquemaSolicitudRegistroJugador, siFallaLaValidacion),
     async (c) => {
       // UEB-Proyect-03 (KAN-16) · Registro de jugador. El esquema ya descartó cualquier "rol".

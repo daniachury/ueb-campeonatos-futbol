@@ -3,6 +3,7 @@ import type { ErrorApi, ErrorDeCampo } from '@shared/api';
 import type { JugadorRegistrado } from '@shared/usuarios/contrato-registro-jugador';
 import { crearApp } from '../../app';
 import { crearD1Falsa } from '../../test/d1-falsa';
+import { crearLimitadorFalso } from '../../test/limitador-falso';
 
 const SOLICITUD_DE_LAURA = {
   nombreCompleto: 'Laura Gómez',
@@ -30,15 +31,15 @@ function crearBaseDeDatosDePrueba() {
   return { db, consultas, insercionesEn };
 }
 
-function registrar(cuerpo: unknown, db: D1Database) {
+function registrar(cuerpo: unknown, db: D1Database, limitador: RateLimit = crearLimitadorFalso()) {
   return crearApp().request(
     '/api/auth/registro',
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'cf-connecting-ip': '203.0.113.7' },
       body: JSON.stringify(cuerpo),
     },
-    { DB: db },
+    { DB: db, LIMITE_DE_REGISTRO: limitador },
   );
 }
 
@@ -66,13 +67,15 @@ describe('POST /api/auth/registro (KAN-16)', () => {
     const respuesta = await registrar(SOLICITUD_DE_LAURA, db);
 
     const cookie = respuesta.headers.get('set-cookie') ?? '';
-    expect(cookie).toMatch(/^sesion=[\w-]{43};/);
+    expect(cookie).toMatch(/^__Host-sesion=[\w-]{43};/);
     expect(cookie).toContain('HttpOnly');
     expect(cookie).toContain('Secure');
     expect(cookie).toContain('SameSite=Lax');
     expect(cookie).toContain('Max-Age=86400');
+    expect(cookie).toContain('Path=/');
+    expect(cookie).not.toContain('Domain');
 
-    const token = cookie.split(';')[0]?.replace('sesion=', '');
+    const token = cookie.split(';')[0]?.replace('__Host-sesion=', '');
     const [sesionGuardada] = insercionesEn('sesiones');
     const jugador = (await respuesta.json()) as JugadorRegistrado;
     expect(sesionGuardada?.parametros[1]).toBe(jugador.id);
@@ -116,6 +119,22 @@ describe('POST /api/auth/registro (KAN-16)', () => {
 
     expect(cuerpoComoTexto).not.toContain('clave123');
     expect(cuerpoComoTexto).not.toMatch(/contrasena|hash/i);
+  });
+
+  it('responde 429 cuando la misma IP pasa el límite de registros, sin tocar la base', async () => {
+    const { db, insercionesEn } = crearBaseDeDatosDePrueba();
+    const limitador = crearLimitadorFalso(1);
+
+    await registrar(SOLICITUD_DE_LAURA, db, limitador);
+    const respuesta = await registrar(
+      { ...SOLICITUD_DE_LAURA, correo: 'otra@mail.com' },
+      db,
+      limitador,
+    );
+
+    expect(respuesta.status).toBe(429);
+    expect(((await respuesta.json()) as ErrorApi).codigo).toBe('DEMASIADAS_PETICIONES');
+    expect(insercionesEn('usuarios')).toHaveLength(1);
   });
 
   it('guarda solo el hash de la contraseña en la base de datos (Escenario 5)', async () => {

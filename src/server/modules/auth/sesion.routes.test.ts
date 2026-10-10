@@ -3,6 +3,7 @@ import type { ErrorApi } from '@shared/api';
 import type { UsuarioAutenticado } from '@shared/usuarios/contrato-inicio-de-sesion';
 import { crearApp } from '../../app';
 import { crearD1DeAutenticacion, crearUsuarioGuardado } from '../../test/d1-de-autenticacion';
+import { crearLimitadorFalso } from '../../test/limitador-falso';
 
 function pedir(
   db: D1Database,
@@ -18,14 +19,14 @@ function pedir(
       headers: encabezados,
       body: opciones.cuerpo === undefined ? undefined : JSON.stringify(opciones.cuerpo),
     },
-    { DB: db },
+    { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
   );
 }
 
 const iniciarSesion = (db: D1Database, correo: string, contrasena: string) =>
   pedir(db, '/api/auth/login', { metodo: 'POST', cuerpo: { correo, contrasena } });
 
-/** "sesion=abc; Max-Age=…" → "sesion=abc", listo para enviarlo de vuelta. */
+/** "__Host-sesion=abc; Max-Age=…" → "__Host-sesion=abc", listo para enviarlo de vuelta. */
 const cookieDe = (respuesta: Response) =>
   (respuesta.headers.get('set-cookie') ?? '').split(';')[0] ?? '';
 
@@ -44,7 +45,7 @@ describe('POST /api/auth/login (KAN-17)', () => {
       rol: 'jugador',
     });
     const cookie = respuesta.headers.get('set-cookie') ?? '';
-    expect(cookie).toMatch(/^sesion=[\w-]{43};/);
+    expect(cookie).toMatch(/^__Host-sesion=[\w-]{43};/);
     expect(cookie).toContain('HttpOnly');
     expect(cookie).toContain('Max-Age=86400');
   });
@@ -146,7 +147,7 @@ describe('sesión con cookie (KAN-17)', () => {
     const conElTokenAnterior = await pedir(db, '/api/usuarios/me', { cookie });
 
     expect(cierre.status).toBe(204);
-    expect(cierre.headers.get('set-cookie')).toContain('sesion=;');
+    expect(cierre.headers.get('set-cookie')).toContain('__Host-sesion=;');
     expect(conElTokenAnterior.status).toBe(401);
     expect(((await conElTokenAnterior.json()) as ErrorApi).codigo).toBe('NO_AUTENTICADO');
   });
