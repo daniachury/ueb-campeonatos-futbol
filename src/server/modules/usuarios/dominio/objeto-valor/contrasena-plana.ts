@@ -12,39 +12,39 @@ const TEXTO_OCULTO = '[contraseña oculta]';
  * - No se recortan espacios: un espacio puede ser parte intencional de la contraseña.
  */
 export class ContrasenaPlana {
-    readonly #valor: string;
+  readonly #valor: string;
 
-    private constructor(contrasenaValidada: string) {
-        this.#valor = contrasenaValidada;
+  private constructor(contrasenaValidada: string) {
+    this.#valor = contrasenaValidada;
+  }
+
+  static crear(contrasenaIngresada: string): ContrasenaPlana {
+    if (!ContrasenaPlana.cumpleLaPoliticaDeSeguridad(contrasenaIngresada)) {
+      throw new ErrorDeValidacionDeDominio('contrasena', REGLAS_CONTRASENA.mensajeError);
     }
+    return new ContrasenaPlana(contrasenaIngresada);
+  }
 
-    static crear(contrasenaIngresada: string): ContrasenaPlana {
-        if (!ContrasenaPlana.cumpleLaPoliticaDeSeguridad(contrasenaIngresada)) {
-            throw new ErrorDeValidacionDeDominio('contrasena', REGLAS_CONTRASENA.mensajeError);
-        }
-        return new ContrasenaPlana(contrasenaIngresada);
-    }
+  /** Único acceso al texto plano. El nombre es largo a propósito: obliga a pensar antes de usarlo. */
+  revelarParaCifrar(): string {
+    return this.#valor;
+  }
 
-    /** Único acceso al texto plano. El nombre es largo a propósito: obliga a pensar antes de usarlo. */
-    revelarParaCifrar(): string {
-        return this.#valor;
-    }
+  toString(): string {
+    return TEXTO_OCULTO;
+  }
 
-    toString(): string {
-        return TEXTO_OCULTO;
-    }
+  toJSON(): string {
+    return TEXTO_OCULTO;
+  }
 
-    toJSON(): string {
-        return TEXTO_OCULTO;
-    }
+  private static cumpleLaPoliticaDeSeguridad(contrasena: string): boolean {
+    const { longitudMinima, patronAlMenosUnaLetra, patronAlMenosUnNumero } = REGLAS_CONTRASENA;
 
-    private static cumpleLaPoliticaDeSeguridad(contrasena: string): boolean {
-        const { longitudMinima, patronAlMenosUnaLetra, patronAlMenosUnNumero } = REGLAS_CONTRASENA;
-
-        return (
-            contrasena.length >= longitudMinima &&
-            patronAlMenosUnaLetra.test(contrasena) &&
-            patronAlMenosUnNumero.test(contrasena)
-        );
-    }
+    return (
+      contrasena.length >= longitudMinima &&
+      patronAlMenosUnaLetra.test(contrasena) &&
+      patronAlMenosUnNumero.test(contrasena)
+    );
+  }
 }

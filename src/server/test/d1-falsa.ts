@@ -29,6 +29,11 @@ export function crearD1Falsa(responder: (sql: string, parametros: unknown[]) => 
           consultas.push({ sql, parametros });
           return responder(sql, parametros)[0] ?? null;
         },
+        async run() {
+          consultas.push({ sql, parametros });
+          responder(sql, parametros);
+          return { results: [], success: true, meta: {} };
+        },
       };
       return sentencia;
     },
@@ -44,7 +49,8 @@ export function crearD1QueFalla(mensaje = 'D1 no disponible'): D1Database {
       const fallar = async () => {
         throw new Error(mensaje);
       };
-      return { bind: () => ({ all: fallar, first: fallar }), all: fallar, first: fallar };
+      const sentencia = { all: fallar, first: fallar, run: fallar };
+      return { ...sentencia, bind: () => sentencia };
     },
   } as unknown as D1Database;
 }

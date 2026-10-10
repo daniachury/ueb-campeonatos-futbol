@@ -26,6 +26,7 @@ export const errores = {
   validacion: (detalles: unknown) =>
     new AppError(400, 'VALIDACION', 'Los datos enviados no son válidos', detalles),
   noAutenticado: () => new AppError(401, 'NO_AUTENTICADO', 'Debes iniciar sesión'),
+  sesionExpirada: () => new AppError(401, 'SESION_EXPIRADA', 'Tu sesión expiró, ingresa de nuevo'),
   sinPermiso: () => new AppError(403, 'SIN_PERMISO', 'No tienes permiso para realizar esta acción'),
   noEncontrado: (recurso: string) => new AppError(404, 'NO_ENCONTRADO', `${recurso} no encontrado`),
   conflicto: (codigo: string, mensaje: string, detalles?: unknown) =>

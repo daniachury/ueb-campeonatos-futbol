@@ -6,21 +6,21 @@
  * - Las subclases deciden CÓMO se valida; esta base solo guarda y compara.
  */
 export abstract class ObjetoDeValorDeTexto {
-    readonly valor: string;
+  readonly valor: string;
 
-    protected constructor(valorValidado: string) {
-        this.valor = valorValidado;
-    }
+  protected constructor(valorValidado: string) {
+    this.valor = valorValidado;
+  }
 
-    esIgualA(otro: ObjetoDeValorDeTexto): boolean {
-        return this.constructor === otro.constructor && this.valor === otro.valor;
-    }
+  esIgualA(otro: ObjetoDeValorDeTexto): boolean {
+    return this.constructor === otro.constructor && this.valor === otro.valor;
+  }
 
-    toString(): string {
-        return this.valor;
-    }
+  toString(): string {
+    return this.valor;
+  }
 
-    toJSON(): string {
-        return this.valor;
-    }
+  toJSON(): string {
+    return this.valor;
+  }
 }

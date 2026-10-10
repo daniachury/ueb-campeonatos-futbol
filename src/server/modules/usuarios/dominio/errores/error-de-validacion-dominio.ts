@@ -6,11 +6,11 @@ export type CampoDelUsuario = 'nombreCompleto' | 'correo' | 'telefono' | 'contra
  * mostrar el mensaje justo debajo del campo correcto.
  */
 export class ErrorDeValidacionDeDominio extends Error {
-    readonly campo: CampoDelUsuario;
+  readonly campo: CampoDelUsuario;
 
-    constructor(campo: CampoDelUsuario, mensaje: string) {
-        super(mensaje);
-        this.name = 'ErrorDeValidacionDeDominio';
-        this.campo = campo;
-    }
+  constructor(campo: CampoDelUsuario, mensaje: string) {
+    super(mensaje);
+    this.name = 'ErrorDeValidacionDeDominio';
+    this.campo = campo;
+  }
 }
