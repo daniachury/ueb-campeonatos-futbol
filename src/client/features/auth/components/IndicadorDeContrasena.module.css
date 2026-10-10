@@ -1,0 +1,29 @@
+.indicador {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.barra {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--color-indicador-apagado);
+  transition: background-color 150ms ease-out;
+}
+
+.barraEncendida {
+  background: var(--color-acento);
+}
+
+.texto {
+  margin-left: 4px;
+  color: var(--color-texto-secundario);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.textoCompleto {
+  color: var(--color-acento-texto);
+}

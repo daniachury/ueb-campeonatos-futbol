@@ -1,0 +1,132 @@
+/* Móvil (v3 · M11): una columna sobre el gris de la app. */
+.pagina {
+  padding: 18px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 12px;
+}
+
+.botonDelMenu {
+  display: flex;
+}
+
+.saludo {
+  flex: 1;
+  min-width: 0;
+}
+
+.hola {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 13px;
+}
+
+.nombre {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.enlaceAlPerfil {
+  display: flex;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+.enlaceAlPerfil:focus-visible {
+  outline: 3px solid var(--color-grafito);
+  outline-offset: 2px;
+}
+
+/* En móvil el aviso ocupa una fila completa debajo del saludo. */
+.bienvenida {
+  flex: 1 1 100%;
+}
+
+.filaDestacada,
+.fila {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Escritorio (v3 · W04): contenido hasta 1240 px, secciones en pares. */
+@media (min-width: 1024px) {
+  .pagina {
+    max-width: 1240px;
+    padding: 32px clamp(16px, 4vw, 56px) 56px;
+    gap: 28px;
+  }
+
+  .encabezado {
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .botonDelMenu {
+    display: none;
+  }
+
+  .enlaceAlPerfil {
+    order: -1;
+  }
+
+  .enlaceAlPerfil > span {
+    width: 52px;
+    height: 52px;
+    font-size: 18px;
+  }
+
+  .saludo {
+    flex: 1 1 auto;
+  }
+
+  .hola {
+    font-size: 14px;
+  }
+
+  .nombre {
+    font-size: 24px;
+    letter-spacing: -0.6px;
+  }
+
+  .bienvenida {
+    flex: none;
+  }
+
+  .filaDestacada,
+  .fila {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .filaDestacada > :first-child {
+    flex: 2 1 520px;
+  }
+
+  .filaDestacada > :last-child {
+    flex: 1 1 300px;
+  }
+
+  .fila > :first-child {
+    flex: 1 1 420px;
+  }
+
+  .fila > :last-child {
+    flex: 1 1 360px;
+  }
+
+  .filaDestacada > *,
+  .fila > * {
+    min-width: 0;
+  }
+}

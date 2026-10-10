@@ -15,6 +15,19 @@ export class ApiError extends Error {
   }
 }
 
+/** Código con el que la API avisa que pasaron las 24 horas de la sesión (KAN-17 · Escenario 7). */
+const CODIGO_SESION_EXPIRADA = 'SESION_EXPIRADA';
+const escuchasDeSesionExpirada = new Set<() => void>();
+
+/**
+ * Avisa cada vez que cualquier petición encuentra la sesión vencida, para que la app
+ * lleve a Iniciar sesión con «Tu sesión expiró, ingresa de nuevo». Devuelve cómo dejar de escuchar.
+ */
+export function escucharSesionExpirada(alExpirar: () => void): () => void {
+  escuchasDeSesionExpirada.add(alExpirar);
+  return () => escuchasDeSesionExpirada.delete(alExpirar);
+}
+
 const esErrorApi = (valor: unknown): valor is ErrorApi =>
   typeof valor === 'object' && valor !== null && 'codigo' in valor && 'mensaje' in valor;
 
@@ -31,6 +44,9 @@ export async function pedir<T>(ruta: string, opciones: RequestInit = {}): Promis
 
   if (!respuesta.ok) {
     if (esErrorApi(cuerpo)) {
+      if (respuesta.status === 401 && cuerpo.codigo === CODIGO_SESION_EXPIRADA) {
+        escuchasDeSesionExpirada.forEach((alExpirar) => alExpirar());
+      }
       throw new ApiError(respuesta.status, cuerpo.codigo, cuerpo.mensaje, cuerpo.detalles);
     }
     throw new ApiError(

@@ -1,0 +1,31 @@
+/* Móvil: el contenido deja espacio abajo para la barra de navegación fija (84 px). */
+.pantalla {
+  --ancho-barra-lateral: 260px;
+  min-height: 100dvh;
+  background: var(--color-fondo-app);
+  color: var(--color-grafito);
+  font-family: var(--fuente-principal);
+}
+
+.contenido {
+  min-width: 0;
+  padding-bottom: 108px;
+}
+
+/* Escritorio (W04): barra lateral blanca a la izquierda y contenido a la derecha. */
+@media (min-width: 1024px) {
+  .pantalla {
+    display: grid;
+    grid-template-columns: var(--ancho-barra-lateral) minmax(0, 1fr);
+    /* La columna de la barra es blanca de arriba abajo aunque la barra sea sticky (W04). */
+    background: linear-gradient(
+      to right,
+      var(--color-superficie) var(--ancho-barra-lateral),
+      var(--color-fondo-app) var(--ancho-barra-lateral)
+    );
+  }
+
+  .contenido {
+    padding-bottom: 0;
+  }
+}

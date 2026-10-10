@@ -1,0 +1,39 @@
+.botonIcono {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  color: var(--color-grafito);
+  cursor: pointer;
+}
+
+.botonIcono:focus-visible {
+  outline: 3px solid var(--color-grafito);
+  outline-offset: 2px;
+}
+
+.campo {
+  background: var(--color-campo);
+}
+
+.blanco {
+  background: var(--color-superficie);
+}
+
+.transparente {
+  background: transparent;
+  color: inherit;
+}
+
+.tamano44 {
+  width: 44px;
+  height: 44px;
+}
+
+.tamano46 {
+  width: 46px;
+  height: 46px;
+}

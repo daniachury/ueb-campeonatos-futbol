@@ -1,0 +1,63 @@
+.pantalla {
+  min-height: 100dvh;
+  background: var(--color-fondo-app);
+  color: var(--color-grafito);
+  font-family: var(--fuente-principal);
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 16px;
+  background: var(--color-superficie);
+}
+
+.contenido {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.saludo {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.tarjeta {
+  padding: 20px 16px;
+  border-radius: var(--radio-tarjeta);
+  background: var(--color-superficie);
+}
+
+@media (min-width: 1024px) {
+  .encabezado {
+    padding: 20px clamp(16px, 4vw, 56px);
+  }
+
+  .contenido {
+    padding: 32px clamp(16px, 4vw, 56px) 56px;
+  }
+
+  .titulo {
+    font-size: 34px;
+    letter-spacing: -1px;
+  }
+
+  .tarjeta {
+    padding: 36px 24px;
+    border-radius: var(--radio-seccion);
+  }
+}

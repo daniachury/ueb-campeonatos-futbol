@@ -1,0 +1,114 @@
+/* Móvil (v3 · M02): encabezado con volver y escudo, formulario en una columna. */
+.encabezadoMovil {
+  height: 64px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.cuerpo {
+  padding: 8px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -1px;
+}
+
+.subtitulo {
+  margin: 8px 0 0;
+  color: var(--color-texto-secundario);
+  font-size: 15px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filaDeCampos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ayudaDelCampo {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 13px;
+}
+
+.ayudaDelCampo strong {
+  color: var(--color-grafito);
+}
+
+.enlace {
+  color: var(--color-grafito);
+  font-weight: 700;
+}
+
+.enlace:hover {
+  color: var(--color-acento-texto);
+}
+
+.acciones {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ayudaDelBoton {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 13px;
+  text-align: center;
+}
+
+.pie {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Escritorio (W03 · Crear cuenta): sin encabezado móvil, campos en pares y título en una línea. */
+@media (min-width: 1024px) {
+  .encabezadoMovil,
+  .saltoSoloMovil,
+  .pie {
+    display: none;
+  }
+
+  .cuerpo {
+    padding: 0;
+    gap: 14px;
+  }
+
+  .titulo {
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  .subtitulo {
+    margin-top: 6px;
+  }
+
+  .filaDeCampos {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .filaDeCampos > * {
+    flex: 1 1 180px;
+  }
+}

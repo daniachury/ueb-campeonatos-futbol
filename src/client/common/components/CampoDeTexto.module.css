@@ -1,0 +1,81 @@
+.campo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.etiqueta {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.contenedorDeLaEntrada {
+  position: relative;
+}
+
+.entrada {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 2px solid transparent;
+  border-radius: var(--radio-campo);
+  background: var(--color-campo);
+  color: var(--color-grafito);
+  font: inherit;
+  font-size: 16px; /* 16 px o más evita que el iPhone haga zoom al enfocar */
+}
+
+.entrada:focus {
+  outline: none;
+  border-color: var(--color-grafito);
+  background: var(--color-superficie);
+}
+
+.entradaConError {
+  border-color: var(--color-error-borde);
+  background: var(--color-superficie);
+}
+
+.entradaConError:focus {
+  border-color: var(--color-error-borde);
+  box-shadow: 0 0 0 4px var(--color-alerta-fondo);
+}
+
+.entradaConBoton {
+  padding-right: 56px;
+}
+
+.botonDeVer {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-texto-secundario);
+  cursor: pointer;
+}
+
+.botonDeVer:focus-visible {
+  outline: 3px solid var(--color-grafito);
+  outline-offset: -2px;
+}
+
+.bloqueDeError {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.mensajeDeError {
+  margin: 0;
+  color: var(--color-error-texto);
+  font-weight: 600;
+}

@@ -1,0 +1,132 @@
+.tarjeta {
+  padding: 18px 18px 6px;
+  border-radius: 26px;
+  background: var(--color-superficie);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progresoEnTexto {
+  color: var(--color-acento-texto);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.barraDeProgreso {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--color-separador);
+}
+
+.avance {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--color-grafito);
+}
+
+.pasos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pasos > li + li {
+  border-top: 1px solid var(--color-separador);
+}
+
+.paso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  color: var(--color-grafito);
+  text-decoration: none;
+}
+
+a.paso:focus-visible {
+  outline: 3px solid var(--color-grafito);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.marcador {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.marcadorCompletado {
+  background: var(--color-acento);
+  color: var(--color-grafito);
+}
+
+.marcadorActual {
+  background: var(--color-grafito);
+  color: var(--color-superficie);
+}
+
+.marcadorBloqueado {
+  background: var(--color-separador);
+  color: var(--color-texto-secundario);
+}
+
+.textos {
+  flex: 1;
+  min-width: 0;
+}
+
+.tituloDelPaso,
+.tituloTachado {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.tituloTachado {
+  color: var(--color-texto-secundario);
+  text-decoration: line-through;
+}
+
+.tituloBloqueado {
+  color: var(--color-texto-secundario);
+}
+
+.detalle,
+.detalleCompletado {
+  display: block;
+  color: var(--color-texto-secundario);
+  font-size: 12px;
+}
+
+.detalleCompletado {
+  color: var(--color-acento-texto);
+  font-weight: 600;
+}
+
+.candado {
+  display: flex;
+  color: var(--color-deshabilitado-texto);
+}
+
+/* W04: en escritorio el paso ya cumplido no se repite; la barra de progreso lo dice. */
+@media (min-width: 1024px) {
+  .tarjeta {
+    padding: 24px;
+    border-radius: 32px;
+  }
+
+  .pasoCompletado {
+    display: none;
+  }
+
+  .pasos {
+    border-top: 1px solid var(--color-separador);
+  }
+}

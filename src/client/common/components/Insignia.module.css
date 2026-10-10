@@ -1,0 +1,9 @@
+.insignia {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radio-pildora);
+  background: var(--color-tinte-acento);
+  color: var(--color-acento-texto);
+  font-size: 12px;
+  font-weight: 700;
+}

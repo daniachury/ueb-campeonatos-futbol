@@ -1,0 +1,22 @@
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.titulo,
+.tituloGrande {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+@media (min-width: 1024px) {
+  .tituloGrande {
+    font-size: 24px;
+    letter-spacing: -0.6px;
+  }
+}

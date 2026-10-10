@@ -1,0 +1,19 @@
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.error {
+  background: var(--color-alerta-fondo);
+  color: var(--color-alerta-texto);
+}
+
+.informativo {
+  background: var(--color-tinte-acento);
+  color: var(--color-grafito);
+}

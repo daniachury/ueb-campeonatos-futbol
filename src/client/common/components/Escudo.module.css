@@ -1,0 +1,22 @@
+.escudo {
+  flex: none;
+  object-fit: contain;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nombreCompacto {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.nombreMediano {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}

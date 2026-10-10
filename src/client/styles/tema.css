@@ -1,0 +1,65 @@
+/*
+ * Tema visual v3 · Neón minimal (lienzo «Liga Bosque · UI web y mobile», página «Oficial Jira»).
+ * Variables globales: los componentes usan var(--…) y nunca escriben un color directamente.
+ * Se carga junto a global.css: el blanco (--color-superficie) y el reinicio de box-sizing y body
+ * ya vienen de allí, por eso no se repiten aquí.
+ *
+ * Puntos de quiebre (los CSS Modules no comparten variables en @media, por eso se documentan aquí):
+ *   - Móvil primero: los estilos base son para 360–767 px (tableros M de v3).
+ *   - 1024 px o más: diseño de escritorio (tableros W de v3, pensados para 1280 px o más).
+ *     Entre 768 y 1023 px se mantiene el diseño móvil centrado, que se lee mejor que una
+ *     versión de escritorio comprimida.
+ */
+:root {
+  /* Superficies */
+  --color-fondo-app: #f6f7f3;
+  --color-campo: #f3f4f0;
+  --color-tinte-acento: #f1fbd0;
+  --color-separador: #f0f2ec;
+  --color-borde-punteado: #d5d9cf;
+  --color-borde-punteado-suave: #c9cec2;
+
+  /* Texto */
+  --color-grafito: #161a14;
+  --color-texto-secundario: #6b7066;
+  --color-texto-apagado: #a3a89c;
+
+  /* Acento verde neón: un solo protagonista por pantalla y nunca como color de texto */
+  --color-acento: #b7f000;
+  --color-acento-texto: #3f5200;
+  --color-avatar: #ff7a2f;
+
+  /* Estados */
+  --color-error-borde: #d93a3a;
+  --color-error-texto: #b02424;
+  --color-alerta-fondo: #fcecec;
+  --color-alerta-texto: #8f1f1f;
+  --color-deshabilitado-fondo: #f0f2ec;
+  --color-deshabilitado-texto: #8a8f84;
+  --color-indicador-apagado: #e4e7df;
+
+  /* Sombras */
+  --sombra-barra-inferior: 0 -6px 24px rgb(22 26 20 / 0.06);
+  --sombra-velo: rgb(22 26 20 / 0.08);
+
+  /* Forma y tipografía */
+  --radio-campo: 16px;
+  --radio-tarjeta: 22px;
+  --radio-seccion: 28px;
+  --radio-panel: 40px;
+  --radio-pildora: 999px;
+  --fuente-principal: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Texto que no se ve en pantalla pero sí leen los lectores de pantalla. */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

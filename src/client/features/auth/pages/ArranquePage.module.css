@@ -1,0 +1,159 @@
+/* Móvil (v3 · S01): portada sobre neón y hoja blanca anclada abajo. */
+.portada {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.nombreDeLaLiga {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1.6px;
+}
+
+.lemaDeLaLiga {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hoja {
+  min-height: 300px;
+  padding: 28px 24px 32px;
+  border-radius: 36px 36px 0 0;
+  background: var(--color-superficie);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.descripcion {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.acciones {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.comprobando {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.barraDeCarga {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--color-separador);
+}
+
+.avanceDeCarga {
+  width: 40%;
+  height: 6px;
+  border-radius: 6px;
+  background: var(--color-grafito);
+  animation: deslizar 1.1s ease-in-out infinite;
+}
+
+@keyframes deslizar {
+  from {
+    transform: translateX(-110%);
+  }
+
+  to {
+    transform: translateX(260%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avanceDeCarga {
+    animation: none;
+  }
+}
+
+.sesionActiva {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.textoSecundario {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+}
+
+.tituloDeSesion {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.pieDeLaHoja {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+  text-align: center;
+}
+
+.enlaceEnLinea {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-grafito);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.enlaceEnLinea:hover {
+  color: var(--color-acento-texto);
+}
+
+/* Escritorio: el panel de la liga reemplaza la portada y la hoja se vuelve contenido plano. */
+@media (min-width: 1024px) {
+  .portada {
+    display: none;
+  }
+
+  .hoja {
+    min-height: 0;
+    padding: 0;
+    border-radius: 0;
+    gap: 16px;
+  }
+
+  .titulo {
+    font-size: 34px;
+    letter-spacing: -1px;
+  }
+}
+
+.comprobando .tituloDeSesion {
+  font-size: 22px;
+  letter-spacing: -0.5px;
+}

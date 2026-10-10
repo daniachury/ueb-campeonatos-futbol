@@ -1,0 +1,163 @@
+/* Móvil (M11): título fuera de la tarjeta neón; el estado va arriba a la izquierda. */
+.titulo {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.tarjeta {
+  padding: 18px;
+  border-radius: var(--radio-seccion);
+  background: var(--color-acento);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.estado {
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: var(--radio-pildora);
+  background: var(--sombra-velo);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.enfrentamiento {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.equipo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.escudoVacio {
+  width: 52px;
+  height: 52px;
+  color: var(--color-grafito);
+}
+
+.nombreDelEquipo {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.versus {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.datosDelPartido {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.datoPorDefinir {
+  padding: 5px 10px;
+  border: 1.5px dashed var(--color-grafito);
+  border-radius: var(--radio-pildora);
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.acciones > * {
+  flex: 1;
+  padding: 0 8px;
+}
+
+/* Escritorio (W04): la sección entera es la tarjeta neón; el estado se alinea con el título. */
+@media (min-width: 1024px) {
+  .seccion {
+    padding: 28px 32px;
+    border-radius: 36px;
+    background: var(--color-acento);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 22px 8px;
+  }
+
+  .titulo {
+    margin: 0;
+    font-size: 20px;
+    letter-spacing: -0.4px;
+  }
+
+  .tarjeta {
+    display: contents;
+  }
+
+  .estado {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .enfrentamiento,
+  .datosDelPartido,
+  .acciones {
+    grid-column: 1 / -1;
+  }
+
+  .enfrentamiento {
+    gap: 16px;
+  }
+
+  .equipo {
+    gap: 10px;
+  }
+
+  .escudoVacio {
+    width: 84px;
+    height: 84px;
+  }
+
+  .nombreDelEquipo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+  }
+
+  .versus {
+    font-size: 48px;
+    letter-spacing: -2px;
+  }
+
+  .datosDelPartido {
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .datoPorDefinir {
+    padding: 6px 14px;
+  }
+
+  .acciones {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .acciones > * {
+    flex: none;
+    padding: 0 28px;
+  }
+}
