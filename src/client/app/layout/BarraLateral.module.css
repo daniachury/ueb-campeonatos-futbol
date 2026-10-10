@@ -1,0 +1,99 @@
+.barra {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .barra {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    padding: 28px 18px;
+    background: var(--color-superficie);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .marca {
+    padding: 0 6px;
+  }
+
+  .jugador {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 20px;
+    background: var(--color-fondo-app);
+  }
+
+  .datosDelJugador {
+    min-width: 0;
+  }
+
+  .nombre {
+    margin: 0 0 2px;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .tituloDelMenu {
+    margin: 0;
+    padding: 0 18px 6px;
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+
+  .opcion {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 18px;
+    border-radius: var(--radio-pildora);
+    color: var(--color-texto-secundario);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .opcion[aria-current='page'] {
+    background: var(--color-acento);
+    color: var(--color-grafito);
+    font-weight: 700;
+  }
+
+  .opcion:focus-visible,
+  .cerrarSesion:focus-visible {
+    outline: 3px solid var(--color-grafito);
+    outline-offset: 2px;
+  }
+
+  .cerrarSesion {
+    margin-top: auto;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: var(--radio-pildora);
+    background: transparent;
+    color: var(--color-texto-secundario);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}

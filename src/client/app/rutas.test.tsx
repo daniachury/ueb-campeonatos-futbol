@@ -1,26 +1,40 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react';
-import { createMemoryRouter, RouterProvider } from 'react-router';
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { RUTAS } from '../common/navegacion';
 import { simularFetch } from '../test/fetch-falso';
-import { rutas } from './rutas';
-
-function renderizarEn(ruta: string) {
-  const router = createMemoryRouter(rutas, { initialEntries: [ruta] });
-  render(<RouterProvider router={router} />);
-  return router;
-}
+import { renderizarAppEn as renderizarEn } from '../test/renderizar-app';
 
 describe('rutas de la aplicación', () => {
-  it('la raíz redirige a /torneos dentro del layout principal', async () => {
+  it('la raíz muestra el arranque (v3 · S01) con las dos formas de entrar', async () => {
+    renderizarEn(RUTAS.INICIO);
+
+    expect(
+      await screen.findByRole('heading', { name: 'Tu liga empieza aquí' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Iniciar sesión' })).toHaveAttribute(
+      'href',
+      RUTAS.INICIAR_SESION,
+    );
+    expect(screen.getByRole('link', { name: 'Soy nuevo · Crear cuenta' })).toHaveAttribute(
+      'href',
+      RUTAS.CREAR_CUENTA,
+    );
+  });
+
+  it('el inicio del jugador sin sesión lleva a Iniciar sesión (KAN-17)', async () => {
+    renderizarEn(RUTAS.INICIO_DEL_JUGADOR);
+
+    expect(await screen.findByRole('heading', { name: 'Hola de nuevo' })).toBeInTheDocument();
+  });
+
+  it('/torneos sigue dentro del layout principal', async () => {
     simularFetch({ datos: [] });
 
-    const router = renderizarEn('/');
+    renderizarEn(RUTAS.TORNEOS);
 
     expect(await screen.findByRole('heading', { name: 'Torneos' })).toBeInTheDocument();
-    expect(router.state.location.pathname).toBe('/torneos');
     expect(screen.getByRole('navigation', { name: 'Principal' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Torneos' })).toHaveClass('app__enlace--activo');
   });
 
   it('una dirección desconocida muestra la página 404', () => {
@@ -31,5 +45,12 @@ describe('rutas de la aplicación', () => {
       'href',
       '/torneos',
     );
+  });
+
+  it('Crear cuenta se muestra como pantalla completa, sin el menú principal (KAN-16)', () => {
+    renderizarEn(RUTAS.CREAR_CUENTA);
+
+    expect(screen.getByRole('heading', { name: /Crea tu ficha/ })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Principal' })).not.toBeInTheDocument();
   });
 });

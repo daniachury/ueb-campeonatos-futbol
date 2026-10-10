@@ -1,0 +1,36 @@
+.avatar {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+.grafito {
+  background: var(--color-grafito);
+  color: var(--color-acento);
+}
+
+.naranja {
+  background: var(--color-avatar);
+  color: var(--color-superficie);
+}
+
+.tamano40 {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+}
+
+.tamano46 {
+  width: 46px;
+  height: 46px;
+  font-size: 16px;
+}
+
+.tamano52 {
+  width: 52px;
+  height: 52px;
+  font-size: 18px;
+}

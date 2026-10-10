@@ -1,0 +1,140 @@
+/* Móvil primero: el marco solo pinta el fondo y deja que cada pantalla ocupe todo el alto. */
+.pantalla {
+  min-height: 100dvh;
+  display: flex;
+  font-family: var(--fuente-principal);
+  color: var(--color-grafito);
+}
+
+.neon {
+  background: var(--color-acento);
+}
+
+.blanco {
+  background: var(--color-superficie);
+}
+
+.panelDeLaLiga,
+.pestanas {
+  display: none;
+}
+
+.contenido {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.columna {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* v3 · W03 · Acceso (escritorio): panel neón a la izquierda, formulario centrado a la derecha. */
+@media (min-width: 1024px) {
+  .pantalla {
+    background: var(--color-superficie);
+  }
+
+  .panelDeLaLiga {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 16px;
+    padding: 40px clamp(24px, 4vw, 64px);
+    border-radius: var(--radio-panel);
+    background: var(--color-acento);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .mensajeDeLaLiga {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .lema {
+    margin: 0;
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -2.5px;
+  }
+
+  .descripcion {
+    max-width: 460px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .beneficios {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .beneficio {
+    height: 44px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: var(--radio-pildora);
+    background: var(--color-superficie);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .contenido {
+    flex: 1.13 1 0;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .columna {
+    max-width: 440px;
+    gap: 18px;
+  }
+
+  .pestanas {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--radio-pildora);
+    background: var(--color-campo);
+  }
+
+  .pestana {
+    flex: 1;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radio-pildora);
+    color: var(--color-texto-secundario);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .pestana[aria-current='page'] {
+    background: var(--color-grafito);
+    color: var(--color-superficie);
+  }
+
+  .pestana:focus-visible {
+    outline: 3px solid var(--color-grafito);
+    outline-offset: 2px;
+  }
+}

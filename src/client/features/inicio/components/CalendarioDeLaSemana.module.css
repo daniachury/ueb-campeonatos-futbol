@@ -1,0 +1,95 @@
+/* Móvil (M11): sin tarjeta; los días son píldoras blancas sobre el fondo de la app. */
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rango {
+  color: var(--color-texto-secundario);
+  font-size: 12px;
+}
+
+.soloEscritorio {
+  display: none;
+}
+
+.dias {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.dia {
+  width: 46px;
+  height: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  background: var(--color-superficie);
+  color: var(--color-grafito);
+  font: inherit;
+  cursor: pointer;
+}
+
+.dia:focus-visible {
+  outline: 3px solid var(--color-grafito);
+  outline-offset: 2px;
+}
+
+.diaElegido {
+  background: var(--color-grafito);
+  color: var(--color-superficie);
+}
+
+.inicial {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.numero {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+/* Escritorio (W04): tarjeta blanca y días sobre el gris de la app. */
+@media (min-width: 1024px) {
+  .seccion {
+    height: 100%;
+    padding: 24px;
+    border-radius: 32px;
+    background: var(--color-superficie);
+    gap: 16px;
+  }
+
+  .rango {
+    font-size: 13px;
+  }
+
+  .soloEscritorio {
+    display: inline;
+  }
+
+  .dias {
+    gap: 6px;
+  }
+
+  .dia {
+    width: 50px;
+    height: 70px;
+    background: var(--color-fondo-app);
+  }
+
+  .diaElegido {
+    background: var(--color-grafito);
+  }
+
+  .numero {
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,127 @@
+/* Móvil (M11): título fuera y tabla en tarjeta blanca. */
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.complemento {
+  color: var(--color-texto-secundario);
+  font-size: 12px;
+}
+
+.tarjeta {
+  padding: 8px 12px 14px;
+  border-radius: var(--radio-tarjeta);
+  background: var(--color-superficie);
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 32px 32px;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 4px;
+}
+
+.filaDeTitulos {
+  padding: 6px 4px;
+  color: var(--color-texto-secundario);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.filaVacia {
+  border-top: 1px solid var(--color-separador);
+  color: var(--color-texto-apagado);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* M11 dibuja tres filas de relleno; W04, cuatro. */
+.filaVacia:last-child {
+  display: none;
+}
+
+.numero {
+  text-align: right;
+}
+
+.equipoVacio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.escudoPunteado {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px dashed var(--color-borde-punteado-suave);
+  border-radius: 5px;
+}
+
+.barraDeRelleno {
+  height: 9px;
+  border-radius: 6px;
+  background: var(--color-separador);
+}
+
+.mensaje {
+  margin: 8px 4px 0;
+  color: var(--color-texto-secundario);
+  font-size: 13px;
+}
+
+/* Escritorio (W04): toda la sección es una tarjeta blanca. */
+@media (min-width: 1024px) {
+  .seccion {
+    height: 100%;
+    padding: 24px;
+    border-radius: 32px;
+    background: var(--color-superficie);
+    gap: 12px;
+  }
+
+  .complemento {
+    font-size: 13px;
+  }
+
+  .tarjeta {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .fila {
+    grid-template-columns: 28px minmax(0, 1fr) 40px 40px;
+    gap: 10px;
+    padding: 10px 8px;
+  }
+
+  .filaDeTitulos {
+    padding: 6px 8px;
+  }
+
+  .filaVacia {
+    font-size: 16px;
+  }
+
+  .filaVacia:last-child {
+    display: grid;
+  }
+
+  .escudoPunteado {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+  }
+
+  .barraDeRelleno {
+    height: 10px;
+  }
+
+  .mensaje {
+    margin: 0;
+    font-size: 14px;
+  }
+}

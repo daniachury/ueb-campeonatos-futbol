@@ -1,0 +1,59 @@
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Los filtros son del diseño de escritorio (W04); en móvil (M11) no aparecen. */
+.filtros {
+  display: none;
+}
+
+.tarjeta {
+  padding: 20px 16px;
+  border-radius: var(--radio-tarjeta);
+  background: var(--color-superficie);
+}
+
+@media (min-width: 1024px) {
+  .seccion {
+    gap: 14px;
+  }
+
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--radio-pildora);
+    background: var(--color-superficie);
+  }
+
+  .filtro {
+    height: 40px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: var(--radio-pildora);
+    background: transparent;
+    color: var(--color-texto-secundario);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .filtro[aria-pressed='true'] {
+    background: var(--color-grafito);
+    color: var(--color-superficie);
+  }
+
+  .filtro:focus-visible {
+    outline: 3px solid var(--color-grafito);
+    outline-offset: 2px;
+  }
+
+  .tarjeta {
+    padding: 36px 24px;
+    border-radius: var(--radio-seccion);
+  }
+}

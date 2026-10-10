@@ -1,0 +1,58 @@
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 12px;
+  border-radius: 18px;
+  background: var(--color-grafito);
+  color: var(--color-superficie);
+}
+
+.marcaDeConfirmacion {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-acento);
+  color: var(--color-grafito);
+}
+
+.mensaje {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cerrar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.cerrar:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: -3px;
+}
+
+/* W04: en escritorio el aviso es una píldora al lado del saludo. */
+@media (min-width: 1024px) {
+  .aviso {
+    padding: 4px 4px 4px 12px;
+    border-radius: var(--radio-pildora);
+  }
+
+  .mensaje {
+    flex: none;
+  }
+}

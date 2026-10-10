@@ -1,0 +1,75 @@
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 3px;
+}
+
+.anchoCompleto {
+  width: 100%;
+}
+
+.grande {
+  height: 56px;
+  padding: 0 28px;
+  font-size: 16px;
+}
+
+.mediano {
+  height: 50px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+.principal {
+  background: var(--color-grafito);
+  color: var(--color-superficie);
+}
+
+.secundario {
+  background: var(--color-campo);
+  color: var(--color-grafito);
+}
+
+.blanco {
+  background: var(--color-superficie);
+  color: var(--color-grafito);
+}
+
+/* Sobre el neón, el anillo de foco es grafito: el neón no se vería. */
+.blanco:focus-visible {
+  outline-color: var(--color-grafito);
+}
+
+.boton:disabled {
+  background: var(--color-deshabilitado-fondo);
+  color: var(--color-deshabilitado-texto);
+  cursor: not-allowed;
+}
+
+/* Mientras espera la respuesta sigue oscuro, para que «Creando…» se lea como acción en curso. */
+.boton[aria-busy='true'] {
+  background: var(--color-grafito);
+  color: var(--color-superficie);
+  opacity: 0.7;
+  cursor: progress;
+}
+
+@media (min-width: 1024px) {
+  .mediano {
+    height: 52px;
+    padding: 0 28px;
+    font-size: 15px;
+  }
+}

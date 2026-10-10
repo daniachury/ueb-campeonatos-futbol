@@ -155,7 +155,7 @@ El módulo `torneos` ya recorre todas las capas (`GET /api/torneos`) y es el eje
 
 \* UEB-Proyect-10 pide sesión para ver torneos; `/api/torneos` pasa al grupo "con sesión" cuando esté el login (UEB-Proyect-04).
 
-`requireAuth` todavía no valida sesiones: responde 401 siempre. Así ninguna ruta privada queda abierta por error mientras se implementa el login.
+`requireAuth` valida la cookie HttpOnly `sesion` contra la tabla `sesiones` (24 h, usuario activo): sin sesión responde 401 `NO_AUTENTICADO` y con la sesión vencida 401 `SESION_EXPIRADA` (UEB-Proyect-04).
 
 ### Formato de respuestas
 
@@ -173,19 +173,19 @@ El módulo `torneos` ya recorre todas las capas (`GET /api/torneos`) y es el eje
 
 ### Módulos y épicas
 
-| Módulo          | Épica  | Historias           | Estado                                    |
-| --------------- | ------ | ------------------- | ----------------------------------------- |
-| `health`        | —      | Monitoreo           | Implementado                              |
-| `torneos`       | E3     | 07, 08, 09, **10**  | Listado (10) implementado como referencia |
-| `auth`          | E2     | 03, 04              | Pendiente                                 |
-| `usuarios`      | E2     | 05, 06, 17          | Pendiente                                 |
-| `equipos`       | E4, E5 | 11 a 17             | Pendiente                                 |
-| `inscripciones` | E6     | 18, 19              | Pendiente                                 |
-| `sorteo`        | E7     | 20                  | Pendiente                                 |
-| `sedes`         | E8     | 21                  | Pendiente                                 |
-| `partidos`      | E8, E9 | 22, 23, 24, 25      | Pendiente                                 |
-| `tabla`         | E10    | 26 (27 es frontend) | Pendiente                                 |
-| `core/`         | E1     | 02                  | Middleware listo; falta validar sesiones  |
+| Módulo          | Épica  | Historias           | Estado                                        |
+| --------------- | ------ | ------------------- | --------------------------------------------- |
+| `health`        | —      | Monitoreo           | Implementado                                  |
+| `torneos`       | E3     | 07, 08, 09, **10**  | Listado (10) implementado como referencia     |
+| `auth`          | E2     | **03**, **04**      | Registro (03), inicio y cierre de sesión (04) |
+| `usuarios`      | E2     | 03, 05, 06, 17      | Dominio y caso de uso del registro (03)       |
+| `equipos`       | E4, E5 | 11 a 17             | Pendiente                                     |
+| `inscripciones` | E6     | 18, 19              | Pendiente                                     |
+| `sorteo`        | E7     | 20                  | Pendiente                                     |
+| `sedes`         | E8     | 21                  | Pendiente                                     |
+| `partidos`      | E8, E9 | 22, 23, 24, 25      | Pendiente                                     |
+| `tabla`         | E10    | 26 (27 es frontend) | Pendiente                                     |
+| `core/`         | E1     | 02                  | Middleware listo; falta validar sesiones      |
 
 Cada archivo `*.routes.ts` lista en su encabezado las historias que le corresponden.
 
@@ -210,7 +210,7 @@ Reglas:
 - Crear una migración: `npx wrangler d1 migrations create DB descripcion_del_cambio`.
 - `seeds/dev.sql` carga torneos de ejemplo **solo en local**.
 
-Modelo de datos planeado según el backlog (hoy solo existe la tabla `torneos`; cada historia agrega sus tablas con su migración):
+Modelo de datos planeado según el backlog (hoy existen `torneos`, `usuarios`, `sesiones` e `intentos_inicio_sesion`; cada historia agrega sus tablas con su migración):
 
 ```mermaid
 erDiagram
@@ -382,9 +382,11 @@ Ejemplo: **UEB-Proyect-14 · Unirme a un equipo** (`KAN-27`).
 - Las peticiones a archivos estáticos (el frontend) son gratuitas e ilimitadas.
 - Evitar cálculos pesados en una sola petición. Para el hash de contraseñas (UEB-Proyect-03) la opción nativa en Workers es PBKDF2 con Web Crypto; medir su costo de CPU antes de fijar el número de iteraciones.
 
+**Pendiente de seguridad (UEB-Proyect-03 · KAN-16, Escenario 5):** por decisión del equipo, la contraseña se guarda **en texto plano** mientras se elige el algoritmo de hash (`CifradorProvisionalEnTextoPlano`). No registrar usuarios reales hasta reemplazarlo: basta con un adaptador nuevo de `CifradorDeContrasenas` y cambiar una línea en `usuarios/infraestructura/crear-registrar-jugador.ts`. La contraseña nunca sale en las respuestas de la API.
+
 **Pendientes del esqueleto:**
 
-- `requireAuth` responde 401 siempre hasta implementar UEB-Proyect-04.
+- UEB-Proyect-04: falta el cambio obligatorio de contraseña temporal del administrador (depende de UEB-Proyect-05) y la pantalla real de Gestión de torneos (épica E3).
 - `GET /api/torneos` es pública por ahora; debe pasar al grupo con sesión (UEB-Proyect-10).
 - El menú por rol y el menú hamburguesa son parte de UEB-Proyect-01.
 - Las pruebas de repositorio contra una D1 real se pueden agregar con `@cloudflare/vitest-pool-workers`.
