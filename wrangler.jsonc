@@ -4,6 +4,9 @@
   // Punto de entrada del backend (Worker con Hono).
   "main": "./src/server/index.ts",
   "compatibility_date": "2025-09-01",
+  // URL pública: https://ueb-campeonatos-futbol.dachuryp.workers.dev
+  "workers_dev": true,
+  "preview_urls": true,
 
   // El frontend (React) se publica como archivos estáticos junto al Worker.
   "assets": {
@@ -17,9 +20,9 @@
     {
       "binding": "DB",
       "database_name": "ueb-campeonatos-db",
-      // Reemplazar con el id que imprime `npx wrangler d1 create ueb-campeonatos-db` (ver README).
-      // Para desarrollo local este valor no importa.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Base de producción en la cuenta de Cloudflare del proyecto (`npx wrangler d1 list`).
+      // Para desarrollo local este valor no importa: Wrangler usa la copia en .wrangler/.
+      "database_id": "deeb4815-fffd-4508-a4d7-23b20ae743df",
       "migrations_dir": "migrations"
     }
   ],
