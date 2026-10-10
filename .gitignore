@@ -53,3 +53,9 @@ Desktop.ini
 *.local
 .cache/
 tmp/
+
+# ─── Llaves y certificados ──────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx

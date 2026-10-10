@@ -1,3 +1,4 @@
+import type { ContrasenaCifrada } from '../../dominio/objeto-valor/contrasena-cifrada';
 import type { CorreoElectronico } from '../../dominio/objeto-valor/correo-electronico';
 import type { Usuario } from '../../dominio/usuario';
 
@@ -11,4 +12,10 @@ export interface RepositorioDeUsuarios {
   buscarPorCorreo(correo: CorreoElectronico): Promise<Usuario | null>;
   /** Si el correo ya existe (dos registros al mismo tiempo), lanza ErrorCorreoYaRegistrado. */
   guardar(usuario: Usuario): Promise<void>;
+  /** Reemplaza la contraseña guardada, por ejemplo al pasar una cuenta antigua a hash. */
+  actualizarContrasena(
+    usuarioId: string,
+    contrasenaCifrada: ContrasenaCifrada,
+    fecha: Date,
+  ): Promise<void>;
 }

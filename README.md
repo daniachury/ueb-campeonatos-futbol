@@ -382,7 +382,7 @@ Ejemplo: **UEB-Proyect-14 · Unirme a un equipo** (`KAN-27`).
 - Las peticiones a archivos estáticos (el frontend) son gratuitas e ilimitadas.
 - Evitar cálculos pesados en una sola petición. Para el hash de contraseñas (UEB-Proyect-03) la opción nativa en Workers es PBKDF2 con Web Crypto; medir su costo de CPU antes de fijar el número de iteraciones.
 
-**Pendiente de seguridad (UEB-Proyect-03 · KAN-16, Escenario 5):** por decisión del equipo, la contraseña se guarda **en texto plano** mientras se elige el algoritmo de hash (`CifradorProvisionalEnTextoPlano`). No registrar usuarios reales hasta reemplazarlo: basta con un adaptador nuevo de `CifradorDeContrasenas` y cambiar una línea en `usuarios/infraestructura/crear-registrar-jugador.ts`. La contraseña nunca sale en las respuestas de la API.
+**Contraseñas (UEB-Proyect-03 · KAN-16, Escenario 5):** se guardan con **PBKDF2-SHA256** (100.000 iteraciones, el máximo de Workers, y sal aleatoria) en `usuarios/infraestructura/cifrador-pbkdf2.ts`, con el formato `pbkdf2_sha256$<iteraciones>$<sal>$<hash>`. Las cuentas creadas antes con el adaptador provisional (contraseña sin hash) siguen entrando y se vuelven a guardar con hash en su siguiente inicio de sesión. La contraseña nunca sale en las respuestas de la API.
 
 **Pendientes del esqueleto:**
 

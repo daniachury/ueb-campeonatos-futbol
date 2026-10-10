@@ -36,6 +36,8 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
   async guardar(usuario: Usuario): Promise<void> {
     this.usuariosGuardados.push(usuario);
   }
+
+  async actualizarContrasena(): Promise<void> {}
 }
 
 /** Doble de prueba: anota qué recibió y devuelve siempre el mismo hash. */
@@ -48,6 +50,10 @@ class CifradorDePrueba implements CifradorDeContrasenas {
   }
 
   async coincide(): Promise<boolean> {
+    return false;
+  }
+
+  necesitaActualizarse(): boolean {
     return false;
   }
 }
