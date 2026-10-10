@@ -1,5 +1,5 @@
 import { IniciarSesion } from '../aplicacion/iniciar-sesion';
-import { CifradorProvisionalEnTextoPlano } from './cifrador-provisional-en-texto-plano';
+import { CifradorPbkdf2 } from './cifrador-pbkdf2';
 import { RegistroDeIntentosFallidosD1 } from './registro-de-intentos-fallidos-d1';
 import { RelojDelSistema } from './reloj-del-sistema';
 import { RepositorioDeUsuariosD1 } from './repositorio-de-usuarios-d1';
@@ -9,7 +9,7 @@ export function crearIniciarSesion(baseDeDatos: D1Database): IniciarSesion {
   const reloj = new RelojDelSistema();
   return new IniciarSesion({
     repositorioDeUsuarios: new RepositorioDeUsuariosD1(baseDeDatos),
-    cifradorDeContrasenas: new CifradorProvisionalEnTextoPlano(),
+    cifradorDeContrasenas: new CifradorPbkdf2(),
     registroDeIntentosFallidos: new RegistroDeIntentosFallidosD1(baseDeDatos, reloj),
     reloj,
   });

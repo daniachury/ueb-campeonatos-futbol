@@ -5,6 +5,7 @@ import type {
 import { REGLAS_INICIO_DE_SESION } from '../../../../shared/usuarios/reglas-inicio-de-sesion';
 import { ErrorDeValidacionDeDominio } from '../dominio/errores/error-de-validacion-dominio';
 import { ContrasenaCifrada } from '../dominio/objeto-valor/contrasena-cifrada';
+import { ContrasenaPlana } from '../dominio/objeto-valor/contrasena-plana';
 import { CorreoElectronico } from '../dominio/objeto-valor/correo-electronico';
 import type { Usuario } from '../dominio/usuario';
 import {
@@ -75,11 +76,29 @@ export class IniciarSesion {
     // 3. Credenciales correctas: el contador vuelve a cero (Escenario 4).
     await this.#registroDeIntentosFallidos.reiniciar(correo);
     const usuarioVerificado = usuario as Usuario;
+    await this.#actualizarContrasenaSiHaceFalta(usuarioVerificado, solicitud.contrasena, ahora);
     if (!usuarioVerificado.activo) {
       throw new ErrorCuentaDesactivada();
     }
 
     return convertirEnUsuarioAutenticado(usuarioVerificado);
+  }
+
+  /**
+   * Las cuentas creadas antes del hash guardaron la contraseña tal cual. Con las credenciales
+   * ya verificadas es el único momento en que se conoce la contraseña: se guarda con hash.
+   */
+  async #actualizarContrasenaSiHaceFalta(
+    usuario: Usuario,
+    contrasenaEscrita: string,
+    ahora: Date,
+  ): Promise<void> {
+    if (!this.#cifradorDeContrasenas.necesitaActualizarse(usuario.contrasenaCifrada)) return;
+
+    const contrasenaCifrada = await this.#cifradorDeContrasenas.cifrar(
+      ContrasenaPlana.desdeContrasenaVerificada(contrasenaEscrita),
+    );
+    await this.#repositorioDeUsuarios.actualizarContrasena(usuario.id, contrasenaCifrada, ahora);
   }
 
   /** Suma el fallo y bloquea al llegar al límite. Siempre termina lanzando un error. */

@@ -56,6 +56,14 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       });
       return [];
     }
+    if (sql.includes('UPDATE usuarios SET hash_contrasena')) {
+      const usuario = usuarios.find((guardado) => guardado.id === tercero);
+      if (usuario) {
+        usuario.hash_contrasena = String(primero);
+        usuario.actualizado_en = String(segundo);
+      }
+      return [];
+    }
     if (sql.includes('DELETE FROM intentos_inicio_sesion')) {
       intentos.delete(String(primero));
       return [];

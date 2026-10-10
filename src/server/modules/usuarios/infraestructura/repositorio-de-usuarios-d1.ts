@@ -86,6 +86,17 @@ export class RepositorioDeUsuariosD1 implements RepositorioDeUsuarios {
       throw error;
     }
   }
+
+  async actualizarContrasena(
+    usuarioId: string,
+    contrasenaCifrada: ContrasenaCifrada,
+    fecha: Date,
+  ): Promise<void> {
+    await this.#baseDeDatos
+      .prepare('UPDATE usuarios SET hash_contrasena = ?, actualizado_en = ? WHERE id = ?')
+      .bind(contrasenaCifrada.obtenerHashParaGuardar(), fecha.toISOString(), usuarioId)
+      .run();
+  }
 }
 
 function convertirFilaEnUsuario(fila: FilaDeUsuario): Usuario {

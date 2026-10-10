@@ -25,6 +25,14 @@ export class ContrasenaPlana {
     return new ContrasenaPlana(contrasenaIngresada);
   }
 
+  /**
+   * La contraseña que ya coincidió con la guardada al iniciar sesión. No se vuelve a exigir
+   * la política: una cuenta antigua no debe quedar fuera porque las reglas cambiaron.
+   */
+  static desdeContrasenaVerificada(contrasenaVerificada: string): ContrasenaPlana {
+    return new ContrasenaPlana(contrasenaVerificada);
+  }
+
   /** Único acceso al texto plano. El nombre es largo a propósito: obliga a pensar antes de usarlo. */
   revelarParaCifrar(): string {
     return this.#valor;

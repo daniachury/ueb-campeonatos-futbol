@@ -118,6 +118,16 @@ describe('POST /api/auth/registro (KAN-16)', () => {
     expect(cuerpoComoTexto).not.toMatch(/contrasena|hash/i);
   });
 
+  it('guarda solo el hash de la contraseña en la base de datos (Escenario 5)', async () => {
+    const { db, insercionesEn } = crearBaseDeDatosDePrueba();
+
+    await registrar(SOLICITUD_DE_LAURA, db);
+    const hashGuardado = insercionesEn('usuarios')[0]?.parametros[4];
+
+    expect(hashGuardado).toMatch(/^pbkdf2_sha256\$/);
+    expect(hashGuardado).not.toContain('clave123');
+  });
+
   it('envía un solo mensaje por campo aunque fallen varias reglas', async () => {
     const { db } = crearBaseDeDatosDePrueba();
 

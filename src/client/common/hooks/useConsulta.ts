@@ -2,9 +2,7 @@ import { useEffect, useState, type DependencyList } from 'react';
 import { ApiError } from '../api/client';
 
 export type EstadoConsulta<T> =
-  | { tipo: 'cargando' }
-  | { tipo: 'listo'; datos: T }
-  | { tipo: 'error'; mensaje: string };
+  { tipo: 'cargando' } | { tipo: 'listo'; datos: T } | { tipo: 'error'; mensaje: string };
 
 /**
  * Carga datos al montar el componente y cada vez que cambian las dependencias.

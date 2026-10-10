@@ -1,0 +1,6 @@
+# Variables y secretos locales del Worker para `npm run dev`.
+# Copia este archivo como .dev.vars (ignorado por git) y escribe los valores reales allí.
+# En producción cada secreto se carga con:  npx wrangler secret put NOMBRE
+# y se declara en Bindings (src/server/core/env.ts).
+#
+# Hoy la app no necesita ninguno: la base D1 llega como binding (DB) desde wrangler.jsonc.

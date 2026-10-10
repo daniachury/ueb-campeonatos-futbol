@@ -5,7 +5,7 @@ import { NombreCompleto } from '../dominio/objeto-valor/nombre-completo';
 import { Telefono } from '../dominio/objeto-valor/telefono';
 import { ROLES, type Rol } from '../dominio/rol';
 import { Usuario } from '../dominio/usuario';
-import { CifradorProvisionalEnTextoPlano } from '../infraestructura/cifrador-provisional-en-texto-plano';
+import { CifradorPbkdf2 } from '../infraestructura/cifrador-pbkdf2';
 import {
   ErrorCredencialesIncorrectas,
   ErrorCuentaDesactivada,
@@ -49,6 +49,16 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
   }
 
   async guardar(): Promise<void> {}
+
+  async actualizarContrasena(
+    usuarioId: string,
+    contrasenaCifrada: ContrasenaCifrada,
+  ): Promise<void> {
+    const posicion = this.usuarios.findIndex((usuario) => usuario.id === usuarioId);
+    const usuario = this.usuarios[posicion];
+    if (!usuario) return;
+    this.usuarios[posicion] = Usuario.reconstituir({ ...usuario, contrasenaCifrada });
+  }
 }
 
 /** Doble de prueba: intentos en un Map por correo. */
@@ -73,14 +83,14 @@ function prepararInicioDeSesion(usuarios: Usuario[] = [crearUsuario('laura@mail.
   const registroDeIntentosFallidos = new RegistroDeIntentosEnMemoria();
   const iniciarSesion = new IniciarSesion({
     repositorioDeUsuarios: new RepositorioDeUsuariosEnMemoria(usuarios),
-    cifradorDeContrasenas: new CifradorProvisionalEnTextoPlano(),
+    cifradorDeContrasenas: new CifradorPbkdf2(),
     registroDeIntentosFallidos,
     reloj,
   });
   const avanzarMinutos = (minutos: number) => {
     reloj.momento = new Date(reloj.momento.getTime() + minutos * MINUTO);
   };
-  return { iniciarSesion, registroDeIntentosFallidos, avanzarMinutos };
+  return { iniciarSesion, registroDeIntentosFallidos, avanzarMinutos, usuarios };
 }
 
 async function fallarVeces(iniciarSesion: IniciarSesion, veces: number) {
@@ -201,6 +211,18 @@ describe('IniciarSesion (KAN-17)', () => {
     await expect(
       iniciarSesion.ejecutar({ correo: 'laura@mail.com', contrasena: CONTRASENA_DE_LAURA }),
     ).rejects.toThrow('Tu cuenta está desactivada. Contacta al administrador');
+  });
+
+  it('una cuenta antigua sin hash sigue entrando y queda guardada con hash', async () => {
+    const { iniciarSesion, usuarios } = prepararInicioDeSesion();
+
+    await iniciarSesion.ejecutar({ correo: 'laura@mail.com', contrasena: CONTRASENA_DE_LAURA });
+    const guardada = usuarios[0]?.contrasenaCifrada.obtenerHashParaGuardar();
+
+    expect(guardada).toMatch(/^pbkdf2_sha256\$/);
+    await expect(
+      iniciarSesion.ejecutar({ correo: 'laura@mail.com', contrasena: CONTRASENA_DE_LAURA }),
+    ).resolves.toMatchObject({ correo: 'laura@mail.com' });
   });
 
   it('el error de cuenta desactivada es de su propia clase', async () => {

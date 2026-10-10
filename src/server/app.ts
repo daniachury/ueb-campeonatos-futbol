@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { secureHeaders } from 'hono/secure-headers';
 import type { AppEnv } from './core/env';
 import { manejarError, rutaNoEncontrada } from './core/errors';
 import { requireAuth } from './core/middleware/auth';
@@ -58,6 +59,9 @@ export function crearApp() {
   api.route('/admin/partidos', partidosAdminRoutes);
 
   const app = new Hono<AppEnv>();
+  // Cabeceras de seguridad en todas las respuestas de la API (nosniff, HSTS, sin iframes…).
+  // Las del frontend estático están en public/_headers.
+  app.use('*', secureHeaders());
   app.route('/api', api);
   app.notFound(rutaNoEncontrada);
   app.onError(manejarError);
