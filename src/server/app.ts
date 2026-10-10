@@ -3,6 +3,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import type { AppEnv } from './core/env';
 import { manejarError, rutaNoEncontrada } from './core/errors';
 import { requireAuth } from './core/middleware/auth';
+import { requireContrasenaActualizada } from './core/middleware/require-contrasena-actualizada';
 import { requireRole } from './core/middleware/require-role';
 import { authRoutes } from './modules/auth/auth.routes';
 import { equiposAdminRoutes, equiposRoutes } from './modules/equipos/equipos.routes';
@@ -32,9 +33,9 @@ export function crearApp() {
   const api = new Hono<AppEnv>();
 
   // 1. Protección por grupos. Va antes de las rutas para que se ejecute primero.
-  api.use('/admin/*', requireAuth, requireRole('admin'));
+  api.use('/admin/*', requireAuth, requireRole('admin'), requireContrasenaActualizada);
   for (const prefijo of PREFIJOS_CON_SESION) {
-    api.use(`${prefijo}/*`, requireAuth);
+    api.use(`${prefijo}/*`, requireAuth, requireContrasenaActualizada);
   }
 
   // 2. Rutas públicas.

@@ -37,7 +37,15 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
     this.usuariosGuardados.push(usuario);
   }
 
+  async buscarPorId(id: string): Promise<Usuario | null> {
+    return this.usuariosGuardados.find((usuario) => usuario.id === id) ?? null;
+  }
+
   async actualizarContrasena(): Promise<void> {}
+
+  async actualizarRol(): Promise<void> {}
+
+  async actualizarDebeCambiarContrasena(): Promise<void> {}
 }
 
 /** Doble de prueba: anota qué recibió y devuelve siempre el mismo hash. */

@@ -17,6 +17,9 @@ export const RUTAS = {
   MI_PERFIL: '/mi-perfil',
   /** v3 · A01 · Gestión de torneos: a donde entra el administrador (KAN-17, Escenario 2). */
   GESTION_DE_TORNEOS: '/admin/torneos',
+  /** KAN-18 · Registro de administradores. */
+  REGISTRAR_ADMIN: '/admin/usuarios/nuevo',
+  CAMBIAR_CONTRASENA: '/cambiar-contrasena',
 } as const;
 
 /** KAN-17 · Escenarios 1 y 2: cada rol entra a su propia pantalla de inicio. */

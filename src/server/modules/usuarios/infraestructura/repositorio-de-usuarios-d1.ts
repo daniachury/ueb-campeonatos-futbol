@@ -16,6 +16,7 @@ interface FilaDeUsuario {
   hash_contrasena: string;
   rol: Rol;
   activo: number;
+  debe_cambiar_contrasena: number;
   creado_en: string;
   actualizado_en: string;
 }
@@ -47,7 +48,8 @@ export class RepositorioDeUsuariosD1 implements RepositorioDeUsuarios {
   async buscarPorCorreo(correo: CorreoElectronico): Promise<Usuario | null> {
     const fila = await this.#baseDeDatos
       .prepare(
-        `SELECT id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, creado_en, actualizado_en
+        `SELECT id, nombre_completo, correo, telefono, hash_contrasena, rol, activo,
+                debe_cambiar_contrasena, creado_en, actualizado_en
            FROM usuarios
           WHERE correo = ?
           LIMIT 1`,
@@ -58,13 +60,28 @@ export class RepositorioDeUsuariosD1 implements RepositorioDeUsuarios {
     return fila === null ? null : convertirFilaEnUsuario(fila);
   }
 
+  async buscarPorId(id: string): Promise<Usuario | null> {
+    const fila = await this.#baseDeDatos
+      .prepare(
+        `SELECT id, nombre_completo, correo, telefono, hash_contrasena, rol, activo,
+                debe_cambiar_contrasena, creado_en, actualizado_en
+           FROM usuarios
+          WHERE id = ?
+          LIMIT 1`,
+      )
+      .bind(id)
+      .first<FilaDeUsuario>();
+
+    return fila === null ? null : convertirFilaEnUsuario(fila);
+  }
+
   async guardar(usuario: Usuario): Promise<void> {
     try {
       await this.#baseDeDatos
         .prepare(
           `INSERT INTO usuarios
-             (id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, creado_en, actualizado_en)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, debe_cambiar_contrasena, creado_en, actualizado_en)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .bind(
           usuario.id,
@@ -74,6 +91,7 @@ export class RepositorioDeUsuariosD1 implements RepositorioDeUsuarios {
           usuario.contrasenaCifrada.obtenerHashParaGuardar(),
           usuario.rol,
           usuario.activo ? 1 : 0,
+          usuario.debeCambiarContrasena ? 1 : 0,
           usuario.creadoEn.toISOString(),
           usuario.actualizadoEn.toISOString(),
         )
@@ -97,6 +115,24 @@ export class RepositorioDeUsuariosD1 implements RepositorioDeUsuarios {
       .bind(contrasenaCifrada.obtenerHashParaGuardar(), fecha.toISOString(), usuarioId)
       .run();
   }
+
+  async actualizarRol(usuarioId: string, rol: Rol, fecha: Date): Promise<void> {
+    await this.#baseDeDatos
+      .prepare('UPDATE usuarios SET rol = ?, actualizado_en = ? WHERE id = ?')
+      .bind(rol, fecha.toISOString(), usuarioId)
+      .run();
+  }
+
+  async actualizarDebeCambiarContrasena(
+    usuarioId: string,
+    valor: boolean,
+    fecha: Date,
+  ): Promise<void> {
+    await this.#baseDeDatos
+      .prepare('UPDATE usuarios SET debe_cambiar_contrasena = ?, actualizado_en = ? WHERE id = ?')
+      .bind(valor ? 1 : 0, fecha.toISOString(), usuarioId)
+      .run();
+  }
 }
 
 function convertirFilaEnUsuario(fila: FilaDeUsuario): Usuario {
@@ -108,6 +144,7 @@ function convertirFilaEnUsuario(fila: FilaDeUsuario): Usuario {
     contrasenaCifrada: ContrasenaCifrada.desdeHash(fila.hash_contrasena),
     rol: fila.rol,
     activo: fila.activo === 1,
+    debeCambiarContrasena: fila.debe_cambiar_contrasena === 1,
     creadoEn: new Date(fila.creado_en),
     actualizadoEn: new Date(fila.actualizado_en),
   });

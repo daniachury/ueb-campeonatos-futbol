@@ -19,6 +19,7 @@ function clasesDelBoton(variante: VarianteDeBoton, tamano: TamanoDeBoton, anchoC
 }
 
 interface PropiedadesBoton {
+  id?: string;
   children: ReactNode;
   tipo?: 'button' | 'submit';
   variante?: VarianteDeBoton;
@@ -32,6 +33,7 @@ interface PropiedadesBoton {
 
 /** Botón en forma de píldora. */
 export function Boton({
+  id,
   children,
   tipo = 'button',
   variante = 'principal',
@@ -44,6 +46,7 @@ export function Boton({
 }: PropiedadesBoton) {
   return (
     <button
+      id={id}
       type={tipo}
       className={clasesDelBoton(variante, tamano, anchoCompleto)}
       disabled={estaDeshabilitado || estaCargando}

@@ -29,9 +29,11 @@ export function IniciarSesionPage() {
     // Escenario 1 y 2: el jugador va a Torneos; el administrador, a Gestión de torneos.
     // Si llegó aquí desde una pantalla protegida, vuelve a ella. `replace` evita volver al formulario con Atrás.
     const destino =
-      usuario.rol === 'jugador' && estadoRecibido?.desde
-        ? estadoRecibido.desde
-        : rutaDeInicioSegunRol(usuario.rol);
+      usuario.debeCambiarContrasena
+        ? RUTAS.CAMBIAR_CONTRASENA
+        : usuario.rol === 'jugador' && estadoRecibido?.desde
+          ? estadoRecibido.desde
+          : rutaDeInicioSegunRol(usuario.rol);
     void navegar(destino, { replace: true });
   }
 

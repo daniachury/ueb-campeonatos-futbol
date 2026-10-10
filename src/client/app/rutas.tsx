@@ -1,7 +1,9 @@
 import type { RouteObject } from 'react-router';
 import { RUTAS } from '../common/navegacion';
 import { GestionDeTorneosPage } from '../features/admin/pages/GestionDeTorneosPage';
+import { RegistrarAdminPage } from '../features/admin/pages/RegistrarAdminPage';
 import { ArranquePage } from '../features/auth/pages/ArranquePage';
+import { CambiarContrasenaPage } from '../features/auth/pages/CambiarContrasenaPage';
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
 import { IniciarSesionPage } from '../features/auth/pages/IniciarSesionPage';
 import { InicioPage } from '../features/inicio/pages/InicioPage';
@@ -26,8 +28,10 @@ export const rutas: RouteObject[] = [
     children: [{ path: RUTAS.INICIO_DEL_JUGADOR, element: <InicioPage /> }],
   },
 
-  // Administrador (v3 · A01). Provisional hasta la historia de gestión de torneos.
+  // Administrador (v3 · A01).
   { path: RUTAS.GESTION_DE_TORNEOS, element: <GestionDeTorneosPage /> },
+  { path: RUTAS.REGISTRAR_ADMIN, element: <RegistrarAdminPage /> },
+  { path: RUTAS.CAMBIAR_CONTRASENA, element: <CambiarContrasenaPage /> },
 
   // Pantallas anteriores al diseño v3.
   {
