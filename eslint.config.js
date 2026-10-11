@@ -50,4 +50,27 @@ export default defineConfig([
     files: ['*.config.{js,ts}'],
     languageOptions: { globals: globals.node },
   },
+  // Pruebas e2e: caja negra (no importan la app) y arquitectura por capas.
+  {
+    files: ['e2e/**/*.ts'],
+    languageOptions: { globals: globals.node },
+    rules: frontera('Las pruebas e2e usan la app como caja negra: no importan código de src/.', [
+      '**/src/**',
+      '@shared/*',
+    ]),
+  },
+  {
+    files: ['e2e/pruebas/**/*.ts'],
+    rules: frontera(
+      'Las pruebas reciben páginas, escenarios y datos desde e2e/fixtures; no usan la infraestructura directamente.',
+      ['**/infraestructura/**', '**/src/**', '@shared/*'],
+    ),
+  },
+  {
+    files: ['e2e/paginas/**/*.ts', 'e2e/flujos/**/*.ts', 'e2e/dominio/**/*.ts'],
+    rules: frontera(
+      'Páginas, flujos y dominio no conocen la infraestructura (base de datos); se inyecta por puertos.',
+      ['**/infraestructura/**', '**/fixtures/**', '**/src/**', '@shared/*'],
+    ),
+  },
 ]);

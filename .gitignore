@@ -61,3 +61,6 @@ tmp/
 *.key
 *.p12
 *.pfx
+
+# ─── Pruebas e2e (Playwright) ───────────────────────────────────
+/blob-report/
