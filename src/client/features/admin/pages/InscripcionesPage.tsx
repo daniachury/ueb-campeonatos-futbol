@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router';
 import { Boton } from '../../../common/components/Boton';
 import { EstadoVacio } from '../../../common/components/EstadoVacio';
@@ -46,30 +46,7 @@ export function InscripcionesPage() {
   // Estado de carga individual para botón Aprobar
   const [aprobandoId, setAprobandoId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!torneoId) return;
-    cargarBandeja(torneoId);
-  }, [torneoId]);
-
-  async function cargarBandeja(id: string) {
-    try {
-      setEstaCargando(true);
-      setErrorGeneral(null);
-      const res = await obtenerBandejaInscripciones(id);
-      setDatos(res);
-
-      if (res.torneo.estado === 'EN_CURSO') {
-        await cargarFixture(id);
-      }
-    } catch (err: unknown) {
-      const mensaje = err instanceof Error ? err.message : 'Error al cargar las inscripciones';
-      setErrorGeneral(mensaje);
-    } finally {
-      setEstaCargando(false);
-    }
-  }
-
-  async function cargarFixture(id: string) {
+  const cargarFixture = useCallback(async (id: string) => {
     try {
       setEstaCargandoFixture(true);
       const res = await sorteoApi.obtenerFixture(id);
@@ -83,7 +60,33 @@ export function InscripcionesPage() {
     } finally {
       setEstaCargandoFixture(false);
     }
-  }
+  }, []);
+
+  const cargarBandeja = useCallback(
+    async (id: string) => {
+      try {
+        setEstaCargando(true);
+        setErrorGeneral(null);
+        const res = await obtenerBandejaInscripciones(id);
+        setDatos(res);
+
+        if (res.torneo.estado === 'EN_CURSO') {
+          await cargarFixture(id);
+        }
+      } catch (err: unknown) {
+        const mensaje = err instanceof Error ? err.message : 'Error al cargar las inscripciones';
+        setErrorGeneral(mensaje);
+      } finally {
+        setEstaCargando(false);
+      }
+    },
+    [cargarFixture],
+  );
+
+  useEffect(() => {
+    if (!torneoId) return;
+    void cargarBandeja(torneoId);
+  }, [torneoId, cargarBandeja]);
 
   if (estaComprobando) return null;
   if (!usuarioActual) return <Navigate to={RUTAS.INICIAR_SESION} replace />;

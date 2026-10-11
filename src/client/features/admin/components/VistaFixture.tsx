@@ -11,7 +11,7 @@ export interface VistaFixtureProps {
   fixture: FixtureTorneoResponse;
   cargando?: boolean;
   onFixtureActualizado: () => void;
-  repetirSorteoFn?: (torneoId: string) => Promise<any>;
+  repetirSorteoFn?: (torneoId: string) => Promise<unknown>;
 }
 
 export const VistaFixture: React.FC<VistaFixtureProps> = ({
@@ -35,8 +35,8 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
       }
       setModalRepetirAbierto(false);
       onFixtureActualizado();
-    } catch (err: any) {
-      setError(err?.message || 'Error al repetir el sorteo');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al repetir el sorteo');
     } finally {
       setProcesando(false);
     }

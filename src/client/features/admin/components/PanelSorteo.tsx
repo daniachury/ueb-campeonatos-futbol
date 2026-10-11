@@ -11,7 +11,7 @@ export interface PanelSorteoProps {
   solicitudesPendientes: number;
   bloqueado?: boolean;
   onSorteoCompletado: () => void;
-  ejecutarSorteoFn?: (torneoId: string) => Promise<any>;
+  ejecutarSorteoFn?: (torneoId: string) => Promise<unknown>;
 }
 
 export const PanelSorteo: React.FC<PanelSorteoProps> = ({
@@ -40,8 +40,8 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
       }
       setModalAbierto(false);
       onSorteoCompletado();
-    } catch (err: any) {
-      setError(err?.message || 'Error al ejecutar el sorteo');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al ejecutar el sorteo');
     } finally {
       setCargando(false);
     }

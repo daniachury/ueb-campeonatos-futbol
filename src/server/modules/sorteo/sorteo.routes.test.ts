@@ -1,7 +1,10 @@
 import { Hono } from 'hono';
 import { createMiddleware } from 'hono/factory';
 import { describe, expect, it } from 'vitest';
+import type { D1Database } from '@cloudflare/workers-types';
 import type { UsuarioSesion } from '@shared/usuarios';
+import type { VistaPreviaSorteoResponse } from './sorteo.service';
+import type { FixtureTorneoResponse } from '../../../shared/sorteo/contrato-sorteo';
 import type { AppEnv } from '../../core/env';
 import { manejarError } from '../../core/errors';
 import { crearD1Falsa } from '../../test/d1-falsa';
@@ -14,7 +17,7 @@ const conUsuario = (usuario: UsuarioSesion) =>
     await next();
   });
 
-function crearTestApp(db: any, usuario: UsuarioSesion = { id: 'admin-1', nombre: 'Admin', rol: 'admin' }) {
+function crearTestApp(db: D1Database, usuario: UsuarioSesion = { id: 'admin-1', nombre: 'Admin', rol: 'admin' }) {
   const app = new Hono<AppEnv>();
   app.use('*', conUsuario(usuario));
   app.route('/admin/sorteo', sorteoAdminRoutes);
@@ -48,7 +51,7 @@ describe('Rutas HTTP /api/admin/sorteo', () => {
     const cliente = crearTestApp(db);
     const res = await cliente.pedir('/admin/sorteo/torneos/t-1/vista-previa');
     expect(res.status).toBe(200);
-    const body = (await res.json()) as any;
+    const body = (await res.json()) as VistaPreviaSorteoResponse;
     expect(body.valido).toBe(true);
     expect(body.equiposAprobados).toBe(4);
     expect(body.totalFechas).toBe(3);
@@ -99,7 +102,7 @@ describe('Rutas HTTP /api/admin/sorteo', () => {
     const cliente = crearTestApp(db);
     const res = await cliente.pedir('/admin/sorteo/torneos/t-1', { method: 'POST' });
     expect(res.status).toBe(201);
-    const body = (await res.json()) as any;
+    const body = (await res.json()) as { mensaje: string; fixture?: FixtureTorneoResponse };
     expect(body.mensaje).toContain('Sorteo generado exitosamente');
     expect(body.fixture).toBeDefined();
   });
@@ -118,7 +121,7 @@ describe('Rutas HTTP /api/admin/sorteo', () => {
     const cliente = crearTestApp(db);
     const res = await cliente.pedir('/admin/sorteo/torneos/t-1', { method: 'POST' });
     expect(res.status).toBe(400);
-    const body = (await res.json()) as any;
+    const body = (await res.json()) as { codigo: string; mensaje: string };
     expect(body.mensaje).toBe('Se necesitan al menos 3 equipos aprobados para sortear');
   });
 
@@ -149,7 +152,7 @@ describe('Rutas HTTP /api/admin/sorteo', () => {
     const cliente = crearTestApp(db);
     const res = await cliente.pedir('/admin/sorteo/torneos/t-1/repetir', { method: 'POST' });
     expect(res.status).toBe(409);
-    const body = (await res.json()) as any;
+    const body = (await res.json()) as { codigo: string; mensaje: string };
     expect(body.mensaje).toContain('ya existen partidos con resultados');
   });
 

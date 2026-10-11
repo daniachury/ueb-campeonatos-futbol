@@ -1,4 +1,4 @@
-import { D1Database } from '@cloudflare/workers-types';
+import { D1Database, D1PreparedStatement } from '@cloudflare/workers-types';
 import { ResultadoFixtureGenerado, EquipoSorteo } from './domain/generador-fixture';
 import { FixtureTorneoResponse, FechaFixtureResumen, PartidoFixtureResumen, EstadoPartido } from '../../../shared/sorteo/contrato-sorteo';
 import { EstadoTorneo } from '../../../shared/constants';
@@ -66,7 +66,7 @@ export class SorteoRepository {
     fixture: ResultadoFixtureGenerado,
   ): Promise<void> {
     const ahora = new Date().toISOString();
-    const batchOps: any[] = [];
+    const batchOps: D1PreparedStatement[] = [];
 
     // 1. Rechazar solicitudes pendientes automáticamente con motivo "Inscripciones cerradas"
     batchOps.push(
@@ -131,7 +131,7 @@ export class SorteoRepository {
     fixture: ResultadoFixtureGenerado,
   ): Promise<void> {
     const ahora = new Date().toISOString();
-    const batchOps: any[] = [];
+    const batchOps: D1PreparedStatement[] = [];
 
     // 1. Eliminar partidos anteriores del torneo
     batchOps.push(

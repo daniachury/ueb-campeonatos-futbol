@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import type { D1Database } from '@cloudflare/workers-types';
 import type { AppEnv } from '../../core/env';
 import { SorteoRepository } from './sorteo.repository';
 import { SorteoService } from './sorteo.service';
@@ -6,7 +7,7 @@ import { SorteoService } from './sorteo.service';
 /**
  * Factory para instanciar el servicio de sorteo con la base de datos D1 del contexto.
  */
-export function crearSorteoService(db: any): SorteoService {
+export function crearSorteoService(db: D1Database): SorteoService {
   const repo = new SorteoRepository(db);
   return new SorteoService(repo);
 }
