@@ -65,25 +65,37 @@ export function Boton({
 }
 
 interface PropiedadesEnlaceBoton {
+  id?: string;
   children: ReactNode;
   ruta: string;
   variante?: VarianteDeBoton;
   tamano?: TamanoDeBoton;
   anchoCompleto?: boolean;
+  testId?: string | undefined;
+  'data-testid'?: string | undefined;
   alPulsar?: () => void;
 }
 
 /** Enlace con forma de botón: navega a otra pantalla (v3 usa <a> para estas acciones). */
 export function EnlaceBoton({
+  id,
   children,
   ruta,
   variante = 'principal',
   tamano = 'grande',
   anchoCompleto = true,
+  testId,
+  'data-testid': dataTestId,
   alPulsar,
 }: PropiedadesEnlaceBoton) {
   return (
-    <Link to={ruta} className={clasesDelBoton(variante, tamano, anchoCompleto)} onClick={alPulsar}>
+    <Link
+      id={id}
+      to={ruta}
+      className={clasesDelBoton(variante, tamano, anchoCompleto)}
+      data-testid={dataTestId ?? testId}
+      onClick={alPulsar}
+    >
       {children}
     </Link>
   );

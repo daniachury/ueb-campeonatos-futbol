@@ -1,9 +1,8 @@
-import { Navigate, useNavigate } from 'react-router';
-import { Boton, EnlaceBoton } from '../../../common/components/Boton';
+import { Navigate } from 'react-router';
 import { EstadoVacio } from '../../../common/components/EstadoVacio';
-import { Marca } from '../../../common/components/Escudo';
 import { RUTAS, rutaDeInicioSegunRol } from '../../../common/navegacion';
 import { useSesion } from '../../../common/sesion/ProveedorDeSesion';
+import { EncabezadoAdmin } from '../components/EncabezadoAdmin';
 import estilos from './GestionDeTorneosPage.module.css';
 
 /**
@@ -11,8 +10,7 @@ import estilos from './GestionDeTorneosPage.module.css';
  * PROVISIONAL: el listado y el formulario de torneos llegan con su propia historia (épica E3).
  */
 export function GestionDeTorneosPage() {
-  const { usuarioActual, estaComprobando, cerrarSesion } = useSesion();
-  const navegar = useNavigate();
+  const { usuarioActual, estaComprobando } = useSesion();
 
   if (estaComprobando) return null;
   if (!usuarioActual) return <Navigate to={RUTAS.INICIAR_SESION} replace />;
@@ -23,45 +21,9 @@ export function GestionDeTorneosPage() {
     return <Navigate to={RUTAS.CAMBIAR_CONTRASENA} replace />;
   }
 
-  async function salirDeLaCuenta(): Promise<void> {
-    await cerrarSesion();
-    void navegar(RUTAS.INICIAR_SESION, { replace: true });
-  }
-
   return (
     <div className={estilos.pantalla}>
-      <header className={estilos.encabezado}>
-        <div className={estilos.marca}>
-          <Marca />
-        </div>
-        <div className={estilos.acciones}>
-          <EnlaceBoton
-            ruta={RUTAS.ADMIN_SEDES}
-            variante="secundario"
-            tamano="mediano"
-            anchoCompleto={false}
-          >
-            Sedes y canchas
-          </EnlaceBoton>
-          <Boton
-            id="btn-ir-registrar-admin"
-            variante="principal"
-            tamano="mediano"
-            anchoCompleto={false}
-            alPulsar={() => void navegar(RUTAS.REGISTRAR_ADMIN)}
-          >
-            Registrar administrador
-          </Boton>
-          <Boton
-            variante="secundario"
-            tamano="mediano"
-            anchoCompleto={false}
-            alPulsar={() => void salirDeLaCuenta()}
-          >
-            Cerrar sesión
-          </Boton>
-        </div>
-      </header>
+      <EncabezadoAdmin paginaActual="torneos" />
       <main className={estilos.contenido}>
         <p className={estilos.saludo}>Hola, {usuarioActual.nombreCompleto}</p>
         <h1 className={estilos.titulo}>Gestión de torneos</h1>

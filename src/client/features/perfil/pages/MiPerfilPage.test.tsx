@@ -2,7 +2,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PerfilUsuario } from '@shared/usuarios/contrato-perfil';
-import { JUGADOR_DE_PRUEBA, renderizarAppEn } from '../../../test/renderizar-app';
+import { ADMIN_DE_PRUEBA, JUGADOR_DE_PRUEBA, renderizarAppEn } from '../../../test/renderizar-app';
 import { respuestaJson } from '../../../test/fetch-falso';
 
 const PERFIL_INICIAL: PerfilUsuario = {
@@ -13,8 +13,11 @@ const PERFIL_INICIAL: PerfilUsuario = {
   rol: 'jugador',
 };
 
+let perfilActual: PerfilUsuario = PERFIL_INICIAL;
+
 describe('MiPerfilPage (KAN-19 · UEB-Proyect-06)', () => {
   beforeEach(() => {
+    perfilActual = { ...PERFIL_INICIAL };
     vi.stubGlobal(
       'fetch',
       vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -22,14 +25,14 @@ describe('MiPerfilPage (KAN-19 · UEB-Proyect-06)', () => {
         const method = init?.method ?? 'GET';
 
         if (url === '/api/me' && method === 'GET') {
-          return respuestaJson(PERFIL_INICIAL, 200);
+          return respuestaJson(perfilActual, 200);
         }
         if (url === '/api/me' && method === 'PATCH') {
           const body = JSON.parse(String(init?.body)) as Partial<PerfilUsuario> & {
             contrasenaActual?: string;
           };
 
-          if (body.correo && body.correo !== PERFIL_INICIAL.correo) {
+          if (body.correo && body.correo !== perfilActual.correo) {
             if (body.contrasenaActual === 'clave-erronea') {
               return respuestaJson(
                 {
@@ -50,13 +53,12 @@ describe('MiPerfilPage (KAN-19 · UEB-Proyect-06)', () => {
             }
           }
 
-          return respuestaJson(
-            {
-              ...PERFIL_INICIAL,
-              ...body,
-            },
-            200,
-          );
+          perfilActual = {
+            ...perfilActual,
+            ...body,
+          };
+
+          return respuestaJson(perfilActual, 200);
         }
         if (url === '/api/me/contrasena' && method === 'POST') {
           const body = JSON.parse(String(init?.body)) as { contrasenaActual: string };
@@ -187,6 +189,53 @@ describe('MiPerfilPage (KAN-19 · UEB-Proyect-06)', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Contraseña actualizada')).toBeInTheDocument();
+    });
+  });
+
+  it('permite que un Administrador acceda a Mi Perfil con su encabezado y rol correspondientes', async () => {
+    perfilActual = {
+      id: 'admin-001',
+      nombreCompleto: 'Laura Administradora',
+      correo: 'admin@unbosque.edu.co',
+      telefono: '3001234567',
+      rol: 'admin',
+    };
+
+    renderizarAppEn('/mi-perfil', { usuarioInicial: ADMIN_DE_PRUEBA });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('pantalla-perfil-admin')).toBeInTheDocument();
+      expect(screen.getByTestId('encabezado-admin')).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /volver a gestión de torneos/i })).toBeInTheDocument();
+      expect(screen.getAllByText('Administrador').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByDisplayValue('Laura Administradora')).toBeInTheDocument();
+    });
+  });
+
+  it('permite a un Administrador actualizar sus datos y muestra "Datos actualizados"', async () => {
+    perfilActual = {
+      id: 'admin-001',
+      nombreCompleto: 'Laura Administradora',
+      correo: 'admin@unbosque.edu.co',
+      telefono: '3001234567',
+      rol: 'admin',
+    };
+
+    renderizarAppEn('/mi-perfil', { usuarioInicial: ADMIN_DE_PRUEBA });
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('3001234567')).toBeInTheDocument();
+    });
+
+    const campoTelefono = screen.getByDisplayValue('3001234567');
+    fireEvent.change(campoTelefono, { target: { value: '3159998877' } });
+
+    const botonGuardar = screen.getByRole('button', { name: /guardar/i });
+    expect(botonGuardar).not.toBeDisabled();
+    fireEvent.click(botonGuardar);
+
+    await waitFor(() => {
+      expect(screen.getByText('Datos actualizados')).toBeInTheDocument();
     });
   });
 });
