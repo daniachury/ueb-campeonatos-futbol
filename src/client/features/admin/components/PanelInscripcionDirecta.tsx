@@ -95,7 +95,9 @@ export function PanelInscripcionDirecta({
           <div className={estilos.vacio}>Buscando equipos...</div>
         ) : equipos.length === 0 ? (
           <div className={estilos.vacio}>
-            {busqueda ? 'No se encontraron equipos disponibles con ese nombre.' : 'No hay más equipos disponibles.'}
+            {busqueda
+              ? 'No se encontraron equipos disponibles con ese nombre.'
+              : 'No hay más equipos disponibles.'}
           </div>
         ) : (
           equipos.map((equipo) => {

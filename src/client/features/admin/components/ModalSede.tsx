@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Boton } from '../../../common/components/Boton';
 import type { SedeResumen } from '../../../../shared/sedes/contrato-sedes';
 import estilos from './ModalSede.module.css';
@@ -31,7 +31,12 @@ export function ModalSede({
   const [indicaciones, setIndicaciones] = useState('');
   const [errorLocal, setErrorLocal] = useState<string | null>(null);
 
-  useEffect(() => {
+  const [estabaAbierto, setEstabaAbierto] = useState(estaAbierto);
+  const [sedeAnterior, setSedeAnterior] = useState(sedeEditar);
+
+  if (estaAbierto !== estabaAbierto || sedeEditar !== sedeAnterior) {
+    setEstabaAbierto(estaAbierto);
+    setSedeAnterior(sedeEditar);
     if (estaAbierto) {
       if (sedeEditar) {
         setNombre(sedeEditar.nombre);
@@ -46,7 +51,7 @@ export function ModalSede({
       }
       setErrorLocal(null);
     }
-  }, [estaAbierto, sedeEditar]);
+  }
 
   if (!estaAbierto) return null;
 

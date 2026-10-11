@@ -19,6 +19,9 @@ export function GestionDeTorneosPage() {
   if (usuarioActual.rol !== 'admin') {
     return <Navigate to={rutaDeInicioSegunRol(usuarioActual.rol)} replace />;
   }
+  if (usuarioActual.debeCambiarContrasena) {
+    return <Navigate to={RUTAS.CAMBIAR_CONTRASENA} replace />;
+  }
 
   async function salirDeLaCuenta(): Promise<void> {
     await cerrarSesion();
@@ -40,6 +43,15 @@ export function GestionDeTorneosPage() {
           >
             Sedes y canchas
           </EnlaceBoton>
+          <Boton
+            id="btn-ir-registrar-admin"
+            variante="principal"
+            tamano="mediano"
+            anchoCompleto={false}
+            alPulsar={() => void navegar(RUTAS.REGISTRAR_ADMIN)}
+          >
+            Registrar administrador
+          </Boton>
           <Boton
             variante="secundario"
             tamano="mediano"

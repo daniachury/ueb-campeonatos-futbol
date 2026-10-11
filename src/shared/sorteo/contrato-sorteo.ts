@@ -1,11 +1,6 @@
 import { REGLAS } from '../constants';
 
-export const ESTADOS_PARTIDO = [
-  'POR_PROGRAMAR',
-  'PROGRAMADO',
-  'JUGADO',
-  'CANCELADO',
-] as const;
+export const ESTADOS_PARTIDO = ['POR_PROGRAMAR', 'PROGRAMADO', 'JUGADO', 'CANCELADO'] as const;
 export type EstadoPartido = (typeof ESTADOS_PARTIDO)[number];
 
 export const ETIQUETAS_ESTADO_PARTIDO: Record<EstadoPartido, string> = {

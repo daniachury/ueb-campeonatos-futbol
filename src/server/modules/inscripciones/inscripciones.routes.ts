@@ -47,34 +47,26 @@ export const inscripcionesAdminRoutes = new Hono<AppEnv>()
     await service.aprobarInscripcion(id, usuario.id);
     return c.json({ mensaje: 'Inscripción aprobada exitosamente' });
   })
-  .post(
-    '/:id/rechazar',
-    zValidator('json', motivoAccionSchema, siFallaLaValidacion),
-    async (c) => {
-      const id = c.req.param('id');
-      const { motivo } = c.req.valid('json');
-      const usuario = c.get('usuario');
-      const repo = crearInscripcionesRepository(c.env.DB);
-      const service = crearInscripcionesService(repo);
+  .post('/:id/rechazar', zValidator('json', motivoAccionSchema, siFallaLaValidacion), async (c) => {
+    const id = c.req.param('id');
+    const { motivo } = c.req.valid('json');
+    const usuario = c.get('usuario');
+    const repo = crearInscripcionesRepository(c.env.DB);
+    const service = crearInscripcionesService(repo);
 
-      await service.rechazarInscripcion(id, usuario.id, motivo);
-      return c.json({ mensaje: 'Inscripción rechazada exitosamente' });
-    },
-  )
-  .post(
-    '/:id/retirar',
-    zValidator('json', motivoAccionSchema, siFallaLaValidacion),
-    async (c) => {
-      const id = c.req.param('id');
-      const { motivo } = c.req.valid('json');
-      const usuario = c.get('usuario');
-      const repo = crearInscripcionesRepository(c.env.DB);
-      const service = crearInscripcionesService(repo);
+    await service.rechazarInscripcion(id, usuario.id, motivo);
+    return c.json({ mensaje: 'Inscripción rechazada exitosamente' });
+  })
+  .post('/:id/retirar', zValidator('json', motivoAccionSchema, siFallaLaValidacion), async (c) => {
+    const id = c.req.param('id');
+    const { motivo } = c.req.valid('json');
+    const usuario = c.get('usuario');
+    const repo = crearInscripcionesRepository(c.env.DB);
+    const service = crearInscripcionesService(repo);
 
-      await service.retirarInscripcion(id, usuario.id, motivo);
-      return c.json({ mensaje: 'Equipo retirado exitosamente' });
-    },
-  )
+    await service.retirarInscripcion(id, usuario.id, motivo);
+    return c.json({ mensaje: 'Equipo retirado exitosamente' });
+  })
   .post(
     '/torneos/:torneoId/directa',
     zValidator('json', inscribirDirectamenteSchema, siFallaLaValidacion),

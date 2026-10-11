@@ -36,12 +36,7 @@ const fixtureMock: FixtureTorneoResponse = {
 
 describe('VistaFixture (Calendario y Fixture)', () => {
   it('renderiza fechas, partidos y descansos adecuadamente (Escenario 2)', () => {
-    render(
-      <VistaFixture
-        fixture={fixtureMock}
-        onFixtureActualizado={vi.fn()}
-      />,
-    );
+    render(<VistaFixture fixture={fixtureMock} onFixtureActualizado={vi.fn()} />);
 
     expect(screen.getByText(/Fecha 1/i)).toBeInTheDocument();
     expect(screen.getByText('Tigres')).toBeInTheDocument();

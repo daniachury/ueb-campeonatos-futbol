@@ -74,7 +74,11 @@ export function validarCondicionesDeInscripcion({
  * Valida que el torneo permita mutaciones (no esté en curso ni finalizado).
  */
 export function validarTorneoPermiteModificacion(torneoEstado: EstadoTorneo): void {
-  if (torneoEstado === 'EN_CURSO' || torneoEstado === 'FINALIZADO' || torneoEstado === 'CANCELADO') {
+  if (
+    torneoEstado === 'EN_CURSO' ||
+    torneoEstado === 'FINALIZADO' ||
+    torneoEstado === 'CANCELADO'
+  ) {
     throw errores.conflicto(
       'TORNEO_EN_CURSO',
       'No se pueden modificar inscripciones cuando el torneo está en curso o finalizado',

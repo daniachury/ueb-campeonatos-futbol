@@ -49,4 +49,6 @@ export interface UsuarioAutenticado {
   correo: string;
   telefono: string;
   rol: Rol;
+  /** KAN-18 · Escenario 2: true para admins con contraseña temporal pendiente de cambio. */
+  debeCambiarContrasena?: boolean;
 }

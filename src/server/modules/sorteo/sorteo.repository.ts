@@ -1,6 +1,11 @@
 import { D1Database, D1PreparedStatement } from '@cloudflare/workers-types';
 import { ResultadoFixtureGenerado, EquipoSorteo } from './domain/generador-fixture';
-import { FixtureTorneoResponse, FechaFixtureResumen, PartidoFixtureResumen, EstadoPartido } from '../../../shared/sorteo/contrato-sorteo';
+import {
+  FixtureTorneoResponse,
+  FechaFixtureResumen,
+  PartidoFixtureResumen,
+  EstadoPartido,
+} from '../../../shared/sorteo/contrato-sorteo';
 import { EstadoTorneo } from '../../../shared/constants';
 
 export interface TorneoSorteoInfo {
@@ -61,10 +66,7 @@ export class SorteoRepository {
     return (row?.count || 0) > 0;
   }
 
-  async guardarSorteoInicial(
-    torneoId: string,
-    fixture: ResultadoFixtureGenerado,
-  ): Promise<void> {
+  async guardarSorteoInicial(torneoId: string, fixture: ResultadoFixtureGenerado): Promise<void> {
     const ahora = new Date().toISOString();
     const batchOps: D1PreparedStatement[] = [];
 
@@ -74,8 +76,8 @@ export class SorteoRepository {
         .prepare(
           `UPDATE inscripciones
            SET estado = 'RECHAZADO',
-               motivo_rechazo = 'Inscripciones cerradas',
-               fecha_resolucion = ?
+               motivo = 'Inscripciones cerradas',
+               actualizada_en = ?
            WHERE torneo_id = ? AND estado = 'PENDIENTE'`,
         )
         .bind(ahora, torneoId),
@@ -126,22 +128,15 @@ export class SorteoRepository {
     }
   }
 
-  async repetirSorteo(
-    torneoId: string,
-    fixture: ResultadoFixtureGenerado,
-  ): Promise<void> {
+  async repetirSorteo(torneoId: string, fixture: ResultadoFixtureGenerado): Promise<void> {
     const ahora = new Date().toISOString();
     const batchOps: D1PreparedStatement[] = [];
 
     // 1. Eliminar partidos anteriores del torneo
-    batchOps.push(
-      this.db.prepare('DELETE FROM partidos WHERE torneo_id = ?').bind(torneoId),
-    );
+    batchOps.push(this.db.prepare('DELETE FROM partidos WHERE torneo_id = ?').bind(torneoId));
 
     // 2. Eliminar fechas anteriores del torneo
-    batchOps.push(
-      this.db.prepare('DELETE FROM fechas WHERE torneo_id = ?').bind(torneoId),
-    );
+    batchOps.push(this.db.prepare('DELETE FROM fechas WHERE torneo_id = ?').bind(torneoId));
 
     // 3. Insertar las nuevas fechas y partidos
     for (const fecha of fixture.fechas) {
@@ -170,9 +165,7 @@ export class SorteoRepository {
 
     // 4. Actualizar timestamp del torneo
     batchOps.push(
-      this.db
-        .prepare('UPDATE torneos SET actualizado_en = ? WHERE id = ?')
-        .bind(ahora, torneoId),
+      this.db.prepare('UPDATE torneos SET actualizado_en = ? WHERE id = ?').bind(ahora, torneoId),
     );
 
     if (typeof this.db.batch === 'function') {

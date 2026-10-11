@@ -38,7 +38,8 @@ export function InscripcionesPage() {
   const [pestanaActiva, setPestanaActiva] = useState<PestanaActiva>('pendientes');
 
   // Estado para modal de motivo (rechazar o retirar)
-  const [solicitudParaMotivo, setSolicitudParaMotivo] = useState<SolicitudInscripcionResumen | null>(null);
+  const [solicitudParaMotivo, setSolicitudParaMotivo] =
+    useState<SolicitudInscripcionResumen | null>(null);
   const [tipoMotivo, setTipoMotivo] = useState<'rechazar' | 'retirar'>('rechazar');
   const [estaProcesandoMotivo, setEstaProcesandoMotivo] = useState(false);
   const [errorModal, setErrorModal] = useState<string | null>(null);
@@ -85,7 +86,15 @@ export function InscripcionesPage() {
 
   useEffect(() => {
     if (!torneoId) return;
-    void cargarBandeja(torneoId);
+    let cancelado = false;
+    // La carga empieza en una microtarea: así el efecto no cambia el estado de forma síncrona
+    // y, si se sale de la pantalla antes, no se pide nada.
+    void Promise.resolve().then(() => {
+      if (!cancelado) void cargarBandeja(torneoId);
+    });
+    return () => {
+      cancelado = true;
+    };
   }, [torneoId, cargarBandeja]);
 
   if (estaComprobando) return null;
@@ -169,11 +178,11 @@ export function InscripcionesPage() {
 
   const solicitudesActivas =
     pestanaActiva === 'pendientes'
-      ? datos?.pendientes ?? []
+      ? (datos?.pendientes ?? [])
       : pestanaActiva === 'aprobados'
-        ? datos?.aprobados ?? []
+        ? (datos?.aprobados ?? [])
         : pestanaActiva === 'rechazados'
-          ? datos?.rechazados ?? []
+          ? (datos?.rechazados ?? [])
           : [];
 
   return (
@@ -205,9 +214,7 @@ export function InscripcionesPage() {
                 <div className={estilos.tarjetaCupo} aria-label="Contador de cupos">
                   <div className={estilos.etiquetaCupo}>
                     <span className={estilos.textoCupo}>Cupos aprobados</span>
-                    <span className={estilos.valorCupo}>
-                      Aprobados {datos.contadorAprobados}
-                    </span>
+                    <span className={estilos.valorCupo}>Aprobados {datos.contadorAprobados}</span>
                   </div>
                   {datos.cupoCompleto && (
                     <span className={estilos.indicadorCupoCompleto}>Cupo completo</span>
@@ -217,7 +224,8 @@ export function InscripcionesPage() {
 
               {datos.torneoEnCurso && (
                 <div className={estilos.alertaTorneoEnCurso} role="alert">
-                  ⚽ El torneo se encuentra en curso. Las inscripciones están cerradas y el fixture está activo.
+                  ⚽ El torneo se encuentra en curso. Las inscripciones están cerradas y el fixture
+                  está activo.
                 </div>
               )}
 
@@ -245,7 +253,11 @@ export function InscripcionesPage() {
               )}
 
               {/* Selector de pestañas */}
-              <div className={estilos.barraPestanas} role="tablist" aria-label="Pestañas de inscripciones">
+              <div
+                className={estilos.barraPestanas}
+                role="tablist"
+                aria-label="Pestañas de inscripciones"
+              >
                 {fixture && fixture.fechas.length > 0 && (
                   <button
                     type="button"
@@ -310,7 +322,10 @@ export function InscripcionesPage() {
                 />
               ) : (
                 /* Lista de solicitudes de la pestaña activa */
-                <section className={estilos.listaSolicitudes} aria-label={`Lista de solicitudes ${pestanaActiva}`}>
+                <section
+                  className={estilos.listaSolicitudes}
+                  aria-label={`Lista de solicitudes ${pestanaActiva}`}
+                >
                   {solicitudesActivas.length === 0 ? (
                     <EstadoVacio
                       icono="escudo"

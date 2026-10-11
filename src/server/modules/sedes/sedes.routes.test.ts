@@ -40,12 +40,14 @@ describe('Rutas HTTP /api/admin/sedes (KAN-34)', () => {
     id: 'admin-1',
     nombre: 'Administrador',
     rol: 'admin',
+    debeCambiarContrasena: false,
   };
 
   const jugadorSesion: UsuarioSesion = {
     id: 'jugador-1',
     nombre: 'Carlos Jugador',
     rol: 'jugador',
+    debeCambiarContrasena: false,
   };
 
   it('Escenario 1: POST /admin/sedes crea sede y responde 201', async () => {

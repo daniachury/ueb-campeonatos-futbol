@@ -53,16 +53,15 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
         <h3 className={styles.titulo}>
           <span>⚽</span> Cerrar inscripciones y sortear
         </h3>
-        <span className={styles.badgeEstado}>
-          Vista previa del fixture
-        </span>
+        <span className={styles.badgeEstado}>Vista previa del fixture</span>
       </div>
 
       {!estimacion.valido ? (
         <div className={styles.alertaInsuficientes} aria-live="polite">
           <span>⚠️</span>
           <span>
-            Se necesitan al menos {REGLAS.EQUIPOS_POR_TORNEO_MIN} equipos aprobados para sortear (actualmente {equiposAprobados}).
+            Se necesitan al menos {REGLAS.EQUIPOS_POR_TORNEO_MIN} equipos aprobados para sortear
+            (actualmente {equiposAprobados}).
           </span>
         </div>
       ) : (
@@ -95,7 +94,10 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
       )}
 
       {error && (
-        <div className={styles.alertaInsuficientes} style={{ borderColor: '#ef4444', color: '#fca5a5' }}>
+        <div
+          className={styles.alertaInsuficientes}
+          style={{ borderColor: '#ef4444', color: '#fca5a5' }}
+        >
           {error}
         </div>
       )}

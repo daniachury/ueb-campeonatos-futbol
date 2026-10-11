@@ -31,7 +31,9 @@ describe('SorteoRepository', () => {
     const { db } = crearD1Falsa((sql, params) => {
       if (sql.includes('SELECT id, nombre, estado, cupo FROM torneos')) {
         if (params && params[0] === 't-1') {
-          return [{ id: 't-1', nombre: 'Copa El Bosque', estado: 'INSCRIPCIONES_ABIERTAS', cupo: 8 }];
+          return [
+            { id: 't-1', nombre: 'Copa El Bosque', estado: 'INSCRIPCIONES_ABIERTAS', cupo: 8 },
+          ];
         }
         return [];
       }
@@ -92,6 +94,21 @@ describe('SorteoRepository', () => {
     expect(sentenciasEjecutadas.some((s) => s.includes('INSERT INTO fechas'))).toBe(true);
     expect(sentenciasEjecutadas.some((s) => s.includes('INSERT INTO partidos'))).toBe(true);
     expect(sentenciasEjecutadas.some((s) => s.includes('UPDATE torneos'))).toBe(true);
+  });
+
+  it('cierra las solicitudes pendientes con las columnas de la migración 0005', async () => {
+    const sentenciasEjecutadas: string[] = [];
+    const { db } = crearD1Falsa((sql) => {
+      sentenciasEjecutadas.push(sql);
+      return [];
+    });
+
+    await new SorteoRepository(db).guardarSorteoInicial('t-1', fixtureEjemplo);
+    const cierre = sentenciasEjecutadas.find((s) => s.includes('UPDATE inscripciones')) ?? '';
+
+    expect(cierre).toMatch(/motivo = 'Inscripciones cerradas'/);
+    expect(cierre).toMatch(/actualizada_en = \?/);
+    expect(cierre).not.toMatch(/motivo_rechazo|fecha_resolucion/);
   });
 
   it('repite sorteo borrando anteriores y guardando nuevas fechas', async () => {

@@ -59,9 +59,14 @@ export function SedesPage() {
   }, []);
 
   useEffect(() => {
-    if (usuarioActual?.rol === 'admin') {
-      void cargarSedes();
-    }
+    if (usuarioActual?.rol !== 'admin') return;
+    let cancelado = false;
+    void Promise.resolve().then(() => {
+      if (!cancelado) void cargarSedes();
+    });
+    return () => {
+      cancelado = true;
+    };
   }, [usuarioActual, cargarSedes]);
 
   if (estaComprobando) return null;

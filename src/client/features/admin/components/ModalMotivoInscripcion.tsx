@@ -26,13 +26,17 @@ export function ModalMotivoInscripcion({
 }: PropiedadesModalMotivo) {
   const [motivo, setMotivo] = useState('');
   const [tocado, setTocado] = useState(false);
+  const [estabaAbierto, setEstabaAbierto] = useState(estaAbierto);
 
-  useEffect(() => {
+  // Cada vez que se abre, empieza con el motivo vacío. Se ajusta durante el render
+  // (patrón recomendado por React) en vez de en un efecto, para no renderizar dos veces.
+  if (estaAbierto !== estabaAbierto) {
+    setEstabaAbierto(estaAbierto);
     if (estaAbierto) {
       setMotivo('');
       setTocado(false);
     }
-  }, [estaAbierto]);
+  }
 
   useEffect(() => {
     function manejarTecla(e: KeyboardEvent) {
@@ -47,8 +51,7 @@ export function ModalMotivoInscripcion({
   if (!estaAbierto) return null;
 
   const longitud = motivo.trim().length;
-  const esValido =
-    longitud >= REGLAS.MOTIVO_RECHAZO_MIN && longitud <= REGLAS.MOTIVO_RECHAZO_MAX;
+  const esValido = longitud >= REGLAS.MOTIVO_RECHAZO_MIN && longitud <= REGLAS.MOTIVO_RECHAZO_MAX;
 
   const errorLocal =
     tocado && longitud > 0 && longitud < REGLAS.MOTIVO_RECHAZO_MIN

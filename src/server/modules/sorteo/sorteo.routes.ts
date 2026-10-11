@@ -27,10 +27,13 @@ export const sorteoAdminRoutes = new Hono<AppEnv>()
     const torneoId = c.req.param('torneoId');
     const service = crearSorteoService(c.env.DB);
     const fixture = await service.ejecutarSorteo(torneoId);
-    return c.json({
-      mensaje: 'Sorteo generado exitosamente e inscripciones cerradas',
-      fixture,
-    }, 201);
+    return c.json(
+      {
+        mensaje: 'Sorteo generado exitosamente e inscripciones cerradas',
+        fixture,
+      },
+      201,
+    );
   })
   .post('/torneos/:torneoId/repetir', async (c) => {
     const torneoId = c.req.param('torneoId');

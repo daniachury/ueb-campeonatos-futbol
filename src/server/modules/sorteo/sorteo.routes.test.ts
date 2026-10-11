@@ -17,7 +17,15 @@ const conUsuario = (usuario: UsuarioSesion) =>
     await next();
   });
 
-function crearTestApp(db: D1Database, usuario: UsuarioSesion = { id: 'admin-1', nombre: 'Admin', rol: 'admin' }) {
+function crearTestApp(
+  db: D1Database,
+  usuario: UsuarioSesion = {
+    id: 'admin-1',
+    nombre: 'Admin',
+    rol: 'admin',
+    debeCambiarContrasena: false,
+  },
+) {
   const app = new Hono<AppEnv>();
   app.use('*', conUsuario(usuario));
   app.route('/admin/sorteo', sorteoAdminRoutes);
@@ -73,7 +81,14 @@ describe('Rutas HTTP /api/admin/sorteo', () => {
       }
       if (sql.includes('SELECT f.id, f.torneo_id, f.numero')) {
         return [
-          { id: 'f-1', torneo_id: 't-1', numero: 1, equipo_descansa_id: 'eq-1', descansa_nombre: 'Tigres', descansa_color: null },
+          {
+            id: 'f-1',
+            torneo_id: 't-1',
+            numero: 1,
+            equipo_descansa_id: 'eq-1',
+            descansa_nombre: 'Tigres',
+            descansa_color: null,
+          },
         ];
       }
       if (sql.includes('SELECT p.id, p.fecha_id, p.torneo_id')) {
@@ -113,7 +128,10 @@ describe('Rutas HTTP /api/admin/sorteo', () => {
         return [{ id: 't-1', nombre: 'Copa El Bosque', estado: 'INSCRIPCIONES_ABIERTAS', cupo: 8 }];
       }
       if (sql.includes("WHERE i.torneo_id = ? AND i.estado = 'APROBADO'")) {
-        return [{ id: 'eq-1', nombre: 'Tigres' }, { id: 'eq-2', nombre: 'Leones' }];
+        return [
+          { id: 'eq-1', nombre: 'Tigres' },
+          { id: 'eq-2', nombre: 'Leones' },
+        ];
       }
       return [];
     });

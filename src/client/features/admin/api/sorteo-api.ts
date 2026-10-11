@@ -22,17 +22,15 @@ export const sorteoApi = {
   },
 
   ejecutarSorteo(torneoId: string): Promise<RespuestaSorteo> {
-    return pedir<RespuestaSorteo>(
-      `/admin/sorteo/torneos/${encodeURIComponent(torneoId)}`,
-      { method: 'POST' },
-    );
+    return pedir<RespuestaSorteo>(`/admin/sorteo/torneos/${encodeURIComponent(torneoId)}`, {
+      method: 'POST',
+    });
   },
 
   repetirSorteo(torneoId: string): Promise<RespuestaSorteo> {
-    return pedir<RespuestaSorteo>(
-      `/admin/sorteo/torneos/${encodeURIComponent(torneoId)}/repetir`,
-      { method: 'POST' },
-    );
+    return pedir<RespuestaSorteo>(`/admin/sorteo/torneos/${encodeURIComponent(torneoId)}/repetir`, {
+      method: 'POST',
+    });
   },
 
   obtenerFixture(torneoId: string): Promise<FixtureTorneoResponse> {

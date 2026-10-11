@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Boton } from '../../../common/components/Boton';
 import {
   SUPERFICIES_CANCHA,
@@ -35,7 +35,12 @@ export function ModalCancha({
   const [activa, setActiva] = useState(true);
   const [errorLocal, setErrorLocal] = useState<string | null>(null);
 
-  useEffect(() => {
+  const [estabaAbierto, setEstabaAbierto] = useState(estaAbierto);
+  const [canchaAnterior, setCanchaAnterior] = useState(canchaEditar);
+
+  if (estaAbierto !== estabaAbierto || canchaEditar !== canchaAnterior) {
+    setEstabaAbierto(estaAbierto);
+    setCanchaAnterior(canchaEditar);
     if (estaAbierto) {
       if (canchaEditar) {
         setNombre(canchaEditar.nombre);
@@ -48,7 +53,7 @@ export function ModalCancha({
       }
       setErrorLocal(null);
     }
-  }, [estaAbierto, canchaEditar]);
+  }
 
   if (!estaAbierto) return null;
 

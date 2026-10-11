@@ -258,7 +258,7 @@ No hace falta iniciar sesión en Cloudflare para trabajar en local.
 | `npm run dev`                                    | Servidor de desarrollo con recarga: React + Worker + D1 local             |
 | `npm run build`                                  | Verifica tipos y genera el build de producción en `dist/`                 |
 | `npm run preview`                                | Build + servidor que imita producción                                     |
-| `npm run deploy`                                 | Build + despliegue manual en Cloudflare                                   |
+| `npm run deploy`                                 | Migraciones en la D1 remota + build + despliegue manual en Cloudflare     |
 | `npm run lint`                                   | ESLint, incluidas las fronteras entre capas                               |
 | `npm run typecheck`                              | TypeScript en los tres entornos (navegador, Worker y Node)                |
 | `npm run format` / `format:check`                | Prettier                                                                  |
@@ -307,12 +307,13 @@ npx wrangler d1 create ueb-campeonatos-db   # imprime el database_id
 ```
 
 1. Copia el `database_id` que imprime el comando en `wrangler.jsonc` (reemplaza los ceros).
-2. Aplica las migraciones y despliega:
+2. Despliega. `npm run deploy` aplica primero las migraciones pendientes en la D1 remota y solo después compila y publica, así el código nuevo nunca llega a producción antes que sus tablas:
 
 ```bash
-npm run db:migrate:remote
 npm run deploy
 ```
+
+Nunca publiques con `npx wrangler deploy` directo: se salta las migraciones y, si el código nuevo usa una columna o tabla que todavía no existe, la API responde 500 (por ejemplo, el inicio de sesión).
 
 Wrangler imprime la URL pública, de la forma `https://ueb-campeonatos-futbol.<tu-subdominio>.workers.dev`. Abre `/api/health` en esa URL para confirmar que el Worker y la D1 responden.
 
