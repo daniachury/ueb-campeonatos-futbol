@@ -24,6 +24,22 @@ jobs:
     # Los secretos de Cloudflare van solo en los pasos de Wrangler: así ningún script de
     # `npm ci` ni de las pruebas puede leer el token.
     steps:
+      # Un secreto que no existe llega vacío sin aviso y Wrangler falla con un error confuso.
+      # Se revisa primero, solo si está vacío: el valor nunca se imprime.
+      - name: Verificar secretos de Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          faltan=0
+          for nombre in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID; do
+            if [ -z "${!nombre}" ]; then
+              echo "::error::Falta el secreto $nombre. Agrégalo en Settings → Secrets and variables → Actions (o en el entorno production). Ver README, sección 11.2."
+              faltan=1
+            fi
+          done
+          exit $faltan
+
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
