@@ -3,6 +3,9 @@
   background: var(--color-fondo-app);
   color: var(--color-grafito);
   font-family: var(--fuente-principal);
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .encabezado {

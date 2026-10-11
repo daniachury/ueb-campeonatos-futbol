@@ -30,7 +30,7 @@
   white-space: nowrap;
 }
 
-.acciones {
+.accionesDesktop {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -38,47 +38,47 @@
   justify-content: flex-end;
 }
 
-.enlaceActivo {
-  outline: 2px solid var(--color-acento, #d4f54c);
-  outline-offset: 1px;
+.botonHamburguesa {
+  display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .encabezado {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding: 14px 16px;
+    padding: 12px 16px;
+  }
+
+  .accionesDesktop {
+    display: none;
+  }
+
+  .botonHamburguesa {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .encabezado {
+    padding: 10px 14px;
+    gap: 8px;
   }
 
   .marcaArea {
-    justify-content: space-between;
-    width: 100%;
+    gap: 8px;
   }
 
-  .acciones {
-    justify-content: flex-start;
-    width: 100%;
+  .insigniaAdmin {
+    font-size: 0.625rem;
+    padding: 2px 6px;
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 360px) {
   .encabezado {
-    padding: 12px 10px;
+    padding: 10px 12px;
   }
 
-  .acciones {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    width: 100%;
-  }
-
-  .acciones > * {
-    width: 100%;
-    font-size: 0.8rem;
-    padding: 8px 10px;
-    text-align: center;
-    box-sizing: border-box;
+  .insigniaAdmin {
+    display: none;
   }
 }

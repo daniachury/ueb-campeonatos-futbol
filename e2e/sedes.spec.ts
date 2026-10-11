@@ -131,20 +131,32 @@ test.describe('Gestión de Sedes y Canchas (KAN-34 E2E con D1 Real)', () => {
       await page.goto('/admin/torneos');
       await expect(page.getByRole('heading', { name: /gestión de torneos/i })).toBeVisible();
 
-      // Verificar que los botones "Sedes y canchas" y "Cerrar sesión" están visibles
-      const botonSedes = page.getByRole('link', { name: /sedes y canchas/i });
-      const botonSalir = page.getByRole('button', { name: /cerrar sesión/i });
-      await expect(botonSedes).toBeVisible();
-      await expect(botonSalir).toBeVisible();
-
       // Verificar que no hay scroll horizontal en /admin/torneos
       const scrollTorneos = await page.evaluate(() => {
         return document.documentElement.scrollWidth <= window.innerWidth;
       });
       expect(scrollTorneos).toBe(true);
 
-      // Navegar a /admin/sedes usando el botón
-      await botonSedes.click();
+      if (vp.width < 768) {
+        // En móvil (< 768px), navegación mediante menú hamburguesa Neón (v3 · M12 / KAN-43)
+        const botonMenu = page.getByRole('button', { name: /abrir menú/i });
+        await expect(botonMenu).toBeVisible();
+        await botonMenu.click();
+
+        const menuMovil = page.getByTestId('menu-movil-admin');
+        await expect(menuMovil).toBeVisible();
+        const botonSedesMovil = menuMovil.getByRole('link', { name: /sedes y canchas/i });
+        await expect(botonSedesMovil).toBeVisible();
+        await botonSedesMovil.click();
+      } else {
+        // En escritorio (>= 768px), botones visibles en barra horizontal
+        const botonSedes = page.getByRole('link', { name: /sedes y canchas/i });
+        const botonSalir = page.getByRole('button', { name: /cerrar sesión/i });
+        await expect(botonSedes).toBeVisible();
+        await expect(botonSalir).toBeVisible();
+        await botonSedes.click();
+      }
+
       await expect(page).toHaveURL(/\/admin\/sedes/);
       await expect(page.getByTestId('pagina-sedes')).toBeVisible();
 

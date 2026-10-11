@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from 'react-router';
+import { Navigate, NavLink, Outlet } from 'react-router';
+import { RUTAS } from '../../common/navegacion';
+import { useSesionOpcional } from '../../common/sesion/ProveedorDeSesion';
 
 /**
  * TODO(UEB-Proyect-01 · KAN-14): menú según el rol (jugador / administrador)
@@ -7,6 +9,11 @@ import { NavLink, Outlet } from 'react-router';
 const ENLACES = [{ ruta: '/torneos', texto: 'Torneos' }] as const;
 
 export function AppLayout() {
+  const sesion = useSesionOpcional();
+  if (sesion?.usuarioActual?.rol === 'admin') {
+    return <Navigate to={RUTAS.GESTION_DE_TORNEOS} replace />;
+  }
+
   return (
     <div className="app">
       <header className="app__encabezado">

@@ -56,7 +56,7 @@ export function RegistrarAdminPage() {
     return <Navigate to={rutaDeInicioSegunRol(usuarioActual.rol)} replace />;
   }
   if (usuarioActual.debeCambiarContrasena) {
-    return <Navigate to={RUTAS.CAMBIAR_CONTRASENA} replace />;
+    return <Navigate to={RUTAS.GESTION_DE_TORNEOS} replace />;
   }
 
   function validarFormulario(): boolean {

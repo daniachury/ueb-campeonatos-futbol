@@ -1,7 +1,8 @@
 import { Navigate } from 'react-router';
 import { EstadoVacio } from '../../../common/components/EstadoVacio';
-import { RUTAS, rutaDeInicioSegunRol } from '../../../common/navegacion';
+import { rutaDeInicioSegunRol, RUTAS } from '../../../common/navegacion';
 import { useSesion } from '../../../common/sesion/ProveedorDeSesion';
+import { ModalCambioObligatorioContrasena } from '../../auth/components/ModalCambioObligatorioContrasena';
 import { EncabezadoAdmin } from '../components/EncabezadoAdmin';
 import estilos from './GestionDeTorneosPage.module.css';
 
@@ -16,9 +17,6 @@ export function GestionDeTorneosPage() {
   if (!usuarioActual) return <Navigate to={RUTAS.INICIAR_SESION} replace />;
   if (usuarioActual.rol !== 'admin') {
     return <Navigate to={rutaDeInicioSegunRol(usuarioActual.rol)} replace />;
-  }
-  if (usuarioActual.debeCambiarContrasena) {
-    return <Navigate to={RUTAS.CAMBIAR_CONTRASENA} replace />;
   }
 
   return (
@@ -36,6 +34,10 @@ export function GestionDeTorneosPage() {
           />
         </div>
       </main>
+
+      {usuarioActual.debeCambiarContrasena && (
+        <ModalCambioObligatorioContrasena isOpen={true} />
+      )}
     </div>
   );
 }

@@ -139,4 +139,45 @@ test.describe('Edición de mis datos y perfil (KAN-19 E2E con D1 Real)', () => {
       expect(scrollPerfil).toBe(true);
     }
   });
+
+  test('Menú móvil Neón (KAN-43 · M12): Administrador abre menú hamburguesa en móvil y navega a Mi perfil', async ({
+    page,
+    request,
+  }) => {
+    // 1. Iniciar sesión con rol administrador
+    const resLogin = await request.post('/api/auth/login', {
+      data: {
+        correo: 'admin@unbosque.edu.co',
+        contrasena: 'admin2026',
+      },
+    });
+    expect(resLogin.status()).toBe(200);
+
+    const storageState = await request.storageState();
+    await page.context().addCookies(storageState.cookies);
+
+    // 2. Establecer viewport móvil (375px)
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/admin/torneos');
+
+    // 3. Botón de menú hamburguesa visible en el encabezado
+    const botonMenu = page.getByRole('button', { name: /abrir menú/i });
+    await expect(botonMenu).toBeVisible();
+    await botonMenu.click();
+
+    // 4. Diálogo de menú móvil Neón abierto
+    const menuMovil = page.getByTestId('menu-movil-admin');
+    await expect(menuMovil).toBeVisible();
+    await expect(menuMovil.getByText(/administrador/i).first()).toBeVisible();
+    await expect(menuMovil.getByText('admin@unbosque.edu.co')).toBeVisible();
+
+    // 5. Navegar a Mi perfil desde el menú
+    const enlacePerfil = menuMovil.getByRole('link', { name: /mi perfil/i });
+    await expect(enlacePerfil).toBeVisible();
+    await enlacePerfil.click();
+
+    // 6. Confirma llegada a Mi perfil
+    await expect(page).toHaveURL(/\/mi-perfil/);
+    await expect(page.getByTestId('pantalla-perfil-admin')).toBeVisible();
+  });
 });

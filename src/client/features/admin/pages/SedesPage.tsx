@@ -59,7 +59,7 @@ export function SedesPage() {
   }, []);
 
   useEffect(() => {
-    if (usuarioActual?.rol !== 'admin') return;
+    if (usuarioActual?.rol !== 'admin' || usuarioActual?.debeCambiarContrasena) return;
     let cancelado = false;
     void Promise.resolve().then(() => {
       if (!cancelado) void cargarSedes();
@@ -93,6 +93,10 @@ export function SedesPage() {
         </main>
       </div>
     );
+  }
+
+  if (usuarioActual.debeCambiarContrasena) {
+    return <Navigate to={RUTAS.GESTION_DE_TORNEOS} replace />;
   }
 
   // Guardar Sede (crear o editar)

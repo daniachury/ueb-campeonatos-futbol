@@ -40,4 +40,15 @@ describe('EncabezadoAdmin (KAN-19 · Navegación Admin)', () => {
 
     expect(servicioDeSesion.cerrarSesion).toHaveBeenCalledTimes(1);
   });
+
+  it('abre el menú móvil tipo hamburguesa Neón al pulsar el botón de menú', () => {
+    renderizarAppEn('/admin/torneos', { usuarioInicial: ADMIN_DE_PRUEBA });
+
+    const botonHamburguesa = screen.getByRole('button', { name: /abrir menú de administrador/i });
+    expect(botonHamburguesa).toBeInTheDocument();
+
+    fireEvent.click(botonHamburguesa);
+
+    expect(screen.getByTestId('menu-movil-admin')).toBeInTheDocument();
+  });
 });

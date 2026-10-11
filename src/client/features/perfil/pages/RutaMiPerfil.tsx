@@ -22,7 +22,7 @@ export function RutaMiPerfil() {
   }
 
   if (usuarioActual.debeCambiarContrasena) {
-    return <Navigate to={RUTAS.CAMBIAR_CONTRASENA} replace />;
+    return <Navigate to={RUTAS.GESTION_DE_TORNEOS} replace />;
   }
 
   if (usuarioActual.rol === 'admin') {
