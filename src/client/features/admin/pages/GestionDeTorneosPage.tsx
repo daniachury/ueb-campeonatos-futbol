@@ -1,5 +1,5 @@
 import { Navigate, useNavigate } from 'react-router';
-import { Boton } from '../../../common/components/Boton';
+import { Boton, EnlaceBoton } from '../../../common/components/Boton';
 import { EstadoVacio } from '../../../common/components/EstadoVacio';
 import { Marca } from '../../../common/components/Escudo';
 import { RUTAS, rutaDeInicioSegunRol } from '../../../common/navegacion';
@@ -28,8 +28,18 @@ export function GestionDeTorneosPage() {
   return (
     <div className={estilos.pantalla}>
       <header className={estilos.encabezado}>
-        <Marca />
-        <div className={estilos.cerrarSesion}>
+        <div className={estilos.marca}>
+          <Marca />
+        </div>
+        <div className={estilos.acciones}>
+          <EnlaceBoton
+            ruta={RUTAS.ADMIN_SEDES}
+            variante="secundario"
+            tamano="mediano"
+            anchoCompleto={false}
+          >
+            Sedes y canchas
+          </EnlaceBoton>
           <Boton
             variante="secundario"
             tamano="mediano"

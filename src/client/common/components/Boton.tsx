@@ -27,6 +27,8 @@ interface PropiedadesBoton {
   estaDeshabilitado?: boolean;
   estaCargando?: boolean;
   idDeLaAyuda?: string | undefined;
+  testId?: string | undefined;
+  'data-testid'?: string | undefined;
   alPulsar?: () => void;
 }
 
@@ -40,6 +42,8 @@ export function Boton({
   estaDeshabilitado = false,
   estaCargando = false,
   idDeLaAyuda,
+  testId,
+  'data-testid': dataTestId,
   alPulsar,
 }: PropiedadesBoton) {
   return (
@@ -49,6 +53,7 @@ export function Boton({
       disabled={estaDeshabilitado || estaCargando}
       aria-busy={estaCargando}
       aria-describedby={idDeLaAyuda}
+      data-testid={dataTestId ?? testId}
       onClick={alPulsar}
     >
       {children}
