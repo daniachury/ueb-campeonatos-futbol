@@ -78,9 +78,7 @@ export function MiPerfilPage() {
   const huboCambiosEnDatos = nombreCambio || telefonoCambio || correoCambio;
 
   const botonGuardarDatosDeshabilitado =
-    !huboCambiosEnDatos ||
-    estaGuardandoDatos ||
-    (correoCambio && !contrasenaActualParaCorreo);
+    !huboCambiosEnDatos || estaGuardandoDatos || (correoCambio && !contrasenaActualParaCorreo);
 
   const botonCambiarContrasenaDeshabilitado =
     estaCambiandoContrasena ||
@@ -245,7 +243,8 @@ export function MiPerfilPage() {
           Seguridad
         </h2>
         <p className={estilos.descripcionSeccion}>
-          Actualiza tu contraseña periódicamente para proteger tu cuenta. Al cambiarla, se cerrarán tus demás sesiones abiertas.
+          Actualiza tu contraseña periódicamente para proteger tu cuenta. Al cambiarla, se cerrarán
+          tus demás sesiones abiertas.
         </p>
 
         {mensajeExitoSeguridad && <Aviso tono="informativo">{mensajeExitoSeguridad}</Aviso>}

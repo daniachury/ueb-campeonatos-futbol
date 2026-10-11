@@ -8,7 +8,9 @@ import type {
 } from './inscripciones.repository';
 import type { SolicitudInscripcionResumen } from '@shared/inscripciones/contrato-inscripciones';
 
-function crearMockRepository(parcial: Partial<InscripcionesRepository> = {}): InscripcionesRepository {
+function crearMockRepository(
+  parcial: Partial<InscripcionesRepository> = {},
+): InscripcionesRepository {
   const torneoDefault: TorneoDb = {
     id: 'torneo-1',
     nombre: 'Copa El Bosque',
@@ -192,11 +194,7 @@ describe('InscripcionesService (casos de uso)', () => {
     });
     const service = crearInscripcionesService(repo);
 
-    await service.retirarInscripcion(
-      'insc-aprobada',
-      'admin-99',
-      'Sanción disciplinaria del club',
-    );
+    await service.retirarInscripcion('insc-aprobada', 'admin-99', 'Sanción disciplinaria del club');
 
     expect(repo.actualizarEstadoInscripcion).toHaveBeenCalledWith({
       id: 'insc-aprobada',
@@ -236,12 +234,12 @@ describe('InscripcionesService (casos de uso)', () => {
     await expect(service2.aprobarInscripcion('insc-99', 'admin')).rejects.toThrowError(
       'Solicitud de inscripción no encontrado',
     );
-    await expect(service2.rechazarInscripcion('insc-99', 'admin', 'motivo valido')).rejects.toThrowError(
-      'Solicitud de inscripción no encontrado',
-    );
-    await expect(service2.retirarInscripcion('insc-99', 'admin', 'motivo valido')).rejects.toThrowError(
-      'Solicitud de inscripción no encontrado',
-    );
+    await expect(
+      service2.rechazarInscripcion('insc-99', 'admin', 'motivo valido'),
+    ).rejects.toThrowError('Solicitud de inscripción no encontrado');
+    await expect(
+      service2.retirarInscripcion('insc-99', 'admin', 'motivo valido'),
+    ).rejects.toThrowError('Solicitud de inscripción no encontrado');
   });
 
   it('lanza 409 si la solicitud no está en el estado requerido', async () => {
@@ -263,9 +261,9 @@ describe('InscripcionesService (casos de uso)', () => {
     await expect(service.aprobarInscripcion('insc-1', 'admin')).rejects.toThrowError(
       'Solo se pueden aprobar solicitudes en estado Pendiente',
     );
-    await expect(service.rechazarInscripcion('insc-1', 'admin', 'motivo valido')).rejects.toThrowError(
-      'Solo se pueden rechazar solicitudes en estado Pendiente',
-    );
+    await expect(
+      service.rechazarInscripcion('insc-1', 'admin', 'motivo valido'),
+    ).rejects.toThrowError('Solo se pueden rechazar solicitudes en estado Pendiente');
 
     const repoPendiente = crearMockRepository({
       buscarInscripcionPorId: vi.fn(async () => ({
@@ -281,15 +279,21 @@ describe('InscripcionesService (casos de uso)', () => {
       })),
     });
     const service2 = crearInscripcionesService(repoPendiente);
-    await expect(service2.retirarInscripcion('insc-1', 'admin', 'motivo valido')).rejects.toThrowError(
-      'Solo se pueden retirar solicitudes en estado Aprobado',
-    );
+    await expect(
+      service2.retirarInscripcion('insc-1', 'admin', 'motivo valido'),
+    ).rejects.toThrowError('Solo se pueden retirar solicitudes en estado Aprobado');
   });
 
   it('buscarEquiposDisponibles consulta el repositorio', async () => {
     const repo = crearMockRepository({
       listarEquiposDisponibles: vi.fn(async () => [
-        { id: 'eq-1', nombre: 'Águilas', color: null, capitanNombre: 'Carlos', cantidadJugadores: 12 },
+        {
+          id: 'eq-1',
+          nombre: 'Águilas',
+          color: null,
+          capitanNombre: 'Carlos',
+          cantidadJugadores: 12,
+        },
       ]),
     });
     const service = crearInscripcionesService(repo);

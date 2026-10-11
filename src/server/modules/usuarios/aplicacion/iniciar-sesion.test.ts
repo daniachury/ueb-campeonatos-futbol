@@ -31,6 +31,7 @@ function crearUsuario(correo: string, opciones: { rol?: Rol; activo?: boolean } 
     contrasenaCifrada: ContrasenaCifrada.desdeHash(CONTRASENA_DE_LAURA),
     rol: opciones.rol ?? ROLES.JUGADOR,
     activo: opciones.activo ?? true,
+    debeCambiarContrasena: false,
     creadoEn: fecha,
     actualizadoEn: fecha,
   });
@@ -65,6 +66,10 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
   }
 
   async actualizarPerfil(): Promise<void> {}
+
+  async actualizarRol(): Promise<void> {}
+
+  async actualizarDebeCambiarContrasena(): Promise<void> {}
 }
 
 /** Doble de prueba: intentos en un Map por correo. */

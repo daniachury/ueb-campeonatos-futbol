@@ -10,9 +10,7 @@ export async function obtenerMiPerfil(): Promise<PerfilUsuario> {
   return pedir<PerfilUsuario>('/me');
 }
 
-export async function actualizarMiPerfil(
-  datos: SolicitudActualizarPerfil,
-): Promise<PerfilUsuario> {
+export async function actualizarMiPerfil(datos: SolicitudActualizarPerfil): Promise<PerfilUsuario> {
   return pedir<PerfilUsuario>('/me', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

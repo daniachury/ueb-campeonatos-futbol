@@ -1,8 +1,5 @@
 import { SorteoRepository } from './sorteo.repository';
-import {
-  generarFixtureRoundRobin,
-  OpcionesSorteo,
-} from './domain/generador-fixture';
+import { generarFixtureRoundRobin, OpcionesSorteo } from './domain/generador-fixture';
 import { AppError } from '../../core/errors';
 import {
   estimarFixture,
@@ -45,7 +42,11 @@ export class SorteoService {
       throw new AppError(404, 'TORNEO_NO_ENCONTRADO', 'El torneo especificado no existe');
     }
 
-    if (torneo.estado === 'EN_CURSO' || torneo.estado === 'FINALIZADO' || torneo.estado === 'CANCELADO') {
+    if (
+      torneo.estado === 'EN_CURSO' ||
+      torneo.estado === 'FINALIZADO' ||
+      torneo.estado === 'CANCELADO'
+    ) {
       throw new AppError(
         409,
         'TORNEO_NO_MODIFICABLE',
@@ -70,10 +71,7 @@ export class SorteoService {
     return this.repo.obtenerFixtureTorneo(torneoId);
   }
 
-  async repetirSorteo(
-    torneoId: string,
-    opciones?: OpcionesSorteo,
-  ): Promise<FixtureTorneoResponse> {
+  async repetirSorteo(torneoId: string, opciones?: OpcionesSorteo): Promise<FixtureTorneoResponse> {
     const torneo = await this.repo.obtenerTorneo(torneoId);
     if (!torneo) {
       throw new AppError(404, 'TORNEO_NO_ENCONTRADO', 'El torneo especificado no existe');

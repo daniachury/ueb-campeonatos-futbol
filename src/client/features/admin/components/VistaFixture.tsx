@@ -79,7 +79,14 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
       </div>
 
       {error && (
-        <div style={{ color: '#fca5a5', background: 'rgba(239, 68, 68, 0.2)', padding: '0.75rem', borderRadius: '6px' }}>
+        <div
+          style={{
+            color: '#fca5a5',
+            background: 'rgba(239, 68, 68, 0.2)',
+            padding: '0.75rem',
+            borderRadius: '6px',
+          }}
+        >
           {error}
         </div>
       )}
@@ -132,9 +139,7 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
 
                   <span
                     className={`${styles.badgeEstadoPartido} ${
-                      partido.estado === 'POR_PROGRAMAR'
-                        ? styles.badgePorProgramar
-                        : ''
+                      partido.estado === 'POR_PROGRAMAR' ? styles.badgePorProgramar : ''
                     }`}
                   >
                     {ETIQUETAS_ESTADO_PARTIDO[partido.estado] || partido.estado}

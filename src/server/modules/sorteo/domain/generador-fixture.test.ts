@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  generarFixtureRoundRobin,
-  EquipoSorteo,
-} from './generador-fixture';
-
+import { generarFixtureRoundRobin, EquipoSorteo } from './generador-fixture';
 
 function crearEquipos(n: number): EquipoSorteo[] {
   return Array.from({ length: n }, (_, i) => ({

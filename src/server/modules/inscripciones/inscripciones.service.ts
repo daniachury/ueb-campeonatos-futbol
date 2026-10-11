@@ -197,9 +197,7 @@ export function crearInscripcionesService(
 
       const solicitudes = await repository.listarInscripcionesPorTorneo(torneoId);
       const yaInscrito = solicitudes.some(
-        (s) =>
-          s.equipoId === equipoId &&
-          (s.estado === 'PENDIENTE' || s.estado === 'APROBADO'),
+        (s) => s.equipoId === equipoId && (s.estado === 'PENDIENTE' || s.estado === 'APROBADO'),
       );
       if (yaInscrito) {
         throw errores.conflicto(

@@ -41,7 +41,9 @@ describe('ModalMotivoInscripcion', () => {
     expect(screen.getByText(/al menos 10 caracteres/i)).toBeInTheDocument();
 
     // Texto válido (>= 10)
-    fireEvent.change(textarea, { target: { value: 'Motivo suficientemente largo para ser válido' } });
+    fireEvent.change(textarea, {
+      target: { value: 'Motivo suficientemente largo para ser válido' },
+    });
     expect(boton).not.toBeDisabled();
 
     // Confirmar

@@ -230,7 +230,10 @@ export function crearInscripcionesRepository(db: D1Database): InscripcionesRepos
         ORDER BY e.nombre ASC
         LIMIT 20
       `;
-      const res = await db.prepare(query).bind(torneoId, filtro, filtro).all<EquipoDisponibleParaInscripcion>();
+      const res = await db
+        .prepare(query)
+        .bind(torneoId, filtro, filtro)
+        .all<EquipoDisponibleParaInscripcion>();
       return res.results ?? [];
     },
   };

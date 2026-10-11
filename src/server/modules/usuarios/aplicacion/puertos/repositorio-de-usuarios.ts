@@ -1,5 +1,6 @@
 import type { ContrasenaCifrada } from '../../dominio/objeto-valor/contrasena-cifrada';
 import type { CorreoElectronico } from '../../dominio/objeto-valor/correo-electronico';
+import type { Rol } from '../../dominio/rol';
 import type { Usuario } from '../../dominio/usuario';
 
 /**
@@ -26,4 +27,8 @@ export interface RepositorioDeUsuarios {
     datos: { nombreCompleto?: string; correo?: string; telefono?: string },
     fecha: Date,
   ): Promise<void>;
+  /** KAN-18: cambia el rol de un usuario (jugador → admin). */
+  actualizarRol(usuarioId: string, rol: Rol, fecha: Date): Promise<void>;
+  /** KAN-18: marca o desmarca la bandera de cambio obligatorio de contraseña. */
+  actualizarDebeCambiarContrasena(usuarioId: string, valor: boolean, fecha: Date): Promise<void>;
 }

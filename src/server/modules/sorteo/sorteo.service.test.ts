@@ -31,9 +31,7 @@ describe('SorteoService', () => {
   describe('obtenerVistaPrevia', () => {
     it('lanza 404 si el torneo no existe', async () => {
       mockRepo.obtenerTorneo.mockResolvedValue(null);
-      await expect(service.obtenerVistaPrevia('t-inexistente')).rejects.toThrow(
-        AppError,
-      );
+      await expect(service.obtenerVistaPrevia('t-inexistente')).rejects.toThrow(AppError);
     });
 
     it('devuelve estimación correcta con solicitudes pendientes', async () => {

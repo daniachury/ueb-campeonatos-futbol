@@ -19,6 +19,7 @@ export interface SesionConUsuario {
     telefono: string;
     rol: Rol;
     activo: boolean;
+    debeCambiarContrasena?: boolean;
   };
 }
 
@@ -41,6 +42,7 @@ interface FilaDeSesion {
   telefono: string;
   rol: Rol;
   activo: number;
+  debe_cambiar_contrasena?: number;
 }
 
 export function crearSesionesRepository(db: D1Database): SesionesRepository {
@@ -58,7 +60,7 @@ export function crearSesionesRepository(db: D1Database): SesionesRepository {
     async buscarPorHashDelToken(hashToken) {
       const fila = await db
         .prepare(
-          `SELECT s.expira_en, u.id AS usuario_id, u.nombre_completo, u.correo, u.telefono, u.rol, u.activo
+          `SELECT s.expira_en, u.id AS usuario_id, u.nombre_completo, u.correo, u.telefono, u.rol, u.activo, u.debe_cambiar_contrasena
              FROM sesiones s
              JOIN usuarios u ON u.id = s.usuario_id
             WHERE s.hash_token = ?`,
@@ -76,6 +78,7 @@ export function crearSesionesRepository(db: D1Database): SesionesRepository {
           telefono: fila.telefono,
           rol: fila.rol,
           activo: fila.activo === 1,
+          debeCambiarContrasena: fila.debe_cambiar_contrasena === 1,
         },
       };
     },

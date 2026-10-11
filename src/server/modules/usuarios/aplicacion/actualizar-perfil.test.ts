@@ -30,6 +30,10 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
     this.usuarios.push(usuario);
   }
 
+  async actualizarRol(): Promise<void> {}
+
+  async actualizarDebeCambiarContrasena(): Promise<void> {}
+
   async actualizarContrasena(
     usuarioId: string,
     contrasenaCifrada: ContrasenaCifrada,
@@ -47,6 +51,7 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
               contrasenaCifrada,
               rol: u.rol,
               activo: u.activo,
+              debeCambiarContrasena: u.debeCambiarContrasena,
               creadoEn: u.creadoEn,
               actualizadoEn: fecha,
             })
@@ -72,6 +77,7 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
         contrasenaCifrada: u.contrasenaCifrada,
         rol: u.rol,
         activo: u.activo,
+        debeCambiarContrasena: u.debeCambiarContrasena,
         creadoEn: u.creadoEn,
         actualizadoEn: fecha,
       });

@@ -1,9 +1,5 @@
 import { z } from 'zod';
-import {
-  REGLAS,
-  type EstadoInscripcion,
-  type EstadoTorneo,
-} from '../constants';
+import { REGLAS, type EstadoInscripcion, type EstadoTorneo } from '../constants';
 
 export const motivoAccionSchema = z.object({
   motivo: z

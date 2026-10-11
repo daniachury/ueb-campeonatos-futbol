@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { NuevaSesion, SesionConUsuario, SesionesRepository } from '../../auth/sesiones.repository';
+import type {
+  NuevaSesion,
+  SesionConUsuario,
+  SesionesRepository,
+} from '../../auth/sesiones.repository';
 import { ContrasenaCifrada } from '../dominio/objeto-valor/contrasena-cifrada';
 import { ContrasenaPlana } from '../dominio/objeto-valor/contrasena-plana';
 import { CorreoElectronico } from '../dominio/objeto-valor/correo-electronico';
@@ -30,6 +34,10 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
     this.usuarios.push(usuario);
   }
 
+  async actualizarRol(): Promise<void> {}
+
+  async actualizarDebeCambiarContrasena(): Promise<void> {}
+
   async actualizarContrasena(
     usuarioId: string,
     contrasenaCifrada: ContrasenaCifrada,
@@ -45,6 +53,7 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
         contrasenaCifrada,
         rol: u.rol,
         activo: u.activo,
+        debeCambiarContrasena: u.debeCambiarContrasena,
         creadoEn: u.creadoEn,
         actualizadoEn: fecha,
       });
@@ -149,7 +158,10 @@ describe('CambiarContrasenaPerfil (KAN-19 · UEB-Proyect-06)', () => {
 
     // Verifica que la nueva clave quedó guardada y funciona
     const usuarioActualizado = await repoUsuarios.buscarPorId('usr-1');
-    const coincide = await cifrador.coincide('NuevaClave2026*', usuarioActualizado!.contrasenaCifrada);
+    const coincide = await cifrador.coincide(
+      'NuevaClave2026*',
+      usuarioActualizado!.contrasenaCifrada,
+    );
     expect(coincide).toBe(true);
   });
 

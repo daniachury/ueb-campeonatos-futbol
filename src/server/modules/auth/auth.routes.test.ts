@@ -175,3 +175,174 @@ describe('POST /api/auth/registro (KAN-16)', () => {
     expect(consultas).toHaveLength(0);
   });
 });
+
+describe('PATCH /api/auth/cambiar-contrasena (KAN-18 · Escenario 2)', () => {
+  it('rechaza con 401 si no hay sesión activa', async () => {
+    const { db } = crearBaseDeDatosDePrueba();
+    const app = crearApp();
+    const res = await app.request(
+      '/api/auth/cambiar-contrasena',
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contrasenaActual: 'actual123', contrasenaNueva: 'nuevaClave1' }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+
+    expect(res.status).toBe(401);
+  });
+
+  it('rechaza con 400 si la contraseña nueva no cumple reglas', async () => {
+    const { db } = await import('../../test/d1-de-autenticacion').then((m) =>
+      m.crearD1DeAutenticacion([
+        m.crearUsuarioGuardado({
+          id: 'user-1',
+          correo: 'user@test.com',
+          hash_contrasena: 'actual123',
+        }),
+      ]),
+    );
+    const app = crearApp();
+    const loginRes = await app.request(
+      '/api/auth/login',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: 'user@test.com', contrasena: 'actual123' }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+    const cookie = (loginRes.headers.get('set-cookie') ?? '').split(';')[0] ?? '';
+
+    const res = await app.request(
+      '/api/auth/cambiar-contrasena',
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Cookie: cookie },
+        body: JSON.stringify({ contrasenaActual: 'actual123', contrasenaNueva: 'corta' }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+
+    expect(res.status).toBe(400);
+  });
+
+  it('rechaza con 400 si la nueva contraseña es igual a la actual', async () => {
+    const { db } = await import('../../test/d1-de-autenticacion').then((m) =>
+      m.crearD1DeAutenticacion([
+        m.crearUsuarioGuardado({
+          id: 'user-1',
+          correo: 'user@test.com',
+          hash_contrasena: 'actual123',
+        }),
+      ]),
+    );
+    const app = crearApp();
+    const loginRes = await app.request(
+      '/api/auth/login',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: 'user@test.com', contrasena: 'actual123' }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+    const cookie = (loginRes.headers.get('set-cookie') ?? '').split(';')[0] ?? '';
+
+    const res = await app.request(
+      '/api/auth/cambiar-contrasena',
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Cookie: cookie },
+        body: JSON.stringify({ contrasenaActual: 'actual123', contrasenaNueva: 'actual123' }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+
+    expect(res.status).toBe(400);
+  });
+
+  it('rechaza con 401 si la contraseña actual es errónea', async () => {
+    const { db } = await import('../../test/d1-de-autenticacion').then((m) =>
+      m.crearD1DeAutenticacion([
+        m.crearUsuarioGuardado({
+          id: 'user-1',
+          correo: 'user@test.com',
+          hash_contrasena: 'actual123',
+        }),
+      ]),
+    );
+    const app = crearApp();
+    const loginRes = await app.request(
+      '/api/auth/login',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: 'user@test.com', contrasena: 'actual123' }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+    const cookie = (loginRes.headers.get('set-cookie') ?? '').split(';')[0] ?? '';
+
+    const res = await app.request(
+      '/api/auth/cambiar-contrasena',
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Cookie: cookie },
+        body: JSON.stringify({
+          contrasenaActual: 'equivocada123',
+          contrasenaNueva: 'nuevaClave123',
+        }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+
+    expect(res.status).toBe(401);
+  });
+
+  it('actualiza la contraseña exitosamente y responde 200', async () => {
+    const { db, usuarios } = await import('../../test/d1-de-autenticacion').then((m) =>
+      m.crearD1DeAutenticacion([
+        m.crearUsuarioGuardado({
+          id: 'admin-temp',
+          correo: 'admin@test.com',
+          hash_contrasena: 'temporal123',
+          rol: 'admin',
+          debe_cambiar_contrasena: 1,
+        }),
+      ]),
+    );
+    const app = crearApp();
+    const loginRes = await app.request(
+      '/api/auth/login',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: 'admin@test.com', contrasena: 'temporal123' }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+    const cookie = (loginRes.headers.get('set-cookie') ?? '').split(';')[0] ?? '';
+
+    const res = await app.request(
+      '/api/auth/cambiar-contrasena',
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Cookie: cookie },
+        body: JSON.stringify({
+          contrasenaActual: 'temporal123',
+          contrasenaNueva: 'Definitiva2026',
+        }),
+      },
+      { DB: db, LIMITE_DE_REGISTRO: crearLimitadorFalso() },
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ mensaje: 'Contraseña actualizada' });
+
+    const usuario = usuarios.find((u) => u.id === 'admin-temp');
+    expect(usuario?.debe_cambiar_contrasena).toBe(0);
+  });
+});

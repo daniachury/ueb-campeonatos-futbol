@@ -13,7 +13,15 @@ const conUsuario = (usuario: UsuarioSesion) =>
     await next();
   });
 
-function crearTestApp(db: D1Database, usuario: UsuarioSesion = { id: 'admin-1', nombre: 'Admin', rol: 'admin' }) {
+function crearTestApp(
+  db: D1Database,
+  usuario: UsuarioSesion = {
+    id: 'admin-1',
+    nombre: 'Admin',
+    rol: 'admin',
+    debeCambiarContrasena: false,
+  },
+) {
   const app = new Hono<AppEnv>();
   app.use('*', conUsuario(usuario));
   app.route('/admin/inscripciones', inscripcionesAdminRoutes);
@@ -165,7 +173,15 @@ describe('Rutas HTTP /api/admin/inscripciones', () => {
         return [{ id: 't-1', nombre: 'Copa', cupo: 8, estado: 'INSCRIPCIONES_ABIERTAS' }];
       }
       if (sql.includes('FROM equipos e')) {
-        return [{ id: 'eq-1', nombre: 'Halcones', color: '#111', capitanNombre: 'Carlos', cantidadJugadores: 14 }];
+        return [
+          {
+            id: 'eq-1',
+            nombre: 'Halcones',
+            color: '#111',
+            capitanNombre: 'Carlos',
+            cantidadJugadores: 14,
+          },
+        ];
       }
       return [];
     });

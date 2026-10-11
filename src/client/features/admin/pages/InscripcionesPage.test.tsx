@@ -99,7 +99,9 @@ describe('InscripcionesPage (v3 · A02)', () => {
   it('Escenario 1: Bandeja de solicitudes muestra pestañas, contadores y detalles de equipo', async () => {
     renderizarInscripciones();
 
-    expect(await screen.findByRole('heading', { level: 1, name: 'Copa El Bosque 2026' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Copa El Bosque 2026' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Aprobados 5/8')).toBeInTheDocument();
 
     // Pestañas
@@ -135,14 +137,18 @@ describe('InscripcionesPage (v3 · A02)', () => {
 
     // Modal abierto
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Rechazar solicitud de inscripción' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Rechazar solicitud de inscripción' }),
+    ).toBeInTheDocument();
 
     const botonConfirmar = screen.getByRole('button', { name: 'Rechazar solicitud' });
     expect(botonConfirmar).toBeDisabled();
 
     // Escribir motivo válido (>= 10 caracteres)
     const textarea = screen.getByPlaceholderText(/Escribe el motivo detallado/i);
-    fireEvent.change(textarea, { target: { value: 'El equipo no presentó los documentos a tiempo.' } });
+    fireEvent.change(textarea, {
+      target: { value: 'El equipo no presentó los documentos a tiempo.' },
+    });
 
     expect(botonConfirmar).not.toBeDisabled();
     fireEvent.click(botonConfirmar);
@@ -184,7 +190,9 @@ describe('InscripcionesPage (v3 · A02)', () => {
     expect(screen.getByRole('heading', { name: 'Retirar equipo aprobado' })).toBeInTheDocument();
 
     const textarea = screen.getByPlaceholderText(/Escribe el motivo detallado/i);
-    fireEvent.change(textarea, { target: { value: 'Sanción disciplinaria que impide participación.' } });
+    fireEvent.change(textarea, {
+      target: { value: 'Sanción disciplinaria que impide participación.' },
+    });
 
     const botonConfirmar = screen.getByRole('button', { name: 'Retirar equipo' });
     fireEvent.click(botonConfirmar);
@@ -218,7 +226,13 @@ describe('InscripcionesPage (v3 · A02)', () => {
       const ruta = String(url);
       if (ruta.includes('/equipos-disponibles')) return respuestaJson({ datos: [] });
       if (init?.method === 'POST') {
-        return respuestaJson({ codigo: 'JUGADORES_EN_CONFLICTO', mensaje: 'Jugadores en conflicto: Carlos (Halcones)' }, 409);
+        return respuestaJson(
+          {
+            codigo: 'JUGADORES_EN_CONFLICTO',
+            mensaje: 'Jugadores en conflicto: Carlos (Halcones)',
+          },
+          409,
+        );
       }
       return respuestaJson(BANDEJA_EJEMPLO);
     });
@@ -249,7 +263,13 @@ describe('InscripcionesPage (v3 · A02)', () => {
       if (ruta.includes('/equipos-disponibles')) {
         return respuestaJson({
           datos: [
-            { id: 'eq-10', nombre: 'Águilas Doradas', color: null, capitanNombre: 'Carlos', cantidadJugadores: 15 },
+            {
+              id: 'eq-10',
+              nombre: 'Águilas Doradas',
+              color: null,
+              capitanNombre: 'Carlos',
+              cantidadJugadores: 15,
+            },
           ],
         });
       }
@@ -276,7 +296,9 @@ describe('InscripcionesPage (v3 · A02)', () => {
   it('muestra mensaje de error si la carga inicial falla', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () => respuestaJson({ codigo: 'ERROR_INTERNO', mensaje: 'Fallo al conectar' }, 500)),
+      vi.fn(async () =>
+        respuestaJson({ codigo: 'ERROR_INTERNO', mensaje: 'Fallo al conectar' }, 500),
+      ),
     );
 
     renderizarAppEn('/admin/torneos/torneo-1/inscripciones', {
@@ -300,7 +322,9 @@ describe('InscripcionesPage (v3 · A02)', () => {
     });
 
     // Como jugador, la ruta redirige a la pantalla de inicio del jugador (no muestra la cabecera de inscripciones)
-    expect(screen.queryByRole('heading', { level: 1, name: 'Copa El Bosque 2026' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { level: 1, name: 'Copa El Bosque 2026' }),
+    ).not.toBeInTheDocument();
   });
 
   it('KAN-33: muestra el Panel de Sorteo con estimación y permite confirmar el sorteo', async () => {

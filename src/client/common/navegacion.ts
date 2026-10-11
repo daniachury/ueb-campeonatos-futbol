@@ -19,6 +19,9 @@ export const RUTAS = {
   GESTION_DE_TORNEOS: '/admin/torneos',
   /** v3 · A02 · Inscripciones y sorteo (KAN-32 · Escenario 1). */
   ADMIN_INSCRIPCIONES: '/admin/torneos/:id/inscripciones',
+  /** KAN-18 · Registro de administradores. */
+  REGISTRAR_ADMIN: '/admin/usuarios/nuevo',
+  CAMBIAR_CONTRASENA: '/cambiar-contrasena',
 } as const;
 
 export function rutaAdminInscripciones(torneoId: string): string {

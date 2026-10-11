@@ -66,18 +66,10 @@ export const meRoutes = new Hono<AppEnv>()
       return c.json(perfilActualizado, 200);
     } catch (error) {
       if (error instanceof ErrorContrasenaActualIncorrecta) {
-        throw new AppError(
-          401,
-          CODIGOS_ERROR_PERFIL.CREDENCIALES_INCORRECTAS,
-          error.message,
-        );
+        throw new AppError(401, CODIGOS_ERROR_PERFIL.CREDENCIALES_INCORRECTAS, error.message);
       }
       if (error instanceof ErrorCorreoYaRegistrado) {
-        throw new AppError(
-          409,
-          CODIGOS_ERROR_PERFIL.CORREO_YA_REGISTRADO,
-          error.message,
-        );
+        throw new AppError(409, CODIGOS_ERROR_PERFIL.CORREO_YA_REGISTRADO, error.message);
       }
       if (error instanceof ErrorDeValidacionDeDominio) {
         throw errores.validacion([{ campo: error.campo, mensaje: error.message }]);
@@ -109,11 +101,7 @@ export const meRoutes = new Hono<AppEnv>()
         return c.json(respuesta, 200);
       } catch (error) {
         if (error instanceof ErrorContrasenaActualIncorrecta) {
-          throw new AppError(
-            401,
-            CODIGOS_ERROR_PERFIL.CREDENCIALES_INCORRECTAS,
-            error.message,
-          );
+          throw new AppError(401, CODIGOS_ERROR_PERFIL.CREDENCIALES_INCORRECTAS, error.message);
         }
         if (error instanceof ErrorDeValidacionDeDominio) {
           throw errores.validacion([{ campo: error.campo, mensaje: error.message }]);
@@ -146,11 +134,7 @@ export const meRoutes = new Hono<AppEnv>()
         return c.json(respuesta, 200);
       } catch (error) {
         if (error instanceof ErrorContrasenaActualIncorrecta) {
-          throw new AppError(
-            401,
-            CODIGOS_ERROR_PERFIL.CREDENCIALES_INCORRECTAS,
-            error.message,
-          );
+          throw new AppError(401, CODIGOS_ERROR_PERFIL.CREDENCIALES_INCORRECTAS, error.message);
         }
         if (error instanceof ErrorDeValidacionDeDominio) {
           throw errores.validacion([{ campo: error.campo, mensaje: error.message }]);

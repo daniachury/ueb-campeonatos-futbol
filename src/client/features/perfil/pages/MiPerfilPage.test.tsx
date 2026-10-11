@@ -166,9 +166,15 @@ describe('MiPerfilPage (KAN-19 · UEB-Proyect-06)', () => {
 
     // Sección Seguridad
     const camposPassword = screen.getAllByLabelText(/contraseña/i);
-    const campoActual = camposPassword.find((c) => (c as HTMLInputElement).id === 'campo-contrasena-actual');
-    const campoNueva = camposPassword.find((c) => (c as HTMLInputElement).id === 'campo-nueva-contrasena');
-    const campoConfirmar = camposPassword.find((c) => (c as HTMLInputElement).id === 'campo-confirmar-contrasena');
+    const campoActual = camposPassword.find(
+      (c) => (c as HTMLInputElement).id === 'campo-contrasena-actual',
+    );
+    const campoNueva = camposPassword.find(
+      (c) => (c as HTMLInputElement).id === 'campo-nueva-contrasena',
+    );
+    const campoConfirmar = camposPassword.find(
+      (c) => (c as HTMLInputElement).id === 'campo-confirmar-contrasena',
+    );
 
     fireEvent.change(campoActual!, { target: { value: 'balon2026' } });
     fireEvent.change(campoNueva!, { target: { value: 'NuevaClave2026*' } });
