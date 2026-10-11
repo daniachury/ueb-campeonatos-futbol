@@ -1,0 +1,85 @@
+.pagina {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: var(--radio-tarjeta, 22px);
+  border: 1px solid var(--color-separador, #f0f2ec);
+}
+
+.infoUsuario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nombre {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-grafito, #161a14);
+}
+
+.rolTag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-acento-texto, #3f5200);
+  background-color: var(--color-tinte-acento, #f1fbd0);
+  padding: 2px 10px;
+  border-radius: var(--radio-pildora, 999px);
+  width: fit-content;
+}
+
+.seccion {
+  background-color: #ffffff;
+  padding: 24px 20px;
+  border-radius: var(--radio-tarjeta, 22px);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tituloSeccion {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-grafito, #161a14);
+}
+
+.descripcionSeccion {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-texto-secundario, #6b7066);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.acciones {
+  margin-top: 8px;
+}
+
+.cargando {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+  color: var(--color-texto-secundario, #6b7066);
+  font-weight: 500;
+}

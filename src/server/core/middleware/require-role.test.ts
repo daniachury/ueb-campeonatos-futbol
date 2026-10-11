@@ -23,13 +23,23 @@ function appProtegida(usuario?: UsuarioSesion) {
 
 describe('requireRole', () => {
   it('deja pasar al rol permitido', async () => {
-    const respuesta = await appProtegida({ id: 'u1', nombre: 'Ana', rol: 'admin' }).request('/');
+    const respuesta = await appProtegida({
+      id: 'u1',
+      nombre: 'Ana',
+      rol: 'admin',
+      debeCambiarContrasena: false,
+    }).request('/');
 
     expect(respuesta.status).toBe(200);
   });
 
   it('responde 403 a un jugador', async () => {
-    const respuesta = await appProtegida({ id: 'u2', nombre: 'Luis', rol: 'jugador' }).request('/');
+    const respuesta = await appProtegida({
+      id: 'u2',
+      nombre: 'Luis',
+      rol: 'jugador',
+      debeCambiarContrasena: false,
+    }).request('/');
 
     expect(respuesta.status).toBe(403);
     expect(await respuesta.json()).toMatchObject({ codigo: 'SIN_PERMISO' });

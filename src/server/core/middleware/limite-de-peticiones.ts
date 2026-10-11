@@ -4,7 +4,7 @@ import { AppError } from '../errors';
 
 /** Bindings de wrangler.jsonc (`ratelimits`) que sirven como limitadores. */
 type NombreDelLimitador = {
-  [Nombre in keyof Bindings]: Bindings[Nombre] extends RateLimit ? Nombre : never;
+  [Nombre in keyof Bindings]-?: NonNullable<Bindings[Nombre]> extends RateLimit ? Nombre : never;
 }[keyof Bindings];
 
 /**

@@ -1,10 +1,14 @@
 import type { RouteObject } from 'react-router';
 import { RUTAS } from '../common/navegacion';
 import { GestionDeTorneosPage } from '../features/admin/pages/GestionDeTorneosPage';
+import { InscripcionesPage } from '../features/admin/pages/InscripcionesPage';
+import { RegistrarAdminPage } from '../features/admin/pages/RegistrarAdminPage';
 import { ArranquePage } from '../features/auth/pages/ArranquePage';
+import { CambiarContrasenaPage } from '../features/auth/pages/CambiarContrasenaPage';
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
 import { IniciarSesionPage } from '../features/auth/pages/IniciarSesionPage';
 import { InicioPage } from '../features/inicio/pages/InicioPage';
+import { MiPerfilPage } from '../features/perfil/pages/MiPerfilPage';
 import { TorneosPage } from '../features/torneos/pages/TorneosPage';
 import { AppLayout } from './layout/AppLayout';
 import { LayoutDelJugador } from './layout/LayoutDelJugador';
@@ -23,11 +27,17 @@ export const rutas: RouteObject[] = [
   // Jugador con sesión (v3 · M11, M12 y W04).
   {
     element: <LayoutDelJugador />,
-    children: [{ path: RUTAS.INICIO_DEL_JUGADOR, element: <InicioPage /> }],
+    children: [
+      { path: RUTAS.INICIO_DEL_JUGADOR, element: <InicioPage /> },
+      { path: RUTAS.MI_PERFIL, element: <MiPerfilPage /> },
+    ],
   },
 
-  // Administrador (v3 · A01). Provisional hasta la historia de gestión de torneos.
+  // Administrador (v3 · A01 y A02).
   { path: RUTAS.GESTION_DE_TORNEOS, element: <GestionDeTorneosPage /> },
+  { path: RUTAS.ADMIN_INSCRIPCIONES, element: <InscripcionesPage /> },
+  { path: RUTAS.REGISTRAR_ADMIN, element: <RegistrarAdminPage /> },
+  { path: RUTAS.CAMBIAR_CONTRASENA, element: <CambiarContrasenaPage /> },
 
   // Pantallas anteriores al diseño v3.
   {

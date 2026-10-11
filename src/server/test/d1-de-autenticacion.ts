@@ -8,8 +8,17 @@ export interface UsuarioGuardado {
   hash_contrasena: string;
   rol: 'jugador' | 'admin';
   activo: number;
+  debe_cambiar_contrasena: number;
   creado_en: string;
   actualizado_en: string;
+}
+
+export interface AuditoriaGuardada {
+  id: string;
+  admin_creador_id: string;
+  usuario_id: string;
+  accion: 'CREAR_ADMIN' | 'PROMOVER_JUGADOR';
+  creado_en: string;
 }
 
 interface SesionGuardada {
@@ -24,39 +33,72 @@ interface IntentosGuardados {
 }
 
 /**
- * D1 falsa con memoria para las pruebas de integración de autenticación (KAN-16 y KAN-17).
- * Entiende solo las consultas de los repositorios de usuarios, intentos y sesiones.
+ * D1 falsa con memoria para las pruebas de integración de autenticación (KAN-16, KAN-17 y KAN-18).
+ * Entiende las consultas de los repositorios de usuarios, intentos, sesiones, auditoría y equipos.
  */
 export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []) {
   const usuarios = [...usuariosIniciales];
   const sesiones: SesionGuardada[] = [];
   const intentos = new Map<string, IntentosGuardados>();
-  const buscarUsuario = (correo: unknown) =>
+  const auditoria: AuditoriaGuardada[] = [];
+  const equiposEnTorneo = new Set<string>(); // usuario_ids con torneo EN_CURSO
+
+  const buscarUsuarioPorCorreo = (correo: unknown) =>
     usuarios.find((usuario) => usuario.correo === String(correo).toLowerCase());
+
+  const buscarUsuarioPorId = (id: unknown) => usuarios.find((usuario) => usuario.id === String(id));
 
   const { db, consultas } = crearD1Falsa((sql, parametros) => {
     const [primero, segundo, tercero, cuarto] = parametros;
 
-    if (sql.includes('FROM usuarios WHERE correo') || sql.includes('FROM usuarios\n')) {
-      const usuario = buscarUsuario(primero);
+    if (sql.includes('COUNT(*) AS total FROM usuarios WHERE rol')) {
+      const total = usuarios.filter((u) => u.rol === 'admin').length;
+      return [{ total }];
+    }
+
+    if (sql.includes('FROM usuarios')) {
+      if (sql.includes('WHERE id') || sql.includes('WHERE id=?')) {
+        const usuario = buscarUsuarioPorId(primero);
+        return usuario ? [usuario] : [];
+      }
+      const usuario = buscarUsuarioPorCorreo(primero);
       return usuario ? [usuario] : [];
     }
+
     if (sql.includes('INSERT INTO usuarios')) {
-      const [id, nombre, correo, telefono, hash, rol, activo, creado, actualizado] = parametros;
-      usuarios.push({
-        id: String(id),
-        nombre_completo: String(nombre),
-        correo: String(correo),
-        telefono: String(telefono),
-        hash_contrasena: String(hash),
-        rol: rol as UsuarioGuardado['rol'],
-        activo: Number(activo),
-        creado_en: String(creado),
-        actualizado_en: String(actualizado),
-      });
+      if (parametros.length >= 10) {
+        const [id, nombre, correo, telefono, hash, rol, activo, debeCambiar, creado, actualizado] =
+          parametros;
+        usuarios.push({
+          id: String(id),
+          nombre_completo: String(nombre),
+          correo: String(correo),
+          telefono: String(telefono),
+          hash_contrasena: String(hash),
+          rol: rol as UsuarioGuardado['rol'],
+          activo: Number(activo),
+          debe_cambiar_contrasena: Number(debeCambiar),
+          creado_en: String(creado),
+          actualizado_en: String(actualizado),
+        });
+      } else {
+        const [id, nombre, correo, telefono, hash, rol, activo, creado, actualizado] = parametros;
+        usuarios.push({
+          id: String(id),
+          nombre_completo: String(nombre),
+          correo: String(correo),
+          telefono: String(telefono),
+          hash_contrasena: String(hash),
+          rol: rol as UsuarioGuardado['rol'],
+          activo: Number(activo),
+          debe_cambiar_contrasena: 0,
+          creado_en: String(creado),
+          actualizado_en: String(actualizado),
+        });
+      }
       return [];
     }
-    if (sql.includes('UPDATE usuarios SET hash_contrasena')) {
+    if (sql.includes('UPDATE usuarios SET hash_contrasena = ?,')) {
       const usuario = usuarios.find((guardado) => guardado.id === tercero);
       if (usuario) {
         usuario.hash_contrasena = String(primero);
@@ -64,14 +106,94 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       }
       return [];
     }
+
+    if (sql.includes('UPDATE usuarios SET rol =')) {
+      const usuario = usuarios.find((guardado) => guardado.id === tercero);
+      if (usuario) {
+        usuario.rol = primero as UsuarioGuardado['rol'];
+        usuario.actualizado_en = String(segundo);
+      }
+      return [];
+    }
+
+    if (sql.includes('UPDATE usuarios SET debe_cambiar_contrasena =')) {
+      const usuario = usuarios.find((guardado) => guardado.id === tercero);
+      if (usuario) {
+        usuario.debe_cambiar_contrasena = Number(primero);
+        usuario.actualizado_en = String(segundo);
+      }
+      return [];
+    }
+
+    if (sql.includes('INSERT INTO auditoria_admins')) {
+      const [id, creadorId, usuarioId, accion, creadoEn] = parametros;
+      auditoria.push({
+        id: String(id),
+        admin_creador_id: String(creadorId),
+        usuario_id: String(usuarioId),
+        accion: accion as AuditoriaGuardada['accion'],
+        creado_en: String(creadoEn),
+      });
+      return [];
+    }
+
+    if (sql.includes('FROM equipo_jugadores ej') && sql.includes("t.estado = 'EN_CURSO'")) {
+      const tieneTorneo = equiposEnTorneo.has(String(primero));
+      return tieneTorneo ? [{ existe: 1 }] : [];
+    }
+
+    if (sql.includes('SELECT e.id FROM equipos e WHERE e.capitan_id')) {
+      return [];
+    }
+
+    if (sql.includes('UPDATE equipos SET')) {
+      return [];
+    }
+
+    if (sql.includes('DELETE FROM equipo_jugadores')) {
+      return [];
+    }
+
+    if (sql.includes('UPDATE usuarios SET') && !sql.includes('hash_contrasena = ?,')) {
+      const idUsuario = parametros[parametros.length - 1];
+      const usuario = usuarios.find((guardado) => guardado.id === idUsuario);
+      if (usuario) {
+        const correoParam = parametros.find(
+          (p): p is string => typeof p === 'string' && p.includes('@'),
+        );
+        if (
+          correoParam &&
+          usuarios.some(
+            (u) => u.id !== idUsuario && u.correo.toLowerCase() === correoParam.toLowerCase(),
+          )
+        ) {
+          throw new Error('UNIQUE constraint failed: usuarios.correo');
+        }
+
+        if (sql.includes('nombre_completo = ?')) {
+          usuario.nombre_completo = String(parametros[0]);
+        }
+        if (sql.includes('telefono = ?')) {
+          const tel = parametros.find((p) => typeof p === 'string' && /^\+?\d{7,15}$/.test(p));
+          if (tel) usuario.telefono = String(tel);
+        }
+        if (correoParam) {
+          usuario.correo = correoParam.toLowerCase();
+        }
+        usuario.actualizado_en = new Date().toISOString();
+      }
+      return [];
+    }
     if (sql.includes('DELETE FROM intentos_inicio_sesion')) {
       intentos.delete(String(primero));
       return [];
     }
+
     if (sql.includes('FROM intentos_inicio_sesion')) {
       const guardados = intentos.get(String(primero));
       return guardados ? [guardados] : [];
     }
+
     if (sql.includes('INSERT INTO intentos_inicio_sesion')) {
       intentos.set(String(primero), {
         fallos_seguidos: Number(segundo),
@@ -79,6 +201,7 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       });
       return [];
     }
+
     if (sql.includes('INSERT INTO sesiones')) {
       sesiones.push({
         usuario_id: String(segundo),
@@ -87,17 +210,28 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       });
       return [];
     }
+    if (sql.includes('DELETE FROM sesiones WHERE usuario_id = ? AND hash_token != ?')) {
+      const [usuarioId, hashTokenActual] = parametros;
+      for (let i = sesiones.length - 1; i >= 0; i--) {
+        if (sesiones[i].usuario_id === usuarioId && sesiones[i].hash_token !== hashTokenActual) {
+          sesiones.splice(i, 1);
+        }
+      }
+      return [];
+    }
     if (sql.includes('DELETE FROM sesiones')) {
       const posicion = sesiones.findIndex((guardada) => guardada.hash_token === primero);
       if (posicion >= 0) sesiones.splice(posicion, 1);
       return [];
     }
+
     if (sql.includes('FROM sesiones')) {
       const sesion = sesiones.find((guardada) => guardada.hash_token === primero);
       const usuario = usuarios.find((guardado) => guardado.id === sesion?.usuario_id);
       if (!sesion || !usuario) return [];
       return [{ ...usuario, usuario_id: usuario.id, expira_en: sesion.expira_en }];
     }
+
     return [];
   });
 
@@ -106,7 +240,16 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
     for (const sesion of sesiones) sesion.expira_en = new Date(Date.now() - 1000).toISOString();
   }
 
-  return { db, consultas, usuarios, sesiones, intentos, vencerSesiones };
+  return {
+    db,
+    consultas,
+    usuarios,
+    sesiones,
+    intentos,
+    auditoria,
+    equiposEnTorneo,
+    vencerSesiones,
+  };
 }
 
 export function crearUsuarioGuardado(cambios: Partial<UsuarioGuardado> = {}): UsuarioGuardado {
@@ -118,6 +261,7 @@ export function crearUsuarioGuardado(cambios: Partial<UsuarioGuardado> = {}): Us
     hash_contrasena: 'balon2026',
     rol: 'jugador',
     activo: 1,
+    debe_cambiar_contrasena: 0,
     creado_en: '2026-10-01T12:00:00.000Z',
     actualizado_en: '2026-10-01T12:00:00.000Z',
     ...cambios,
