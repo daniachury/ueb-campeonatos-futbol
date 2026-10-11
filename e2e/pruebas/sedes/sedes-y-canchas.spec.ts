@@ -76,8 +76,12 @@ test.describe('KAN-34 · Sedes y canchas', () => {
       await test.step(`A ${ancho}px de ancho`, async () => {
         await page.setViewportSize({ width: ancho, height: 800 });
         await gestionDeTorneos.abrir();
-        await expect(gestionDeTorneos.enlaceSedesYCanchas).toBeVisible();
-        await expect(gestionDeTorneos.botonCerrarSesion).toBeVisible();
+        if (ancho < 768) {
+          await expect(gestionDeTorneos.botonMenuMovil).toBeVisible();
+        } else {
+          await expect(gestionDeTorneos.enlaceSedesYCanchas).toBeVisible();
+          await expect(gestionDeTorneos.botonCerrarSesion).toBeVisible();
+        }
         expect(await hayScrollHorizontal()).toBe(false);
 
         await gestionDeTorneos.irASedesYCanchas();

@@ -9,7 +9,7 @@ import { CambiarContrasenaPage } from '../features/auth/pages/CambiarContrasenaP
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
 import { IniciarSesionPage } from '../features/auth/pages/IniciarSesionPage';
 import { InicioPage } from '../features/inicio/pages/InicioPage';
-import { MiPerfilPage } from '../features/perfil/pages/MiPerfilPage';
+import { RutaMiPerfil } from '../features/perfil/pages/RutaMiPerfil';
 import { TorneosPage } from '../features/torneos/pages/TorneosPage';
 import { AppLayout } from './layout/AppLayout';
 import { LayoutDelJugador } from './layout/LayoutDelJugador';
@@ -30,9 +30,11 @@ export const rutas: RouteObject[] = [
     element: <LayoutDelJugador />,
     children: [
       { path: RUTAS.INICIO_DEL_JUGADOR, element: <InicioPage /> },
-      { path: RUTAS.MI_PERFIL, element: <MiPerfilPage /> },
     ],
   },
+
+  // Perfil de usuario (KAN-19 · rol-todos: accesible para jugador y administrador).
+  { path: RUTAS.MI_PERFIL, element: <RutaMiPerfil /> },
 
   // Administrador (v3 · A01, A02 y A07).
   { path: RUTAS.GESTION_DE_TORNEOS, element: <GestionDeTorneosPage /> },

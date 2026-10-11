@@ -13,6 +13,10 @@ export class GestionDeTorneosPagina extends PaginaBase {
     return this.page.getByText(/^Hola, /);
   }
 
+  get botonMenuMovil(): Locator {
+    return this.page.getByRole('button', { name: /abrir menú/i });
+  }
+
   get enlaceSedesYCanchas(): Locator {
     return this.page.getByRole('link', { name: /sedes y canchas/i });
   }
@@ -22,7 +26,12 @@ export class GestionDeTorneosPagina extends PaginaBase {
   }
 
   async irASedesYCanchas(): Promise<void> {
-    await this.enlaceSedesYCanchas.click();
+    if (await this.botonMenuMovil.isVisible()) {
+      await this.botonMenuMovil.click();
+      await this.page.getByTestId('menu-movil-admin').getByRole('link', { name: /sedes y canchas/i }).click();
+    } else {
+      await this.enlaceSedesYCanchas.click();
+    }
   }
 
   async irARegistrarAdministrador(): Promise<void> {
@@ -30,6 +39,11 @@ export class GestionDeTorneosPagina extends PaginaBase {
   }
 
   async cerrarSesion(): Promise<void> {
-    await this.botonCerrarSesion.click();
+    if (await this.botonMenuMovil.isVisible()) {
+      await this.botonMenuMovil.click();
+      await this.page.getByTestId('menu-movil-admin').getByRole('button', { name: /cerrar sesión/i }).click();
+    } else {
+      await this.botonCerrarSesion.click();
+    }
   }
 }

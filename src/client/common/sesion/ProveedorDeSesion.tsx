@@ -108,3 +108,7 @@ export function useSesion(): Sesion {
   }
   return sesion;
 }
+
+export function useSesionOpcional(): Sesion | null {
+  return useContext(ContextoDeSesion);
+}

@@ -26,13 +26,14 @@ export function IniciarSesionPage() {
 
   function entrar(usuario: UsuarioAutenticado): void {
     establecerSesion(usuario);
-    // Escenario 1 y 2: el jugador va a Torneos; el administrador, a Gestión de torneos.
-    // Si llegó aquí desde una pantalla protegida, vuelve a ella. `replace` evita volver al formulario con Atrás.
-    const destino = usuario.debeCambiarContrasena
-      ? RUTAS.CAMBIAR_CONTRASENA
-      : usuario.rol === 'jugador' && estadoRecibido?.desde
-        ? estadoRecibido.desde
-        : rutaDeInicioSegunRol(usuario.rol);
+    // Escenario 1 y 2: el jugador va a Torneos; el administrador, siempre a Gestión de torneos.
+    // Si tiene debeCambiarContrasena, el modal obligatorio se despliega sobre la pantalla de torneos.
+    const destino =
+      usuario.rol === 'admin'
+        ? RUTAS.GESTION_DE_TORNEOS
+        : estadoRecibido?.desde
+          ? estadoRecibido.desde
+          : rutaDeInicioSegunRol(usuario.rol);
     void navegar(destino, { replace: true });
   }
 

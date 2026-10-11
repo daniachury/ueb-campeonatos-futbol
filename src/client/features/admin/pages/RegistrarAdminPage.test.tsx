@@ -62,12 +62,12 @@ describe('RegistrarAdminPage (KAN-18 · Frontend)', () => {
     expect(screen.getByText('Pantalla Inicio Jugador')).toBeInTheDocument();
   });
 
-  it('redirige a Cambiar contraseña si el admin tiene debeCambiarContrasena=true', () => {
+  it('redirige a Gestión de torneos si el admin tiene debeCambiarContrasena=true', () => {
     renderizarPagina({
       ...ADMIN_AUTENTICADO,
       debeCambiarContrasena: true,
     });
-    expect(screen.getByText('Pantalla Cambiar Contrasena')).toBeInTheDocument();
+    expect(screen.getByText('Pantalla Gestion Torneos')).toBeInTheDocument();
   });
 
   it('muestra el formulario de registro para un administrador válido', () => {

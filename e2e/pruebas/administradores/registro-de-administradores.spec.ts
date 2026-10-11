@@ -12,12 +12,6 @@ test.describe('KAN-18 · Registro de administradores', () => {
     cambiarContrasena,
     almacen,
   }) => {
-    test.fail(
-      true,
-      'Bug en main: POST /api/auth/login no devuelve debeCambiarContrasena ' +
-        '(convertirEnUsuarioAutenticado en iniciar-sesion.ts), así que la app no lleva al ' +
-        'administrador nuevo a «Cambia tu contraseña». Quitar esta marca cuando se corrija.',
-    );
     const nuevoAdmin = unAdministrador().conNombre('Andrea Martínez').construir();
     let contrasenaTemporal = '';
     await sesion.iniciarComo(await escenarios.administradorRegistrado());
