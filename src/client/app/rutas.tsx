@@ -3,6 +3,7 @@ import { RUTAS } from '../common/navegacion';
 import { GestionDeTorneosPage } from '../features/admin/pages/GestionDeTorneosPage';
 import { InscripcionesPage } from '../features/admin/pages/InscripcionesPage';
 import { RegistrarAdminPage } from '../features/admin/pages/RegistrarAdminPage';
+import { SedesPage } from '../features/admin/pages/SedesPage';
 import { ArranquePage } from '../features/auth/pages/ArranquePage';
 import { CambiarContrasenaPage } from '../features/auth/pages/CambiarContrasenaPage';
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
@@ -33,10 +34,11 @@ export const rutas: RouteObject[] = [
     ],
   },
 
-  // Administrador (v3 · A01 y A02).
+  // Administrador (v3 · A01, A02 y A07).
   { path: RUTAS.GESTION_DE_TORNEOS, element: <GestionDeTorneosPage /> },
   { path: RUTAS.ADMIN_INSCRIPCIONES, element: <InscripcionesPage /> },
   { path: RUTAS.REGISTRAR_ADMIN, element: <RegistrarAdminPage /> },
+  { path: RUTAS.ADMIN_SEDES, element: <SedesPage /> },
   { path: RUTAS.CAMBIAR_CONTRASENA, element: <CambiarContrasenaPage /> },
 
   // Pantallas anteriores al diseño v3.
