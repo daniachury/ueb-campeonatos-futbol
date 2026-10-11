@@ -21,6 +21,9 @@
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=default --reporter=json --outputFile.json=reports/test-results.json",
     "test:e2e": "playwright test",
+    "test:e2e:informe": "playwright show-report reports/e2e/html",
+    "test:e2e:video": "E2E_CAMARA_LENTA=700 playwright test recorrido-completo --reporter=list",
+    "e2e:servidor": "node -e \"fs.rmSync('.wrangler/e2e', { recursive: true, force: true })\" && wrangler d1 migrations apply DB --local --persist-to .wrangler/e2e && vite build && wrangler dev -c dist/ueb_campeonatos_futbol/wrangler.json --persist-to .wrangler/e2e --port 8788 --show-interactive-dev-session=false",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "db:seed:local": "wrangler d1 execute DB --local --file=seeds/dev.sql"
