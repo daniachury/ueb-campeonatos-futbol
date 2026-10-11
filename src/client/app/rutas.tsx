@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router';
 import { RUTAS } from '../common/navegacion';
 import { GestionDeTorneosPage } from '../features/admin/pages/GestionDeTorneosPage';
+import { InscripcionesPage } from '../features/admin/pages/InscripcionesPage';
 import { ArranquePage } from '../features/auth/pages/ArranquePage';
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
 import { IniciarSesionPage } from '../features/auth/pages/IniciarSesionPage';
@@ -30,8 +31,9 @@ export const rutas: RouteObject[] = [
     ],
   },
 
-  // Administrador (v3 · A01). Provisional hasta la historia de gestión de torneos.
+  // Administrador (v3 · A01 y A02).
   { path: RUTAS.GESTION_DE_TORNEOS, element: <GestionDeTorneosPage /> },
+  { path: RUTAS.ADMIN_INSCRIPCIONES, element: <InscripcionesPage /> },
 
   // Pantallas anteriores al diseño v3.
   {
