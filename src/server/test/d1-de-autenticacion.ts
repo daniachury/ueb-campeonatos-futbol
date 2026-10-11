@@ -37,6 +37,10 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
   const { db, consultas } = crearD1Falsa((sql, parametros) => {
     const [primero, segundo, tercero, cuarto] = parametros;
 
+    if (sql.includes('FROM usuarios WHERE id = ?') || sql.includes('FROM usuarios\n          WHERE id = ?')) {
+      const usuario = usuarios.find((u) => u.id === primero);
+      return usuario ? [usuario] : [];
+    }
     if (sql.includes('FROM usuarios WHERE correo') || sql.includes('FROM usuarios\n')) {
       const usuario = buscarUsuario(primero);
       return usuario ? [usuario] : [];
@@ -56,11 +60,39 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       });
       return [];
     }
-    if (sql.includes('UPDATE usuarios SET hash_contrasena')) {
+    if (sql.includes('UPDATE usuarios SET hash_contrasena = ?,')) {
       const usuario = usuarios.find((guardado) => guardado.id === tercero);
       if (usuario) {
         usuario.hash_contrasena = String(primero);
         usuario.actualizado_en = String(segundo);
+      }
+      return [];
+    }
+    if (sql.includes('UPDATE usuarios SET') && !sql.includes('hash_contrasena = ?,')) {
+      const idUsuario = parametros[parametros.length - 1];
+      const usuario = usuarios.find((guardado) => guardado.id === idUsuario);
+      if (usuario) {
+        const correoParam = parametros.find((p): p is string => typeof p === 'string' && p.includes('@'));
+        if (
+          correoParam &&
+          usuarios.some((u) => u.id !== idUsuario && u.correo.toLowerCase() === correoParam.toLowerCase())
+        ) {
+          throw new Error('UNIQUE constraint failed: usuarios.correo');
+        }
+
+        if (sql.includes('nombre_completo = ?')) {
+          usuario.nombre_completo = String(parametros[0]);
+        }
+        if (sql.includes('telefono = ?')) {
+          const tel = parametros.find(
+            (p) => typeof p === 'string' && /^\+?\d{7,15}$/.test(p),
+          );
+          if (tel) usuario.telefono = String(tel);
+        }
+        if (correoParam) {
+          usuario.correo = correoParam.toLowerCase();
+        }
+        usuario.actualizado_en = new Date().toISOString();
       }
       return [];
     }
@@ -85,6 +117,15 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
         hash_token: String(tercero),
         expira_en: String(cuarto),
       });
+      return [];
+    }
+    if (sql.includes('DELETE FROM sesiones WHERE usuario_id = ? AND hash_token != ?')) {
+      const [usuarioId, hashTokenActual] = parametros;
+      for (let i = sesiones.length - 1; i >= 0; i--) {
+        if (sesiones[i].usuario_id === usuarioId && sesiones[i].hash_token !== hashTokenActual) {
+          sesiones.splice(i, 1);
+        }
+      }
       return [];
     }
     if (sql.includes('DELETE FROM sesiones')) {

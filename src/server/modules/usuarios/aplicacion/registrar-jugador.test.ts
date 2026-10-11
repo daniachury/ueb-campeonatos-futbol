@@ -33,11 +33,17 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
     return null;
   }
 
+  async buscarPorId(): Promise<Usuario | null> {
+    return null;
+  }
+
   async guardar(usuario: Usuario): Promise<void> {
     this.usuariosGuardados.push(usuario);
   }
 
   async actualizarContrasena(): Promise<void> {}
+
+  async actualizarPerfil(): Promise<void> {}
 }
 
 /** Doble de prueba: anota qué recibió y devuelve siempre el mismo hash. */

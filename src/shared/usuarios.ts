@@ -6,3 +6,6 @@ export interface UsuarioSesion {
   nombre: string;
   rol: Rol;
 }
+
+export * from './usuarios/contrato-perfil';
+

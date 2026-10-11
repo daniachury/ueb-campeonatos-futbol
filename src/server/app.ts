@@ -16,6 +16,7 @@ import { sedesAdminRoutes } from './modules/sedes/sedes.routes';
 import { sorteoAdminRoutes } from './modules/sorteo/sorteo.routes';
 import { tablaRoutes } from './modules/tabla/tabla.routes';
 import { torneosAdminRoutes, torneosRoutes } from './modules/torneos/torneos.routes';
+import { meRoutes } from './modules/usuarios/me.routes';
 import { usuariosAdminRoutes, usuariosRoutes } from './modules/usuarios/usuarios.routes';
 
 /**
@@ -26,7 +27,7 @@ import { usuariosAdminRoutes, usuariosRoutes } from './modules/usuarios/usuarios
  * TODO(UEB-Proyect-10): la historia pide sesión para ver torneos. Agregar '/torneos'
  * aquí cuando esté listo el inicio de sesión (UEB-Proyect-04).
  */
-const PREFIJOS_CON_SESION = ['/usuarios', '/equipos', '/inscripciones', '/partidos', '/tabla'];
+const PREFIJOS_CON_SESION = ['/usuarios', '/equipos', '/inscripciones', '/partidos', '/tabla', '/me'];
 
 export function crearApp() {
   const api = new Hono<AppEnv>();
@@ -34,6 +35,7 @@ export function crearApp() {
   // 1. Protección por grupos. Va antes de las rutas para que se ejecute primero.
   api.use('/admin/*', requireAuth, requireRole('admin'));
   for (const prefijo of PREFIJOS_CON_SESION) {
+    api.use(prefijo, requireAuth);
     api.use(`${prefijo}/*`, requireAuth);
   }
 
@@ -43,6 +45,7 @@ export function crearApp() {
   api.route('/torneos', torneosRoutes);
 
   // 3. Rutas con sesión (jugador o administrador).
+  api.route('/me', meRoutes);
   api.route('/usuarios', usuariosRoutes);
   api.route('/equipos', equiposRoutes);
   api.route('/inscripciones', inscripcionesRoutes);

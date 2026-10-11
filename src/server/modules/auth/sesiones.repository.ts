@@ -30,6 +30,7 @@ export interface SesionesRepository {
   crear(sesion: NuevaSesion): Promise<void>;
   buscarPorHashDelToken(hashToken: string): Promise<SesionConUsuario | null>;
   eliminarPorHashDelToken(hashToken: string): Promise<void>;
+  eliminarOtrasSesionesDelUsuario(usuarioId: string, hashTokenActual: string): Promise<void>;
 }
 
 interface FilaDeSesion {
@@ -81,6 +82,13 @@ export function crearSesionesRepository(db: D1Database): SesionesRepository {
 
     async eliminarPorHashDelToken(hashToken) {
       await db.prepare('DELETE FROM sesiones WHERE hash_token = ?').bind(hashToken).run();
+    },
+
+    async eliminarOtrasSesionesDelUsuario(usuarioId, hashTokenActual) {
+      await db
+        .prepare('DELETE FROM sesiones WHERE usuario_id = ? AND hash_token != ?')
+        .bind(usuarioId, hashTokenActual)
+        .run();
     },
   };
 }
