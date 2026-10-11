@@ -13,11 +13,23 @@ export class GestionDeTorneosPagina extends PaginaBase {
     return this.page.getByText(/^Hola, /);
   }
 
+  get enlaceSedesYCanchas(): Locator {
+    return this.page.getByRole('link', { name: /sedes y canchas/i });
+  }
+
+  get botonCerrarSesion(): Locator {
+    return this.page.getByRole('button', { name: 'Cerrar sesión' });
+  }
+
+  async irASedesYCanchas(): Promise<void> {
+    await this.enlaceSedesYCanchas.click();
+  }
+
   async irARegistrarAdministrador(): Promise<void> {
     await this.page.getByRole('button', { name: 'Registrar administrador' }).click();
   }
 
   async cerrarSesion(): Promise<void> {
-    await this.page.getByRole('button', { name: 'Cerrar sesión' }).click();
+    await this.botonCerrarSesion.click();
   }
 }

@@ -19,6 +19,8 @@ export const RUTAS = {
   GESTION_DE_TORNEOS: '/admin/torneos',
   /** v3 · A02 · Inscripciones y sorteo (KAN-32 · Escenario 1). */
   ADMIN_INSCRIPCIONES: '/admin/torneos/:id/inscripciones',
+  /** v3 · A07 · Lugares y escenarios deportivos (KAN-34 · Escenario 1). */
+  ADMIN_SEDES: '/admin/sedes',
   /** KAN-18 · Registro de administradores. */
   REGISTRAR_ADMIN: '/admin/usuarios/nuevo',
   CAMBIAR_CONTRASENA: '/cambiar-contrasena',

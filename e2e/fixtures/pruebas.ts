@@ -12,6 +12,7 @@ import { InicioDelJugadorPagina } from '../paginas/inicio-del-jugador.pagina';
 import { InscripcionesPagina } from '../paginas/inscripciones.pagina';
 import { MiPerfilPagina } from '../paginas/mi-perfil.pagina';
 import { RegistrarAdministradorPagina } from '../paginas/registrar-administrador.pagina';
+import { SedesPagina } from '../paginas/sedes.pagina';
 
 interface Paginas {
   iniciarSesion: IniciarSesionPagina;
@@ -22,6 +23,7 @@ interface Paginas {
   registrarAdministrador: RegistrarAdministradorPagina;
   cambiarContrasena: CambiarContrasenaPagina;
   inscripciones: InscripcionesPagina;
+  sedes: SedesPagina;
 }
 
 interface Contexto {
@@ -65,6 +67,7 @@ export const test = base.extend<Paginas & Contexto, ContextoDelTrabajador>({
   registrarAdministrador: async ({ page }, usar) => usar(new RegistrarAdministradorPagina(page)),
   cambiarContrasena: async ({ page }, usar) => usar(new CambiarContrasenaPagina(page)),
   inscripciones: async ({ page }, usar) => usar(new InscripcionesPagina(page)),
+  sedes: async ({ page }, usar) => usar(new SedesPagina(page)),
 });
 
 export { expect } from '@playwright/test';
