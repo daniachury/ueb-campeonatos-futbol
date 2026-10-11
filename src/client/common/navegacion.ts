@@ -17,7 +17,13 @@ export const RUTAS = {
   MI_PERFIL: '/mi-perfil',
   /** v3 · A01 · Gestión de torneos: a donde entra el administrador (KAN-17, Escenario 2). */
   GESTION_DE_TORNEOS: '/admin/torneos',
+  /** v3 · A02 · Inscripciones y sorteo (KAN-32 · Escenario 1). */
+  ADMIN_INSCRIPCIONES: '/admin/torneos/:id/inscripciones',
 } as const;
+
+export function rutaAdminInscripciones(torneoId: string): string {
+  return `/admin/torneos/${torneoId}/inscripciones`;
+}
 
 /** KAN-17 · Escenarios 1 y 2: cada rol entra a su propia pantalla de inicio. */
 export function rutaDeInicioSegunRol(rol: Rol): string {
