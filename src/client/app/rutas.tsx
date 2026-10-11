@@ -5,6 +5,7 @@ import { ArranquePage } from '../features/auth/pages/ArranquePage';
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
 import { IniciarSesionPage } from '../features/auth/pages/IniciarSesionPage';
 import { InicioPage } from '../features/inicio/pages/InicioPage';
+import { MiPerfilPage } from '../features/perfil/pages/MiPerfilPage';
 import { TorneosPage } from '../features/torneos/pages/TorneosPage';
 import { AppLayout } from './layout/AppLayout';
 import { LayoutDelJugador } from './layout/LayoutDelJugador';
@@ -23,7 +24,10 @@ export const rutas: RouteObject[] = [
   // Jugador con sesión (v3 · M11, M12 y W04).
   {
     element: <LayoutDelJugador />,
-    children: [{ path: RUTAS.INICIO_DEL_JUGADOR, element: <InicioPage /> }],
+    children: [
+      { path: RUTAS.INICIO_DEL_JUGADOR, element: <InicioPage /> },
+      { path: RUTAS.MI_PERFIL, element: <MiPerfilPage /> },
+    ],
   },
 
   // Administrador (v3 · A01). Provisional hasta la historia de gestión de torneos.

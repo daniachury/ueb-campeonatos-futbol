@@ -58,6 +58,20 @@ export class RepositorioDeUsuariosD1 implements RepositorioDeUsuarios {
     return fila === null ? null : convertirFilaEnUsuario(fila);
   }
 
+  async buscarPorId(id: string): Promise<Usuario | null> {
+    const fila = await this.#baseDeDatos
+      .prepare(
+        `SELECT id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, creado_en, actualizado_en
+           FROM usuarios
+          WHERE id = ?
+          LIMIT 1`,
+      )
+      .bind(id)
+      .first<FilaDeUsuario>();
+
+    return fila === null ? null : convertirFilaEnUsuario(fila);
+  }
+
   async guardar(usuario: Usuario): Promise<void> {
     try {
       await this.#baseDeDatos
@@ -96,6 +110,47 @@ export class RepositorioDeUsuariosD1 implements RepositorioDeUsuarios {
       .prepare('UPDATE usuarios SET hash_contrasena = ?, actualizado_en = ? WHERE id = ?')
       .bind(contrasenaCifrada.obtenerHashParaGuardar(), fecha.toISOString(), usuarioId)
       .run();
+  }
+
+  async actualizarPerfil(
+    usuarioId: string,
+    datos: { nombreCompleto?: string; correo?: string; telefono?: string },
+    fecha: Date,
+  ): Promise<void> {
+    const campos: string[] = [];
+    const valores: (string | number)[] = [];
+
+    if (datos.nombreCompleto !== undefined) {
+      campos.push('nombre_completo = ?');
+      valores.push(datos.nombreCompleto);
+    }
+    if (datos.correo !== undefined) {
+      campos.push('correo = ?');
+      valores.push(datos.correo);
+    }
+    if (datos.telefono !== undefined) {
+      campos.push('telefono = ?');
+      valores.push(datos.telefono);
+    }
+
+    if (campos.length === 0) return;
+
+    campos.push('actualizado_en = ?');
+    valores.push(fecha.toISOString());
+
+    valores.push(usuarioId);
+
+    try {
+      await this.#baseDeDatos
+        .prepare(`UPDATE usuarios SET ${campos.join(', ')} WHERE id = ?`)
+        .bind(...valores)
+        .run();
+    } catch (error) {
+      if (error instanceof Error && error.message.includes(VIOLACION_DE_CORREO_UNICO)) {
+        throw new ErrorCorreoYaRegistrado();
+      }
+      throw error;
+    }
   }
 }
 
