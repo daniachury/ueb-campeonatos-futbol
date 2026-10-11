@@ -8,6 +8,7 @@ import type {
   BandejaInscripcionesResponse,
   SolicitudInscripcionResumen,
 } from '@shared/inscripciones/contrato-inscripciones';
+import type { FixtureTorneoResponse } from '@shared/sorteo/contrato-sorteo';
 import {
   aprobarInscripcion,
   inscribirDirectamente,
@@ -15,18 +16,23 @@ import {
   rechazarInscripcion,
   retirarInscripcion,
 } from '../api/inscripciones-api';
+import { sorteoApi } from '../api/sorteo-api';
 import { ModalMotivoInscripcion } from '../components/ModalMotivoInscripcion';
 import { PanelInscripcionDirecta } from '../components/PanelInscripcionDirecta';
+import { PanelSorteo } from '../components/PanelSorteo';
+import { VistaFixture } from '../components/VistaFixture';
 import estilos from './InscripcionesPage.module.css';
 
-type PestanaActiva = 'pendientes' | 'aprobados' | 'rechazados';
+type PestanaActiva = 'pendientes' | 'aprobados' | 'rechazados' | 'fixture';
 
 export function InscripcionesPage() {
   const { id: torneoId } = useParams<{ id: string }>();
   const { usuarioActual, estaComprobando } = useSesion();
 
   const [datos, setDatos] = useState<BandejaInscripcionesResponse | null>(null);
+  const [fixture, setFixture] = useState<FixtureTorneoResponse | null>(null);
   const [estaCargando, setEstaCargando] = useState(true);
+  const [estaCargandoFixture, setEstaCargandoFixture] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [pestanaActiva, setPestanaActiva] = useState<PestanaActiva>('pendientes');
@@ -51,11 +57,31 @@ export function InscripcionesPage() {
       setErrorGeneral(null);
       const res = await obtenerBandejaInscripciones(id);
       setDatos(res);
+
+      if (res.torneo.estado === 'EN_CURSO') {
+        await cargarFixture(id);
+      }
     } catch (err: unknown) {
       const mensaje = err instanceof Error ? err.message : 'Error al cargar las inscripciones';
       setErrorGeneral(mensaje);
     } finally {
       setEstaCargando(false);
+    }
+  }
+
+  async function cargarFixture(id: string) {
+    try {
+      setEstaCargandoFixture(true);
+      const res = await sorteoApi.obtenerFixture(id);
+      setFixture(res);
+      if (res.fechas.length > 0) {
+        setPestanaActiva('fixture');
+      }
+    } catch {
+      // Si aún no hay fixture generado no es un error fatal
+      setFixture(null);
+    } finally {
+      setEstaCargandoFixture(false);
     }
   }
 
@@ -133,12 +159,19 @@ export function InscripcionesPage() {
     }
   }
 
+  async function manejarSorteoCompletado() {
+    setMensajeExito('¡Sorteo generado con éxito! El torneo ha iniciado.');
+    await cargarBandeja(torneoId!);
+  }
+
   const solicitudesActivas =
     pestanaActiva === 'pendientes'
       ? datos?.pendientes ?? []
       : pestanaActiva === 'aprobados'
         ? datos?.aprobados ?? []
-        : datos?.rechazados ?? [];
+        : pestanaActiva === 'rechazados'
+          ? datos?.rechazados ?? []
+          : [];
 
   return (
     <div className={estilos.pantalla}>
@@ -181,7 +214,7 @@ export function InscripcionesPage() {
 
               {datos.torneoEnCurso && (
                 <div className={estilos.alertaTorneoEnCurso} role="alert">
-                  ⚠️ El torneo se encuentra en curso. La bandeja de inscripciones opera en modo de solo lectura.
+                  ⚽ El torneo se encuentra en curso. Las inscripciones están cerradas y el fixture está activo.
                 </div>
               )}
 
@@ -197,8 +230,34 @@ export function InscripcionesPage() {
                 </div>
               )}
 
+              {/* Panel verde de sorteo (cuando está en inscripciones abiertas) */}
+              {!datos.torneoEnCurso && (
+                <PanelSorteo
+                  torneoId={torneoId}
+                  equiposAprobados={datos.aprobados.length}
+                  solicitudesPendientes={datos.pendientes.length}
+                  bloqueado={datos.torneoEnCurso}
+                  onSorteoCompletado={manejarSorteoCompletado}
+                />
+              )}
+
               {/* Selector de pestañas */}
               <div className={estilos.barraPestanas} role="tablist" aria-label="Pestañas de inscripciones">
+                {fixture && fixture.fechas.length > 0 && (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={pestanaActiva === 'fixture'}
+                    className={`${estilos.botonPestana} ${
+                      pestanaActiva === 'fixture' ? estilos.botonPestanaActiva : ''
+                    }`}
+                    onClick={() => setPestanaActiva('fixture')}
+                  >
+                    📅 Fixture / Cruces
+                    <span className={estilos.insigniaConteo}>{fixture.totalFechas}</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   role="tab"
@@ -239,111 +298,122 @@ export function InscripcionesPage() {
                 </button>
               </div>
 
-              {/* Lista de solicitudes de la pestaña activa */}
-              <section className={estilos.listaSolicitudes} aria-label={`Lista de solicitudes ${pestanaActiva}`}>
-                {solicitudesActivas.length === 0 ? (
-                  <EstadoVacio
-                    icono="escudo"
-                    titulo={`No hay solicitudes en ${pestanaActiva}`}
-                    descripcion="Las solicitudes aparecerán aquí según su estado de aprobación."
-                  />
-                ) : (
-                  solicitudesActivas.map((solicitud) => {
-                    const estaAprobandoEste = aprobandoId === solicitud.id;
+              {/* Vista según pestaña */}
+              {pestanaActiva === 'fixture' && fixture ? (
+                <VistaFixture
+                  fixture={fixture}
+                  cargando={estaCargandoFixture}
+                  onFixtureActualizado={() => cargarFixture(torneoId)}
+                />
+              ) : (
+                /* Lista de solicitudes de la pestaña activa */
+                <section className={estilos.listaSolicitudes} aria-label={`Lista de solicitudes ${pestanaActiva}`}>
+                  {solicitudesActivas.length === 0 ? (
+                    <EstadoVacio
+                      icono="escudo"
+                      titulo={`No hay solicitudes en ${pestanaActiva}`}
+                      descripcion="Las solicitudes aparecerán aquí según su estado de aprobación."
+                    />
+                  ) : (
+                    solicitudesActivas.map((solicitud) => {
+                      const estaAprobandoEste = aprobandoId === solicitud.id;
 
-                    return (
-                      <article key={solicitud.id} className={estilos.tarjetaSolicitud}>
-                        <div className={estilos.infoPrincipal}>
-                          <div className={estilos.filaEquipo}>
-                            {solicitud.equipoColor && (
-                              <span
-                                className={estilos.puntoColor}
-                                style={{ backgroundColor: solicitud.equipoColor }}
-                                aria-hidden="true"
-                              />
-                            )}
-                            <h2 className={estilos.nombreEquipo}>{solicitud.equipoNombre}</h2>
-                          </div>
-
-                          <div className={estilos.metadatos}>
-                            <span>Capitán: {solicitud.capitanNombre}</span>
-                            <span>{solicitud.cantidadJugadores} jugadores</span>
-                            <span>
-                              Solicitud:{' '}
-                              {new Date(solicitud.fechaSolicitud).toLocaleDateString('es-CO', {
-                                day: '2-digit',
-                                month: 'short',
-                                year: 'numeric',
-                              })}
-                            </span>
-                          </div>
-
-                          {solicitud.motivo && (
-                            <div className={estilos.cajaMotivo}>
-                              <strong>Motivo:</strong> {solicitud.motivo}
+                      return (
+                        <article key={solicitud.id} className={estilos.tarjetaSolicitud}>
+                          <div className={estilos.infoPrincipal}>
+                            <div className={estilos.filaEquipo}>
+                              {solicitud.equipoColor && (
+                                <span
+                                  className={estilos.puntoColor}
+                                  style={{ backgroundColor: solicitud.equipoColor }}
+                                  aria-hidden="true"
+                                />
+                              )}
+                              <h2 className={estilos.nombreEquipo}>{solicitud.equipoNombre}</h2>
                             </div>
-                          )}
-                        </div>
 
-                        {/* Botones de acción según pestaña */}
-                        <div className={estilos.accionesSolicitud}>
-                          {pestanaActiva === 'pendientes' && (
-                            <>
+                            <div className={estilos.metadatos}>
+                              <span>Capitán: {solicitud.capitanNombre}</span>
+                              <span>{solicitud.cantidadJugadores} jugadores</span>
+                              <span>
+                                Solicitud:{' '}
+                                {new Date(solicitud.fechaSolicitud).toLocaleDateString('es-CO', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric',
+                                })}
+                              </span>
+                            </div>
+
+                            {solicitud.motivo && (
+                              <div className={estilos.cajaMotivo}>
+                                <strong>Motivo:</strong> {solicitud.motivo}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Botones de acción según pestaña */}
+                          <div className={estilos.accionesSolicitud}>
+                            {pestanaActiva === 'pendientes' && (
+                              <>
+                                <Boton
+                                  variante="secundario"
+                                  tamano="mediano"
+                                  anchoCompleto={false}
+                                  estaDeshabilitado={datos.torneoEnCurso}
+                                  alPulsar={() => abrirModalRechazar(solicitud)}
+                                >
+                                  Rechazar
+                                </Boton>
+                                <Boton
+                                  variante="principal"
+                                  tamano="mediano"
+                                  anchoCompleto={false}
+                                  estaDeshabilitado={
+                                    datos.cupoCompleto ||
+                                    datos.torneoEnCurso ||
+                                    solicitud.cantidadJugadores < 11 ||
+                                    estaAprobandoEste
+                                  }
+                                  estaCargando={estaAprobandoEste}
+                                  alPulsar={() => void manejarAprobar(solicitud)}
+                                >
+                                  {datos.cupoCompleto ? 'Cupo completo' : 'Aprobar'}
+                                </Boton>
+                              </>
+                            )}
+
+                            {pestanaActiva === 'aprobados' && (
                               <Boton
                                 variante="secundario"
                                 tamano="mediano"
                                 anchoCompleto={false}
-                                estaDeshabilitado={datos.torneoEnCurso}
-                                alPulsar={() => abrirModalRechazar(solicitud)}
-                              >
-                                Rechazar
-                              </Boton>
-                              <Boton
-                                variante="principal"
-                                tamano="mediano"
-                                anchoCompleto={false}
                                 estaDeshabilitado={
-                                  datos.cupoCompleto ||
                                   datos.torneoEnCurso ||
-                                  solicitud.cantidadJugadores < 11 ||
-                                  estaAprobandoEste
+                                  datos.torneo.estado !== 'INSCRIPCIONES_ABIERTAS'
                                 }
-                                estaCargando={estaAprobandoEste}
-                                alPulsar={() => void manejarAprobar(solicitud)}
+                                alPulsar={() => abrirModalRetirar(solicitud)}
                               >
-                                {datos.cupoCompleto ? 'Cupo completo' : 'Aprobar'}
+                                Retirar
                               </Boton>
-                            </>
-                          )}
-
-                          {pestanaActiva === 'aprobados' && (
-                            <Boton
-                              variante="secundario"
-                              tamano="mediano"
-                              anchoCompleto={false}
-                              estaDeshabilitado={
-                                datos.torneoEnCurso ||
-                                datos.torneo.estado !== 'INSCRIPCIONES_ABIERTAS'
-                              }
-                              alPulsar={() => abrirModalRetirar(solicitud)}
-                            >
-                              Retirar
-                            </Boton>
-                          )}
-                        </div>
-                      </article>
-                    );
-                  })
-                )}
-              </section>
+                            )}
+                          </div>
+                        </article>
+                      );
+                    })
+                  )}
+                </section>
+              )}
 
               {/* Panel de Inscripción Directa */}
-              <PanelInscripcionDirecta
-                torneoId={torneoId}
-                cupoCompleto={datos.cupoCompleto}
-                torneoEnCurso={datos.torneoEnCurso}
-                alInscribir={manejarInscripcionDirecta}
-              />
+              {!datos.torneoEnCurso && (
+                <PanelInscripcionDirecta
+                  torneoId={torneoId}
+                  cupoCompleto={datos.cupoCompleto}
+                  torneoEnCurso={datos.torneoEnCurso}
+                  alInscribir={manejarInscripcionDirecta}
+                />
+              )}
 
               {/* Modal para captura obligatoria de motivo */}
               <ModalMotivoInscripcion

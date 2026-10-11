@@ -231,7 +231,7 @@ describe('InscripcionesPage (v3 · A02)', () => {
     const botonAprobar = await screen.findByRole('button', { name: 'Aprobar' });
     fireEvent.click(botonAprobar);
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/Jugadores en conflicto/i);
+    expect(await screen.findByText(/Jugadores en conflicto: Carlos/i)).toBeInTheDocument();
   });
 
   it('muestra estado vacío cuando una pestaña no tiene solicitudes', async () => {
@@ -301,5 +301,40 @@ describe('InscripcionesPage (v3 · A02)', () => {
 
     // Como jugador, la ruta redirige a la pantalla de inicio del jugador (no muestra la cabecera de inscripciones)
     expect(screen.queryByRole('heading', { level: 1, name: 'Copa El Bosque 2026' })).not.toBeInTheDocument();
+  });
+
+  it('KAN-33: muestra el Panel de Sorteo con estimación y permite confirmar el sorteo', async () => {
+    const bandejaCon3Aprobados: BandejaInscripcionesResponse = {
+      ...BANDEJA_EJEMPLO,
+      aprobados: [
+        { ...BANDEJA_EJEMPLO.aprobados[0], id: 'ins-2' },
+        { ...BANDEJA_EJEMPLO.aprobados[0], id: 'ins-3', equipoId: 'eq-3', equipoNombre: 'Tigres' },
+        { ...BANDEJA_EJEMPLO.aprobados[0], id: 'ins-4', equipoId: 'eq-4', equipoNombre: 'Leones' },
+      ],
+    };
+    const { fetchFalso } = renderizarInscripciones(bandejaCon3Aprobados);
+
+    // El panel de sorteo debe estar en pantalla con el botón
+    expect(await screen.findByTestId('panel-sorteo')).toBeInTheDocument();
+    const botonSortear = screen.getByRole('button', { name: /Cerrar inscripciones y sortear/i });
+    expect(botonSortear).toBeInTheDocument();
+    expect(botonSortear).not.toBeDisabled();
+
+    fireEvent.click(botonSortear);
+
+    // Modal de confirmación abierto
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('1 solicitud pendiente')).toBeInTheDocument();
+
+    const botonConfirmar = screen.getByRole('button', { name: /Confirmar y sortear/i });
+    fireEvent.click(botonConfirmar);
+
+    await screen.findByRole('dialog'); // sigue abierto o cerrando
+    await vi.waitFor(() => {
+      expect(fetchFalso).toHaveBeenCalledWith(
+        '/api/admin/sorteo/torneos/torneo-1',
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
   });
 });
