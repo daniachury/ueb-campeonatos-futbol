@@ -26,6 +26,7 @@ describe('seguridad por defecto (UEB-Proyect-02)', () => {
   it.each([
     '/api/admin/torneos',
     '/api/admin/inscripciones/torneos/t1',
+    '/api/admin/sorteo/torneos/t1',
     '/api/admin/ruta-que-aun-no-existe',
     '/api/equipos',
     '/api/equipos/123',
