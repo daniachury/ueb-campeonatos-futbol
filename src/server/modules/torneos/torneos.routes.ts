@@ -30,7 +30,11 @@ export const torneosRoutes = new Hono<AppEnv>().get(
     };
     return c.json(respuesta);
   },
-);
+).get('/:id', async (c) => {
+  const torneo = await crearTorneosService(crearTorneosRepository(c.env.DB)).obtenerPorId(c.req.param('id'));
+  if (!torneo) return c.json({ mensaje: 'Torneo no encontrado' }, 404);
+  return c.json({ datos: torneo });
+});
 
 /**
  * Rutas de administración, montadas en /api/admin/torneos (exigen rol admin).
