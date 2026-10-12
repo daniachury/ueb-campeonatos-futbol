@@ -1,17 +1,21 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import type { RespuestaLista } from '@shared/api';
-import { consultaTorneosSchema, type TorneoResumen } from '@shared/torneos';
+import {
+  consultaTorneosSchema,
+  esquemaCrearTorneo,
+  type TorneoAdminResumen,
+  type TorneoResumen,
+} from '@shared/torneos';
 import type { AppEnv } from '../../core/env';
 import { siFallaLaValidacion } from '../../core/validacion';
+import { crearSorteoService } from '../sorteo/sorteo.routes';
 import { crearTorneosRepository } from './torneos.repository';
 import { crearTorneosService } from './torneos.service';
-import { crearSorteoService } from '../sorteo/sorteo.routes';
 
 /**
  * Épica E3 · Gestión de torneos.
- * Módulo de referencia: muestra el recorrido completo routes → service → domain → repository → D1.
- * Copia esta forma al implementar los demás módulos.
+ * Rutas públicas (o con sesión de jugador): /api/torneos
  */
 export const torneosRoutes = new Hono<AppEnv>().get(
   '/',
@@ -30,14 +34,49 @@ export const torneosRoutes = new Hono<AppEnv>().get(
 
 /**
  * Rutas de administración, montadas en /api/admin/torneos (exigen rol admin).
- * Pendientes:
  * - UEB-Proyect-07 (KAN-20) · Crear torneo y abrir inscripciones
- * - UEB-Proyect-08 (KAN-21) · Editar torneo
- * - UEB-Proyect-09 (KAN-22) · Eliminar torneo
- * Implementadas:
- * - UEB-Proyect-20 (KAN-33) · POST /:id/sorteo y POST /:id/sorteo/repetir
+ * - UEB-Proyect-20 (KAN-33) · Sorteo y Fixture
  */
 export const torneosAdminRoutes = new Hono<AppEnv>()
+  .get('/', async (c) => {
+    const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+    const torneos = await servicio.listarAdmin();
+    const respuesta: RespuestaLista<TorneoAdminResumen> = {
+      datos: torneos,
+    };
+    return c.json(respuesta);
+  })
+  .get('/:id', async (c) => {
+    const torneoId = c.req.param('id');
+    const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+    const torneo = await servicio.obtenerPorId(torneoId);
+    return c.json(torneo);
+  })
+  .post(
+    '/',
+    zValidator('json', esquemaCrearTorneo, siFallaLaValidacion),
+    async (c) => {
+      const datos = c.req.valid('json');
+      const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+      const torneo = await servicio.crearTorneo(datos);
+      return c.json(
+        {
+          mensaje: 'Torneo creado exitosamente en estado borrador',
+          torneo,
+        },
+        201,
+      );
+    },
+  )
+  .post('/:id/abrir-inscripciones', async (c) => {
+    const torneoId = c.req.param('id');
+    const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+    const torneo = await servicio.abrirInscripciones(torneoId);
+    return c.json({
+      mensaje: 'Inscripciones abiertas exitosamente',
+      torneo,
+    });
+  })
   .post('/:id/sorteo', async (c) => {
     const torneoId = c.req.param('id');
     const service = crearSorteoService(c.env.DB);

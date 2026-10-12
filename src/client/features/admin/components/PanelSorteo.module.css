@@ -1,16 +1,15 @@
 .panel {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.05) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.25),
-    0 0 15px rgba(16, 185, 129, 0.1);
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
+  background: var(--color-superficie, #ffffff);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  box-shadow: 0 4px 16px rgba(22, 26, 20, 0.04);
+  border-radius: var(--radio-tarjeta, 22px);
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 16px;
+  margin-bottom: 24px;
   transition: all 0.2s ease;
+  font-family: var(--fuente-principal, 'Plus Jakarta Sans', sans-serif);
 }
 
 .cabecera {
@@ -18,72 +17,88 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .titulo {
   margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #34d399;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--color-grafito, #161a14);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .badgeEstado {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  background-color: rgba(16, 185, 129, 0.2);
-  color: #a7f3d0;
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radio-pildora, 999px);
+  background-color: var(--color-tinte-acento, #f1fbd0);
+  color: var(--color-acento-texto, #3f5200);
+  border: 1px solid var(--color-acento, #b7f000);
 }
 
 .cuerpo {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .cajaMetrica {
-  background-color: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: 8px;
-  padding: 0.75rem;
+  background-color: var(--color-campo, #f3f4f0);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  border-radius: 14px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
 }
 
 .etiquetaMetrica {
-  font-size: 0.75rem;
-  color: #94a3b8;
+  font-size: 11px;
+  color: var(--color-texto-secundario, #6b7066);
   text-transform: uppercase;
+  font-weight: 700;
   letter-spacing: 0.05em;
 }
 
 .valorMetrica {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #f1f5f9;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-grafito, #161a14);
 }
 
 .valorMetricaResaltado {
-  color: #10b981;
+  color: var(--color-acento-texto, #3f5200);
 }
 
 .alertaInsuficientes {
-  background-color: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: #fcd34d;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  background-color: #fff8e6;
+  border: 1px solid #ffd591;
+  color: #874d00;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+}
+
+.alertaError {
+  background-color: var(--color-alerta-fondo, #fcecec);
+  border: 1px solid var(--color-error-borde, #d93a3a);
+  color: var(--color-error-texto, #b02424);
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .pie {
@@ -91,41 +106,44 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(16, 185, 129, 0.2);
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-separador, #f0f2ec);
 }
 
 .notaAviso {
-  font-size: 0.8rem;
-  color: #94a3b8;
+  font-size: 13px;
+  color: var(--color-texto-secundario, #6b7066);
   margin: 0;
+  font-weight: 500;
 }
 
 .botonSortear {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background-color: var(--color-grafito, #161a14);
   border: none;
-  color: #022c22;
+  color: #ffffff;
   font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.7rem 1.4rem;
-  border-radius: 8px;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: var(--radio-pildora, 999px);
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.35);
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+  font-family: inherit;
 }
 
 .botonSortear:hover:not(:disabled) {
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
-  transform: translateY(-2px);
+  background-color: #2a3126;
+  transform: translateY(-1px);
 }
 
 .botonSortear:disabled {
-  opacity: 0.45;
+  background-color: var(--color-campo, #f3f4f0);
+  color: var(--color-texto-secundario, #6b7066);
+  border: 1px solid var(--color-separador, #f0f2ec);
   cursor: not-allowed;
-  box-shadow: none;
   transform: none;
+  box-shadow: none;
 }
