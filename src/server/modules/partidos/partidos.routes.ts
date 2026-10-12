@@ -15,7 +15,21 @@ export function crearPartidosService(db: D1Database): PartidoService {
 /**
  * Épicas E8 (programación) y E9 (resultados). Montadas en /api/partidos (exigen sesión).
  */
-export const partidosRoutes = new Hono<AppEnv>().get('/:id', async (c) => {
+export const partidosRoutes = new Hono<AppEnv>()
+  .get('/calendario/:torneoId', async (c) => {
+    const { results } = await c.env.DB.prepare(
+      `SELECT p.id, f.numero AS jornada, p.fecha_hora AS fechaHora,
+        p.local_id AS localId, p.visitante_id AS visitanteId,
+        local.nombre AS equipoLocal, visitante.nombre AS equipoVisitante,
+        p.cancha, p.estado, p.goles_local AS golesLocal, p.goles_visitante AS golesVisitante
+       FROM partidos p JOIN fechas f ON f.id = p.fecha_id
+       JOIN equipos local ON local.id = p.local_id
+       JOIN equipos visitante ON visitante.id = p.visitante_id
+       WHERE p.torneo_id = ? ORDER BY f.numero, p.fecha_hora`,
+    ).bind(c.req.param('torneoId')).all();
+    return c.json({ datos: results });
+  })
+  .get('/:id', async (c) => {
   const id = c.req.param('id');
   const service = crearPartidosService(c.env.DB);
   const partido = await service.obtenerPartidoPorId(id);

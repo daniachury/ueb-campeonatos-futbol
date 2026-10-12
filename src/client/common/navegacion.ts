@@ -15,6 +15,7 @@ export const RUTAS = {
   CREAR_MI_EQUIPO: '/mis-equipos/nuevo',
   CALENDARIO: '/calendario',
   MI_PERFIL: '/mi-perfil',
+  TABLA_RESULTADOS: '/tabla-resultados',
   /** v3 · A01 · Gestión de torneos: a donde entra el administrador (KAN-17, Escenario 2). */
   GESTION_DE_TORNEOS: '/admin/torneos',
   PANEL_ADMIN: '/admin',

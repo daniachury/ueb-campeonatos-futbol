@@ -14,7 +14,13 @@ import { crearInscripcionesService } from './inscripciones.service';
  * Pendientes:
  * - UEB-Proyect-18 (KAN-31) · El capitán solicita la inscripción de su equipo
  */
-export const inscripcionesRoutes = new Hono<AppEnv>();
+export const inscripcionesRoutes = new Hono<AppEnv>().get('/', async (c) => {
+  const usuario = c.get('usuario');
+  const { results } = await c.env.DB.prepare(
+    'SELECT id, torneo_id AS torneoId, equipo_id AS equipoId, estado FROM inscripciones WHERE solicitada_por = ? OR equipo_id IN (SELECT id FROM equipos WHERE capitan_id = ?) ORDER BY creada_en DESC',
+  ).bind(usuario.id, usuario.id).all();
+  return c.json({ datos: results });
+});
 
 /**
  * Montadas en /api/admin/inscripciones (exigen rol admin).

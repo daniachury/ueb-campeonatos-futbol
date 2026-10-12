@@ -9,6 +9,8 @@ import { CambiarContrasenaPage } from '../features/auth/pages/CambiarContrasenaP
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
 import { IniciarSesionPage } from '../features/auth/pages/IniciarSesionPage';
 import { InicioPage } from '../features/inicio/pages/InicioPage';
+import { CalendarioPage } from '../features/inicio/pages/CalendarioPage';
+import { TablaResultadosPage } from '../features/inicio/pages/TablaResultadosPage';
 import { RutaMiPerfil } from '../features/perfil/pages/RutaMiPerfil';
 import { TorneosPage } from '../features/torneos/pages/TorneosPage';
 import { AppLayout } from './layout/AppLayout';
@@ -30,6 +32,8 @@ export const rutas: RouteObject[] = [
     element: <LayoutDelJugador />,
     children: [
       { path: RUTAS.INICIO_DEL_JUGADOR, element: <InicioPage /> },
+      { path: RUTAS.CALENDARIO, element: <CalendarioPage /> },
+      { path: RUTAS.TABLA_RESULTADOS, element: <TablaResultadosPage /> },
     ],
   },
 
