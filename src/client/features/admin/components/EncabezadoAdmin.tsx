@@ -62,6 +62,16 @@ export function EncabezadoAdmin({ paginaActual }: PropiedadesEncabezadoAdmin = {
           </EnlaceBoton>
 
           <EnlaceBoton
+            id="enlace-admin-inicio"
+            ruta={RUTAS.PANEL_ADMIN}
+            variante="secundario"
+            tamano="mediano"
+            anchoCompleto={false}
+          >
+            Regresar al inicio
+          </EnlaceBoton>
+
+          <EnlaceBoton
             id="enlace-admin-sedes"
             ruta={RUTAS.ADMIN_SEDES}
             variante={esSedes ? 'principal' : 'secundario'}

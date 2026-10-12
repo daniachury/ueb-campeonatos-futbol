@@ -34,6 +34,9 @@ export function AppLayout() {
             ))}
           </ul>
         </nav>
+        <NavLink className="app__enlace app__enlace--inicio" to={RUTAS.INICIO_DEL_JUGADOR}>
+          Regresar al inicio
+        </NavLink>
       </header>
       <main className="app__contenido">
         <Outlet />
