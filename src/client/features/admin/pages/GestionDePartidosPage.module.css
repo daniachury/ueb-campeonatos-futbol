@@ -1,0 +1,13 @@
+.pantalla { min-height: 100dvh; background: var(--color-fondo-app); color: var(--color-grafito); }
+.encabezado { display: flex; justify-content: space-between; align-items: center; padding: 18px 16px; background: var(--color-superficie); }
+.contenido { max-width: 1240px; margin: 0 auto; padding: 28px 16px 48px; }
+.volver { border: 0; background: transparent; color: var(--color-grafito); padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
+.contenido h1 { margin: 16px 0 8px; font-size: clamp(30px, 5vw, 48px); }
+.descripcion { color: var(--color-texto-secundario); }
+.lista { display: grid; gap: 14px; margin-top: 28px; }
+.tarjeta { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px; border: 1px solid #e1e5eb; border-radius: var(--radio-tarjeta); background: var(--color-superficie); }
+.datos h2, .datos p, .datos span { margin: 0 0 8px; }
+.datos p, .datos span { display: block; color: var(--color-texto-secundario); }
+.acciones { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.vacio { padding: 28px; border: 1px dashed #cfd5dc; border-radius: var(--radio-tarjeta); background: var(--color-superficie); color: var(--color-texto-secundario); }
+@media (max-width: 700px) { .tarjeta { align-items: stretch; flex-direction: column; } .acciones { justify-content: stretch; } }

@@ -41,6 +41,21 @@ export const partidosRoutes = new Hono<AppEnv>()
  * UEB-Proyect-22 (KAN-35) · Programar partido: lugar, fecha, hora y cancha.
  */
 export const partidosAdminRoutes = new Hono<AppEnv>()
+  .get('/', async (c) => {
+    const { results } = await c.env.DB.prepare(
+      `SELECT p.id, f.numero AS jornada, p.estado, p.fecha_hora,
+        p.cancha_id, p.cancha, p.goles_local, p.goles_visitante,
+        p.local_id, p.visitante_id, el.nombre AS local_nombre,
+        ev.nombre AS visitante_nombre, t.nombre AS torneo_nombre
+       FROM partidos p
+       JOIN equipos el ON el.id = p.local_id
+       JOIN equipos ev ON ev.id = p.visitante_id
+       JOIN torneos t ON t.id = p.torneo_id
+       LEFT JOIN fechas f ON f.id = p.fecha_id
+       ORDER BY p.fecha_hora IS NULL, p.fecha_hora, t.nombre, f.numero, p.id`,
+    ).all();
+    return c.json({ datos: results });
+  })
   .get('/:id', async (c) => {
     const id = c.req.param('id');
     const service = crearPartidosService(c.env.DB);
@@ -59,4 +74,18 @@ export const partidosAdminRoutes = new Hono<AppEnv>()
     const service = crearPartidosService(c.env.DB);
     const partido = await service.desprogramarPartido(id);
     return c.json(partido);
+  })
+  .patch('/:id/resultado', async (c) => {
+    const id = c.req.param('id');
+    const body = await c.req.json<{ golesLocal?: number; golesVisitante?: number }>();
+    const golesLocal = body.golesLocal;
+    const golesVisitante = body.golesVisitante;
+    if (typeof golesLocal !== 'number' || typeof golesVisitante !== 'number' || !Number.isInteger(golesLocal) || !Number.isInteger(golesVisitante) || golesLocal < 0 || golesVisitante < 0) {
+      return c.json({ mensaje: 'Los goles deben ser números enteros positivos' }, 400);
+    }
+    await c.env.DB.prepare(
+      `UPDATE partidos SET goles_local = ?, goles_visitante = ?, estado = 'JUGADO', actualizado_en = ? WHERE id = ?`,
+    ).bind(golesLocal, golesVisitante, new Date().toISOString(), id).run();
+    const service = crearPartidosService(c.env.DB);
+    return c.json(await service.obtenerPartidoPorId(id));
   });
