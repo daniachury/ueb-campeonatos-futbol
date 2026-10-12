@@ -18,7 +18,7 @@ export function crearPartidosService(db: D1Database): PartidoService {
 export const partidosRoutes = new Hono<AppEnv>()
   .get('/calendario/:torneoId', async (c) => {
     const { results } = await c.env.DB.prepare(
-      `SELECT p.id, f.numero AS jornada, p.fecha_hora AS fechaHora,
+      `SELECT p.id, f.numero AS jornada, date(p.fecha_hora) AS fecha, time(p.fecha_hora) AS hora,
         p.local_id AS localId, p.visitante_id AS visitanteId,
         local.nombre AS equipoLocal, visitante.nombre AS equipoVisitante,
         p.cancha, p.estado, p.goles_local AS golesLocal, p.goles_visitante AS golesVisitante
