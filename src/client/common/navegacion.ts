@@ -17,6 +17,11 @@ export const RUTAS = {
   MI_PERFIL: '/mi-perfil',
   /** v3 · A01 · Gestión de torneos: a donde entra el administrador (KAN-17, Escenario 2). */
   GESTION_DE_TORNEOS: '/admin/torneos',
+  PANEL_ADMIN: '/admin',
+  GESTION_DE_EQUIPOS: '/admin/equipos',
+  GESTION_DE_JUGADORES: '/admin/jugadores',
+  GESTION_DE_INSCRIPCIONES: '/admin/inscripciones',
+  GESTION_DE_PARTIDOS: '/admin/partidos',
   /** v3 · A02 · Inscripciones y sorteo (KAN-32 · Escenario 1). */
   ADMIN_INSCRIPCIONES: '/admin/torneos/:id/inscripciones',
   /** v3 · A07 · Lugares y escenarios deportivos (KAN-34 · Escenario 1). */
