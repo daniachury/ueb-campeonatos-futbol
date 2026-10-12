@@ -1,0 +1,152 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--sombra-velo, rgba(22, 26, 20, 0.45));
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.modal {
+  background: var(--color-superficie, #ffffff);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  box-shadow: 0 20px 40px rgba(22, 26, 20, 0.16);
+  border-radius: var(--radio-tarjeta, 22px);
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  color: var(--color-grafito, #161a14);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  font-family: var(--fuente-principal, 'Plus Jakarta Sans', sans-serif);
+}
+
+.titulo {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--color-grafito, #161a14);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tituloRepetir {
+  color: #874d00;
+}
+
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-texto-secundario, #6b7066);
+}
+
+.contenido strong {
+  color: var(--color-grafito, #161a14);
+}
+
+.alertaPendientes {
+  background-color: var(--color-alerta-fondo, #fcecec);
+  border: 1px solid var(--color-error-borde, #d93a3a);
+  color: var(--color-error-texto, #b02424);
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.alertaPendientes strong {
+  color: var(--color-error-texto, #b02424);
+}
+
+.infoDetalle {
+  background-color: var(--color-tinte-acento, #f1fbd0);
+  border: 1px solid var(--color-acento, #b7f000);
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--color-acento-texto, #3f5200);
+  line-height: 1.4;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.botonCancelar {
+  background: var(--color-campo, #f3f4f0);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  color: var(--color-grafito, #161a14);
+  padding: 10px 18px;
+  border-radius: var(--radio-pildora, 999px);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.botonCancelar:hover:not(:disabled) {
+  background: var(--color-separador, #f0f2ec);
+}
+
+.botonConfirmar {
+  background: var(--color-acento, #b7f000);
+  border: 1px solid var(--color-acento, #b7f000);
+  color: var(--color-acento-texto, #3f5200);
+  font-weight: 800;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: var(--radio-pildora, 999px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.botonConfirmar:hover:not(:disabled) {
+  background: var(--color-acento-hover, #c9ff1a);
+  transform: translateY(-1px);
+}
+
+.botonConfirmar:disabled,
+.botonCancelar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.botonConfirmarRepetir {
+  background: #fff8e6;
+  border-color: #ffd591;
+  color: #874d00;
+}
+
+.botonConfirmarRepetir:hover:not(:disabled) {
+  background: #ffecc2;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
