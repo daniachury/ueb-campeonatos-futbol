@@ -134,7 +134,7 @@ export function GestionDeTorneosPage() {
 
         {error && (
           <div className={estilos.alertaError} role="alert">
-            ⚠️ {error}
+            {error}
           </div>
         )}
 
@@ -173,11 +173,9 @@ export function GestionDeTorneosPage() {
 
                 <div className={estilos.detallesGrid}>
                   <div className={estilos.detalleItem}>
-                    <span>📅</span>
                     <span>Inicio: {formatearFecha(torneo.fechaInicio)}</span>
                   </div>
                   <div className={estilos.detalleItem}>
-                    <span>👥</span>
                     <span>Cupo: {torneo.cupo} equipos</span>
                   </div>
                   <div className={estilos.detalleItem}>
@@ -185,7 +183,6 @@ export function GestionDeTorneosPage() {
                     <span>Fútbol 11</span>
                   </div>
                   <div className={estilos.detalleItem}>
-                    <span>🏆</span>
                     <span>Liga</span>
                   </div>
                 </div>

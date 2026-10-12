@@ -76,7 +76,6 @@ export function SedesPage() {
       <div className={estilos.pantalla} data-testid="estado-403">
         <main className={estilos.contenedor403}>
           <div className={estilos.tarjeta403} role="alert">
-            <span className={estilos.icono403} aria-hidden="true">🚫</span>
             <h1 className={estilos.titulo403}>Acceso no autorizado (403)</h1>
             <p className={estilos.descripcion403}>
               No tienes permisos de administrador para gestionar sedes y canchas. Esta sección está reservada exclusivamente para la administración del torneo.
@@ -235,15 +234,15 @@ export function SedesPage() {
                   <div className={estilos.infoSede}>
                     <h2 className={estilos.nombreSede}>{sede.nombre}</h2>
                     <div className={estilos.detallesSede}>
-                      <span>📍 {sede.direccion}</span>
-                      <span>🏙️ {sede.ciudad}</span>
+                      <span>{sede.direccion}</span>
+                      <span>{sede.ciudad}</span>
                       <span>⚽ {sede.totalCanchas} canchas</span>
                       {sede.totalPartidosProgramados > 0 && (
-                        <span>📅 {sede.totalPartidosProgramados} partidos programados</span>
+                        <span>{sede.totalPartidosProgramados} partidos programados</span>
                       )}
                     </div>
                     {sede.indicaciones && (
-                      <p className={estilos.indicaciones}>ℹ️ {sede.indicaciones}</p>
+                      <p className={estilos.indicaciones}>{sede.indicaciones}</p>
                     )}
                   </div>
 
@@ -295,7 +294,7 @@ export function SedesPage() {
 
                 <div className={estilos.seccionCanchas}>
                   <h3 className={estilos.tituloCanchas}>
-                    <span>🏟️</span> Canchas disponibles en esta sede
+                    Canchas disponibles en esta sede
                   </h3>
 
                   {sede.canchas.length === 0 ? (

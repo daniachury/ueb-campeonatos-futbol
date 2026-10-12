@@ -185,7 +185,6 @@ export function ModalProgramarPartido({
             className={estilos.alertaConflicto}
             data-testid="alerta-conflicto-horario"
           >
-            <span className={estilos.iconoAlerta}>⚠️</span>
             <div>{error}</div>
           </div>
         )}
@@ -205,7 +204,7 @@ export function ModalProgramarPartido({
             >
               <option value="">-- Selecciona una cancha --</option>
               {Array.from(sedesMap.values()).map((sede) => (
-                <optgroup key={sede.sedeNombre} label={`📍 ${sede.sedeNombre}`}>
+                <optgroup key={sede.sedeNombre} label={sede.sedeNombre}>
                   {sede.canchas.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.nombre} {c.superficie ? `(${c.superficie})` : ''}

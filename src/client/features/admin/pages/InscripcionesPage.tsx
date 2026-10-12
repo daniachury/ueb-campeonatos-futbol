@@ -268,7 +268,7 @@ export function InscripcionesPage() {
                     }`}
                     onClick={() => setPestanaActiva('fixture')}
                   >
-                    📅 Fixture / Cruces
+                    Fixture / Cruces
                     <span className={estilos.insigniaConteo}>{fixture.totalFechas}</span>
                   </button>
                 )}

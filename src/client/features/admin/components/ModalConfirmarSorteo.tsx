@@ -54,7 +54,7 @@ export const ModalConfirmarSorteo: React.FC<ModalConfirmarSorteoProps> = ({
           id="modal-sorteo-titulo"
           className={`${styles.titulo} ${esRepeticion ? styles.tituloRepetir : ''}`}
         >
-          {esRepeticion ? '🔄 Repetir sorteo del torneo' : '⚽ Cerrar inscripciones y sortear'}
+          {esRepeticion ? 'Repetir sorteo del torneo' : 'Cerrar inscripciones y sortear'}
         </h3>
 
         <div className={styles.contenido}>
@@ -66,7 +66,7 @@ export const ModalConfirmarSorteo: React.FC<ModalConfirmarSorteoProps> = ({
                 aprobados.
               </p>
               <div className={styles.infoDetalle}>
-                ⚠️ Se reemplazarán las fechas y partidos actuales. Esta acción solo es posible
+                Se reemplazarán las fechas y partidos actuales. Esta acción solo es posible
                 porque aún no hay ningún resultado registrado.
               </div>
             </>
@@ -80,7 +80,6 @@ export const ModalConfirmarSorteo: React.FC<ModalConfirmarSorteoProps> = ({
 
               {solicitudesPendientes > 0 && (
                 <div className={styles.alertaPendientes}>
-                  <span>⚠️</span>
                   <span>
                     Hay{' '}
                     <strong>
@@ -95,7 +94,7 @@ export const ModalConfirmarSorteo: React.FC<ModalConfirmarSorteoProps> = ({
               )}
 
               <div className={styles.infoDetalle}>
-                ℹ️ Una vez iniciado el torneo, no se podrán aprobar nuevas inscripciones ni
+                Una vez iniciado el torneo, no se podrán aprobar nuevas inscripciones ni
                 modificar los equipos del fixture.
               </div>
             </>

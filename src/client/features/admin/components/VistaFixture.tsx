@@ -111,7 +111,7 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
       <div className={styles.cabeceraFixture}>
         <div>
           <h3 className={styles.titulo}>
-            <span>📅</span> Calendario y Fixture del Torneo
+            Calendario y Fixture del Torneo
           </h3>
           <div className={styles.resumenMetricas}>
             <span className={styles.metricaItem}>
@@ -133,7 +133,7 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
             onClick={() => setModalRepetirAbierto(true)}
             disabled={procesando}
           >
-            <span>🔄</span> Repetir sorteo
+            Repetir sorteo
           </button>
         )}
       </div>
@@ -163,7 +163,6 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
 
             {fecha.equipoDescansa && (
               <div className={styles.cajaDescanso}>
-                <span>💤</span>
                 <span>
                   Descansa: <strong>{fecha.equipoDescansa.nombre}</strong>
                 </span>
@@ -228,7 +227,6 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
                               className={esProgramado ? styles.botonReprogramar : styles.botonProgramar}
                               onClick={() => abrirModalProgramar(partido, fecha.numero)}
                             >
-                              <span>{esProgramado ? '✏️' : '📅'}</span>
                               <span>{esProgramado ? 'Reprogramar' : 'Programar'}</span>
                             </button>
                           )}
@@ -239,7 +237,6 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
                         <div className={styles.detallesProgramacion} data-testid={`detalles-programacion-${partido.id}`}>
                           {textoLugar && (
                             <div className={styles.itemProgramacion}>
-                              <span className={styles.iconoProgramacion}>📍</span>
                               <span>{textoLugar}</span>
                             </div>
                           )}

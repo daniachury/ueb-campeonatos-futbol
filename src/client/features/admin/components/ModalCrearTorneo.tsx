@@ -112,7 +112,7 @@ export function ModalCrearTorneo({
       <div className={estilos.tarjeta}>
         <div className={estilos.cabecera}>
           <h2 id="titulo-modal-crear-torneo" className={estilos.titulo}>
-            🏆 Nuevo torneo
+            Nuevo torneo
           </h2>
           <button
             type="button"
@@ -128,7 +128,7 @@ export function ModalCrearTorneo({
         <form onSubmit={manejarEnvio} noValidate className={estilos.formulario}>
           {errorGeneral && (
             <div className={estilos.alertaError} role="alert">
-              ⚠️ {errorGeneral}
+              {errorGeneral}
             </div>
           )}
 

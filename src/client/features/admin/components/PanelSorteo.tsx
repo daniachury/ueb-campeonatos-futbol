@@ -58,7 +58,6 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
 
       {!estimacion.valido ? (
         <div className={styles.alertaInsuficientes} aria-live="polite">
-          <span>⚠️</span>
           <span>
             Se necesitan al menos {REGLAS.EQUIPOS_POR_TORNEO_MIN} equipos aprobados para sortear
             (actualmente {equiposAprobados}).
@@ -102,7 +101,7 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
       <div className={styles.pie}>
         <p className={styles.notaAviso}>
           {solicitudesPendientes > 0
-            ? `⚠️ Hay ${solicitudesPendientes} solicitud(es) pendiente(s) que se rechazarán automáticamente.`
+            ? `Hay ${solicitudesPendientes} solicitud(es) pendiente(s) que se rechazarán automáticamente.`
             : 'Todas las solicitudes han sido resueltas.'}
         </p>
 
@@ -112,7 +111,7 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
           disabled={!puedeSortear || cargando}
           onClick={() => setModalAbierto(true)}
         >
-          <span>🎯</span> Cerrar inscripciones y sortear
+          Cerrar inscripciones y sortear
         </button>
       </div>
 

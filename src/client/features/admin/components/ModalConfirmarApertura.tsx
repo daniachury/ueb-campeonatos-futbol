@@ -53,7 +53,6 @@ export function ModalConfirmarApertura({
     >
       <div className={estilos.tarjeta}>
         <div className={estilos.cabecera}>
-          <span className={estilos.icono}>📢</span>
           <h2 id="titulo-modal-confirmar-apertura" className={estilos.titulo}>
             Abrir inscripciones
           </h2>
@@ -65,7 +64,6 @@ export function ModalConfirmarApertura({
         </p>
 
         <div className={estilos.advertencia}>
-          <span>⚠️</span>
           <span>
             Esta acción es <strong>irreversible</strong>: el torneo pasará al estado de
             inscripciones abiertas y será visible de inmediato para todos los jugadores y equipos.
