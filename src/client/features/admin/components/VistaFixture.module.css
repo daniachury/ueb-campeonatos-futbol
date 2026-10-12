@@ -1,266 +1,230 @@
 .contenedor {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 24px;
 }
 
 .cabeceraFixture {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
+  background: var(--color-superficie, #ffffff);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  border-radius: var(--radio-tarjeta, 22px);
+  padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(22, 26, 20, 0.04);
 }
 
 .titulo {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #f1f5f9;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-grafito, #161a14);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .resumenMetricas {
   display: flex;
-  gap: 1.5rem;
-  font-size: 0.875rem;
-  color: #94a3b8;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--color-texto-secundario, #6b7066);
 }
 
 .metricaItem strong {
-  color: #38bdf8;
+  color: var(--color-grafito, #161a14);
 }
 
 .botonRepetir {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  border: none;
-  color: #451a03;
+  background: var(--color-campo, #f3f4f0);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  color: var(--color-grafito, #161a14);
   font-weight: 700;
-  font-size: 0.875rem;
-  padding: 0.55rem 1.1rem;
-  border-radius: 6px;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: var(--radio-pildora, 999px);
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+  transition: background 0.15s ease;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 6px;
 }
 
 .botonRepetir:hover:not(:disabled) {
-  box-shadow: 0 0 18px rgba(245, 158, 11, 0.5);
-  transform: translateY(-1px);
+  background: var(--color-separador, #f0f2ec);
 }
 
 .grillaFechas {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.25rem;
+  gap: 20px;
 }
 
 .tarjetaFecha {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(148, 163, 184, 0.15);
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
+  background: var(--color-superficie, #ffffff);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  border-radius: var(--radio-tarjeta, 22px);
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  gap: 14px;
+  box-shadow: 0 4px 16px rgba(22, 26, 20, 0.04);
 }
 
 .tituloFecha {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #38bdf8;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-grafito, #161a14);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-separador, #f0f2ec);
+  padding-bottom: 10px;
 }
 
 .cajaDescanso {
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px dashed rgba(245, 158, 11, 0.35);
-  color: #fcd34d;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  background: var(--color-tinte-acento, #f1fbd0);
+  border: 1px solid var(--color-acento, #b7f000);
+  color: var(--color-acento-texto, #3f5200);
+  padding: 8px 12px;
+  border-radius: var(--radio-campo, 14px);
+  font-size: 13px;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 6px;
 }
 
 .listaPartidos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 10px;
 }
 
-.tarjetaPartido {
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 6px;
-  padding: 0.6rem 0.75rem;
+.filaPartido {
+  background: var(--color-campo, #f3f4f0);
+  border-radius: var(--radio-campo, 16px);
+  padding: 12px 14px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .enfrentamiento {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #e2e8f0;
-  flex: 1;
 }
 
-.equipoLocal,
-.equipoVisitante {
+.equipo {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-grafito, #161a14);
 }
 
 .puntoColor {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  display: inline-block;
+  flex-shrink: 0;
 }
 
-.versus {
-  color: #64748b;
-  font-size: 0.75rem;
-  font-weight: 700;
+.marcador {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--color-texto-secundario, #6b7066);
 }
 
-.badgeEstadoPartido {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
-  white-space: nowrap;
-}
-
-.badgePorProgramar {
-  background: rgba(56, 189, 248, 0.15);
-  color: #7dd3fc;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-}
-
-.badgeProgramado {
-  background: rgba(16, 185, 129, 0.15);
-  color: #6ee7b7;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.cuerpoPartido {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
-}
-
-.cabeceraPartido {
+.infoProgramacion {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
   flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-separador, #f0f2ec);
 }
 
-.detallesProgramacion {
-  display: flex;
-  flex-direction: column;
+.badgeProgramado {
+  background: var(--color-tinte-acento, #f1fbd0);
+  color: var(--color-acento-texto, #3f5200);
+  border: 1px solid var(--color-acento, #b7f000);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radio-pildora, 999px);
+  display: inline-flex;
+  align-items: center;
   gap: 4px;
-  font-size: 0.8rem;
-  color: #94a3b8;
-  background: rgba(15, 23, 42, 0.4);
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.itemProgramacion {
-  display: flex;
+.badgePorProgramar {
+  background: var(--color-campo, #f3f4f0);
+  color: var(--color-texto-secundario, #6b7066);
+  border: 1px solid var(--color-borde-punteado, #d5d9cf);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radio-pildora, 999px);
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-.iconoProgramacion {
-  flex-shrink: 0;
-}
-
-.accionesPartido {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 4px;
 }
 
 .botonProgramar {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #6ee7b7;
-  font-size: 0.78rem;
+  background: var(--color-grafito, #161a14);
+  color: var(--color-superficie, #ffffff);
+  border: none;
+  font-size: 12px;
   font-weight: 700;
-  padding: 5px 9px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radio-pildora, 999px);
   cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  transition: opacity 0.15s;
 }
 
 .botonProgramar:hover {
-  background: rgba(16, 185, 129, 0.25);
-  border-color: #10b981;
+  opacity: 0.9;
 }
 
 .botonReprogramar {
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #7dd3fc;
-  font-size: 0.78rem;
+  background: var(--color-superficie, #ffffff);
+  color: var(--color-grafito, #161a14);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  font-size: 12px;
   font-weight: 700;
-  padding: 5px 9px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radio-pildora, 999px);
   cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  transition: background 0.15s;
 }
 
 .botonReprogramar:hover {
-  background: rgba(56, 189, 248, 0.22);
-  border-color: #38bdf8;
+  background: var(--color-campo, #f3f4f0);
 }
 
-.cargando {
-  text-align: center;
-  padding: 2rem;
-  color: #94a3b8;
-}
+@media (max-width: 640px) {
+  .cabeceraFixture {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
+  .resumenMetricas {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .grillaFechas {
+    grid-template-columns: 1fr;
+  }
+}

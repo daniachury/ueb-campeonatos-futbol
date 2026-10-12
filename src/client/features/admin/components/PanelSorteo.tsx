@@ -94,10 +94,7 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
       )}
 
       {error && (
-        <div
-          className={styles.alertaInsuficientes}
-          style={{ borderColor: '#ef4444', color: '#fca5a5' }}
-        >
+        <div className={styles.alertaError} role="alert">
           {error}
         </div>
       )}
