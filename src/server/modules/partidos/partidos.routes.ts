@@ -1,20 +1,48 @@
 import { Hono } from 'hono';
+import type { D1Database } from '@cloudflare/workers-types';
 import type { AppEnv } from '../../core/env';
+import { PartidoRepository } from './partidos.repository';
+import { PartidoService } from './partidos.service';
+
+/**
+ * Factory para instanciar el servicio de partidos con la base de datos D1 del contexto.
+ */
+export function crearPartidosService(db: D1Database): PartidoService {
+  const repo = new PartidoRepository(db);
+  return new PartidoService(repo);
+}
 
 /**
  * Épicas E8 (programación) y E9 (resultados). Montadas en /api/partidos (exigen sesión).
- * Pendientes:
- * - UEB-Proyect-23 (KAN-36) · Ver el calendario de fechas → GET /api/partidos/calendario/:torneoId
  */
-export const partidosRoutes = new Hono<AppEnv>();
+export const partidosRoutes = new Hono<AppEnv>().get('/:id', async (c) => {
+  const id = c.req.param('id');
+  const service = crearPartidosService(c.env.DB);
+  const partido = await service.obtenerPartidoPorId(id);
+  return c.json(partido);
+});
 
 /**
  * Montadas en /api/admin/partidos (exigen rol admin).
- * Pendientes:
- * - UEB-Proyect-22 (KAN-35) · Programar partido: lugar, fecha, hora y cancha
- *   → detección de cruces de horario como función pura en partidos/domain/
- * - UEB-Proyect-24 (KAN-37) · Registrar resultado y estadísticas
- *   → cálculo de puntos (3/1/0) como función pura en partidos/domain/
- * - UEB-Proyect-25 (KAN-38) · Corregir estadísticas de un partido
+ * UEB-Proyect-22 (KAN-35) · Programar partido: lugar, fecha, hora y cancha.
  */
-export const partidosAdminRoutes = new Hono<AppEnv>();
+export const partidosAdminRoutes = new Hono<AppEnv>()
+  .get('/:id', async (c) => {
+    const id = c.req.param('id');
+    const service = crearPartidosService(c.env.DB);
+    const partido = await service.obtenerPartidoPorId(id);
+    return c.json(partido);
+  })
+  .patch('/:id/programar', async (c) => {
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    const service = crearPartidosService(c.env.DB);
+    const partido = await service.programarPartido(id, body);
+    return c.json(partido);
+  })
+  .patch('/:id/desprogramar', async (c) => {
+    const id = c.req.param('id');
+    const service = crearPartidosService(c.env.DB);
+    const partido = await service.desprogramarPartido(id);
+    return c.json(partido);
+  });

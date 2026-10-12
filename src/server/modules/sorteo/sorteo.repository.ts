@@ -203,11 +203,14 @@ export class SorteoRepository {
       .prepare(
         `SELECT p.id, p.fecha_id, p.torneo_id, p.local_id, p.visitante_id,
                 p.estado, p.goles_local, p.goles_visitante, p.fecha_hora, p.cancha,
+                p.cancha_id, c.nombre as cancha_nombre, s.nombre as sede_nombre,
                 el.nombre as local_nombre, el.color as local_color,
                 ev.nombre as visitante_nombre, ev.color as visitante_color
          FROM partidos p
          JOIN equipos el ON p.local_id = el.id
          JOIN equipos ev ON p.visitante_id = ev.id
+         LEFT JOIN canchas c ON p.cancha_id = c.id
+         LEFT JOIN sedes s ON c.sede_id = s.id
          WHERE p.torneo_id = ?
          ORDER BY p.creado_en ASC`,
       )
@@ -223,6 +226,9 @@ export class SorteoRepository {
         goles_visitante: number | null;
         fecha_hora: string | null;
         cancha: string | null;
+        cancha_id: string | null;
+        cancha_nombre: string | null;
+        sede_nombre: string | null;
         local_nombre: string;
         local_color: string | null;
         visitante_nombre: string;
@@ -255,6 +261,9 @@ export class SorteoRepository {
         golesVisitante: p.goles_visitante,
         fechaHora: p.fecha_hora,
         cancha: p.cancha,
+        canchaId: p.cancha_id,
+        canchaNombre: p.cancha_nombre,
+        sedeNombre: p.sede_nombre,
       });
       partidosPorFechaId.set(p.fecha_id, list);
     }

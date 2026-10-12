@@ -84,4 +84,44 @@ describe('VistaFixture (Calendario y Fixture)', () => {
 
     expect(screen.queryByRole('button', { name: /Repetir sorteo/i })).not.toBeInTheDocument();
   });
+
+  it('muestra botón Programar y abre el modal de programación (KAN-35)', () => {
+    render(<VistaFixture fixture={fixtureMock} onFixtureActualizado={vi.fn()} />);
+
+    const btnProgramar = screen.getByTestId('btn-programar-partido-p-1');
+    expect(btnProgramar).toBeInTheDocument();
+    expect(btnProgramar).toHaveTextContent(/Programar/i);
+
+    fireEvent.click(btnProgramar);
+
+    expect(screen.getByTestId('modal-programar-partido')).toBeInTheDocument();
+  });
+
+  it('muestra datos de sede, cancha y fecha en partidos programados con botón Reprogramar (KAN-35)', () => {
+    const fixtureConProgramado: FixtureTorneoResponse = {
+      ...fixtureMock,
+      fechas: [
+        {
+          ...fixtureMock.fechas[0]!,
+          partidos: [
+            {
+              ...fixtureMock.fechas[0]!.partidos[0]!,
+              estado: 'PROGRAMADO',
+              fechaHora: '2026-10-25T14:00:00.000Z',
+              canchaId: 'cancha-1',
+              canchaNombre: 'Cancha 1 Sintética',
+              sedeNombre: 'Sede Norte',
+            },
+          ],
+        },
+      ],
+    };
+
+    render(<VistaFixture fixture={fixtureConProgramado} onFixtureActualizado={vi.fn()} />);
+
+    expect(screen.getByText('Programado')).toBeInTheDocument();
+    expect(screen.getByText(/Sede Norte · Cancha 1 Sintética/i)).toBeInTheDocument();
+    const btnReprogramar = screen.getByTestId('btn-programar-partido-p-1');
+    expect(btnReprogramar).toHaveTextContent(/Reprogramar/i);
+  });
 });

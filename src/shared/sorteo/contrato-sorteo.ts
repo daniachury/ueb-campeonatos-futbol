@@ -65,6 +65,9 @@ export interface PartidoFixtureResumen {
   golesVisitante: number | null;
   fechaHora: string | null;
   cancha: string | null;
+  canchaId?: string | null;
+  canchaNombre?: string | null;
+  sedeNombre?: string | null;
 }
 
 export interface FechaFixtureResumen {
