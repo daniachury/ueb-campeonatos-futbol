@@ -35,7 +35,7 @@ export function BarraLateral({ jugador, alCerrarSesion }: PropiedadesBarraLatera
         {MENU_DEL_JUGADOR.map((opcion) => (
           <NavLink key={opcion.ruta} to={opcion.ruta} end className={estilos.opcion}>
             <Icono nombre={opcion.icono} />
-            {opcion.texto}
+            {opcion.ruta === '/inicio' ? 'Regresar al inicio' : opcion.texto}
           </NavLink>
         ))}
       </nav>

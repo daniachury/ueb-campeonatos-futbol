@@ -1,0 +1,7 @@
+.pantalla { min-height: 100dvh; padding: 24px 16px; background: var(--color-fondo-app); }
+.tarjeta { width: min(100%, 620px); margin: 0 auto; padding: 28px; border-radius: 24px; background: var(--color-superficie); }
+.tarjeta h1 { margin-bottom: 8px; }
+.tarjeta form { display: grid; gap: 16px; margin-top: 24px; }
+.tarjeta label { display: grid; gap: 6px; font-weight: 700; }
+.tarjeta input { min-height: 48px; padding: 0 14px; border: 1px solid #d7dce5; border-radius: 12px; font: inherit; }
+.tarjeta button { min-height: 50px; border: 0; border-radius: 999px; background: var(--color-grafito); color: white; font: inherit; font-weight: 700; cursor: pointer; }
