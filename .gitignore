@@ -24,6 +24,8 @@ build/
 # ─── Pruebas y reportes ─────────────────────────────────────────
 coverage/
 reports/
+test-results/
+playwright-report/
 *.lcov
 .nyc_output/
 
@@ -59,3 +61,6 @@ tmp/
 *.key
 *.p12
 *.pfx
+
+# ─── Pruebas e2e (Playwright) ───────────────────────────────────
+/blob-report/

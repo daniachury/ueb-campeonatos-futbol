@@ -8,11 +8,6 @@ DELETE FROM sedes;
 DELETE FROM equipo_integrantes;
 DELETE FROM equipos;
 DELETE FROM torneos;
-DELETE FROM sesiones;
-DELETE FROM usuarios;
-
-INSERT INTO usuarios (id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, creado_en, actualizado_en)
-VALUES ('dev-admin', 'Admin de prueba', 'admin@mail.com', '3000000000', 'balon2026', 'admin', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO usuarios (id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, creado_en, actualizado_en) VALUES
   ('dev-jugador-1', 'Miguel Alvarado', 'miguel@mail.com', '3000000001', 'balon2026', 'jugador', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

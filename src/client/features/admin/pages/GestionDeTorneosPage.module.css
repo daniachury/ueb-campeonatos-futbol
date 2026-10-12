@@ -1,88 +1,223 @@
 .pantalla {
   min-height: 100dvh;
-  background: var(--color-fondo-app);
-  color: var(--color-grafito);
-  font-family: var(--fuente-principal);
+  background: var(--color-fondo-app, #f6f7f3);
+  color: var(--color-grafito, #161a14);
+  font-family: var(--fuente-principal, 'Plus Jakarta Sans', system-ui, sans-serif);
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.encabezado {
+.contenido {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cabeceraSeccion {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 18px 16px;
-  background: var(--color-superficie);
+  flex-wrap: wrap;
+  gap: 16px;
 }
-.identidad { display: flex; align-items: center; gap: 12px; }
-.identidad > div { display: grid; gap: 2px; }
-.identidad span { color: var(--color-texto-secundario); font-size: 13px; }
-.menu { display: flex; gap: 8px; }
-.menu a { color: var(--color-texto-secundario); padding: 10px 12px; border-radius: 10px; text-decoration: none; }
-.menu a.active { color: var(--color-grafito); background: var(--color-neon); }
 
-.contenido {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 24px 16px 40px;
+.titulos {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4px;
 }
 
 .saludo {
   margin: 0;
-  color: var(--color-texto-secundario);
+  color: var(--color-texto-secundario, #6b7066);
   font-size: 14px;
+  font-weight: 500;
 }
 
 .titulo {
   margin: 0;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
   letter-spacing: -0.6px;
+  color: var(--color-grafito, #161a14);
 }
 
-.tarjeta {
-  padding: 20px 16px;
-  border-radius: var(--radio-tarjeta);
-  background: var(--color-superficie);
-}
-
-.formulario { display: grid; gap: 16px; max-width: 640px; }
-.formulario label { display: grid; gap: 6px; font-weight: 700; }
-.formulario input, .formulario textarea, .formulario select { border: 1px solid #d7dce5; border-radius: 10px; padding: 12px; font: inherit; }
-.formulario textarea { min-height: 90px; resize: vertical; }
-.fijos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.fijos span { display: grid; gap: 4px; color: var(--color-texto-secundario); }
-.fijos strong { color: var(--color-grafito); }
-.lista { display: grid; gap: 12px; }
-.torneo { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px; border: 1px solid #e1e5eb; border-radius: 12px; }
-.torneo div { display: grid; gap: 4px; }
-.torneo span { color: var(--color-texto-secundario); font-size: 14px; }
-.acciones { display: flex; gap: 8px; flex-wrap: wrap; }
-@media (max-width: 600px) { .torneo { display: grid; } }
-
-@media (min-width: 1024px) {
-  .encabezado {
-    padding: 20px clamp(16px, 4vw, 56px);
-  }
-
-  .contenido {
-    padding: 32px clamp(16px, 4vw, 56px) 56px;
-  }
-
+@media (min-width: 768px) {
   .titulo {
-    font-size: 34px;
-    letter-spacing: -1px;
-  }
-
-  .tarjeta {
-    padding: 36px 24px;
-    border-radius: var(--radio-seccion);
+    font-size: 32px;
   }
 }
-@media (max-width: 760px) {
-  .encabezado { flex-wrap: wrap; }
-  .menu { order: 3; width: 100%; overflow-x: auto; }
-  .menu a { white-space: nowrap; }
+
+.alertaExito {
+  background: var(--color-tinte-acento, #f1fbd0);
+  border: 1px solid var(--color-acento, #b7f000);
+  border-radius: var(--radio-campo, 16px);
+  padding: 12px 18px;
+  color: var(--color-acento-texto, #3f5200);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alertaError {
+  background: var(--color-alerta-fondo, #fcecec);
+  border: 1px solid var(--color-error-borde, #d93a3a);
+  border-radius: var(--radio-campo, 16px);
+  padding: 12px 18px;
+  color: var(--color-alerta-texto, #8f1f1f);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cargando {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--color-texto-secundario, #6b7066);
+  font-size: 15px;
+}
+
+.listaTorneos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .listaTorneos {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+.tarjetaTorneo {
+  background: var(--color-superficie, #ffffff);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  border-radius: var(--radio-tarjeta, 22px);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(22, 26, 20, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.tarjetaTorneo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(22, 26, 20, 0.08);
+  border-color: var(--color-borde-punteado, #d5d9cf);
+}
+
+.tarjetaCabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nombreTorneo {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-grafito, #161a14);
+  line-height: 1.3;
+}
+
+.etiqueta {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radio-pildora, 999px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.etiquetaBorrador {
+  background: var(--color-campo, #f3f4f0);
+  color: var(--color-texto-secundario, #6b7066);
+  border: 1px solid var(--color-borde-punteado, #d5d9cf);
+}
+
+.etiquetaInscripcionesAbiertas {
+  background: var(--color-tinte-acento, #f1fbd0);
+  color: var(--color-acento-texto, #3f5200);
+  border: 1px solid var(--color-acento, #b7f000);
+}
+
+.etiquetaEnCurso {
+  background: #e8f4fd;
+  color: #0d6efd;
+  border: 1px solid #b6d4fe;
+}
+
+.etiquetaFinalizado {
+  background: #f3e8fd;
+  color: #6f42c1;
+  border: 1px solid #d8b4fe;
+}
+
+.descripcion {
+  margin: 0;
+  color: var(--color-texto-secundario, #6b7066);
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.detallesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  font-size: 13px;
+  color: var(--color-grafito, #161a14);
+  background: var(--color-campo, #f3f4f0);
+  padding: 12px 14px;
+  border-radius: var(--radio-campo, 16px);
+}
+
+.detalleItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tarjetaPie {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-separador, #f0f2ec);
+}
+
+.enlaceGestion {
+  color: var(--color-grafito, #161a14);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  background: var(--color-campo, #f3f4f0);
+  padding: 8px 16px;
+  border-radius: var(--radio-pildora, 999px);
+  transition: background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.enlaceGestion:hover {
+  background: var(--color-separador, #f0f2ec);
 }

@@ -1,52 +1,110 @@
-import { ESTADOS_TORNEO_PUBLICOS, type EstadoTorneoPublico } from '@shared/constants';
-import type { TorneoResumen } from '@shared/torneos';
+import {
+  ESTADOS_TORNEO_PUBLICOS,
+  type EstadoTorneoPublico,
+} from '@shared/constants';
+import {
+  obtenerFechaHoyBogota,
+  type CrearTorneoDto,
+  type TorneoAdminResumen,
+  type TorneoResumen,
+} from '@shared/torneos';
+import { AppError } from '../../core/errors';
 import { ordenarParaListado } from './domain/ordenar-torneos';
 import type { TorneosRepository } from './torneos.repository';
-import { errores } from '../../core/errors';
-import type { CrearTorneo, EditarTorneo } from '@shared/torneos';
 
-
+/**
+ * Casos de uso de torneos (Épica E3 · KAN-20, KAN-23).
+ * Maneja las reglas de negocio, ciclo de vida e invariantes del torneo.
+ */
 export function crearTorneosService(repositorio: TorneosRepository) {
   return {
-
+    /**
+     * UEB-Proyect-10 (KAN-23): torneos visibles para jugadores.
+     * Solo devuelve estados públicos (INSCRIPCIONES_ABIERTAS, EN_CURSO, FINALIZADO).
+     */
     async listarPublicos(estado?: EstadoTorneoPublico): Promise<TorneoResumen[]> {
       const estados = estado ? [estado] : ESTADOS_TORNEO_PUBLICOS;
       const torneos = await repositorio.listarPorEstados(estados);
       return ordenarParaListado(torneos);
     },
-    async listarTodos(): Promise<TorneoResumen[]> {
-      if (!repositorio.listarTodos) return [];
-      return repositorio.listarTodos();
+
+    /**
+     * UEB-Proyect-07 (KAN-20): listado completo de administración (incluye borradores).
+     */
+    async listarAdmin(): Promise<TorneoAdminResumen[]> {
+      return repositorio.listarAdmin();
     },
-    async crear(datos: CrearTorneo): Promise<TorneoResumen> {
-      if (!repositorio.crear) throw new Error('Repositorio de torneos no soporta creación');
-      const hoy = new Date().toISOString().slice(0, 10);
-      if (datos.fechaInicio < hoy) throw errores.validacion({ fechaInicio: 'La fecha de inicio no puede ser anterior a hoy' });
-      try {
-        return await repositorio.crear({ id: crypto.randomUUID(), nombre: datos.nombre, descripcion: datos.descripcion, fechaInicio: datos.fechaInicio, cupo: datos.cupo });
-      } catch (error) {
-        if (error instanceof Error && /unique/i.test(error.message)) throw errores.conflicto('TORNEO_NOMBRE_DUPLICADO', 'Ya existe un torneo con ese nombre');
-        throw error;
+
+    /**
+     * Obtiene el detalle administrativo de un torneo.
+     */
+    async obtenerPorId(id: string): Promise<TorneoAdminResumen> {
+      const torneo = await repositorio.obtenerPorId(id);
+      if (!torneo) {
+        throw new AppError(404, 'TORNEO_NO_ENCONTRADO', 'Torneo no encontrado');
       }
+      return torneo;
     },
-    async abrirInscripciones(id: string): Promise<void> {
-      if (!repositorio.abrirInscripciones) throw new Error('Repositorio de torneos no soporta transiciones');
-      if (!(await repositorio.abrirInscripciones(id))) throw errores.conflicto('TRANSICION_INVALIDA', 'El torneo no está en estado Borrador');
-    },
-    async editar(id: string, datos: EditarTorneo): Promise<void> {
-      if (!repositorio.editar) throw new Error('Repositorio de torneos no soporta edición');
-      const hoy = new Date().toISOString().slice(0, 10);
-      if (datos.fechaInicio < hoy) throw errores.validacion({ fechaInicio: 'La fecha de inicio no puede ser anterior a hoy' });
-      try {
-        if (!(await repositorio.editar(id, datos))) throw errores.conflicto('EDICION_NO_PERMITIDA', 'Este torneo ya no se puede editar');
-      } catch (error) {
-        if (error instanceof Error && /unique/i.test(error.message)) throw errores.conflicto('TORNEO_NOMBRE_DUPLICADO', 'Ya existe un torneo con ese nombre');
-        throw error;
+
+    /**
+     * UEB-Proyect-07 (KAN-20) · Escenario 1 y 3.
+     * Crea un torneo en estado BORRADOR con modalidad y formato fijos.
+     */
+    async crearTorneo(datos: CrearTorneoDto): Promise<TorneoAdminResumen> {
+      const hoy = obtenerFechaHoyBogota();
+      if (datos.fechaInicio < hoy) {
+        throw new AppError(
+          400,
+          'FECHA_INVALIDA',
+          'La fecha de inicio no puede ser anterior a hoy',
+        );
       }
+
+      const existente = await repositorio.buscarPorNombre(datos.nombre);
+      if (existente) {
+        throw new AppError(
+          409,
+          'NOMBRE_DUPLICADO',
+          'Ya existe un torneo con ese nombre',
+        );
+      }
+
+      const nuevoTorneoId = crypto.randomUUID();
+      return repositorio.crear({
+        id: nuevoTorneoId,
+        nombre: datos.nombre.trim(),
+        descripcion: datos.descripcion?.trim() || null,
+        fechaInicio: datos.fechaInicio,
+        cupo: datos.cupo,
+        modalidad: 'FUTBOL_11',
+        formato: 'LIGA',
+        estado: 'BORRADOR',
+      });
     },
-    async eliminar(id: string): Promise<void> {
-      if (!repositorio.eliminar) throw new Error('Repositorio de torneos no soporta eliminación');
-      if (!(await repositorio.eliminar(id))) throw errores.conflicto('ELIMINACION_NO_PERMITIDA', 'Este torneo ya no se puede eliminar');
+
+    /**
+     * UEB-Proyect-07 (KAN-20) · Escenario 2.
+     * Transiciona irreversiblemente de BORRADOR a INSCRIPCIONES_ABIERTAS.
+     */
+    async abrirInscripciones(id: string): Promise<TorneoAdminResumen> {
+      const torneo = await repositorio.obtenerPorId(id);
+      if (!torneo) {
+        throw new AppError(404, 'TORNEO_NO_ENCONTRADO', 'Torneo no encontrado');
+      }
+
+      if (torneo.estado !== 'BORRADOR') {
+        throw new AppError(
+          400,
+          'ESTADO_INVALIDO',
+          'Solo se pueden abrir inscripciones de torneos en estado borrador',
+        );
+      }
+
+      await repositorio.actualizarEstado(id, 'INSCRIPCIONES_ABIERTAS');
+      return {
+        ...torneo,
+        estado: 'INSCRIPCIONES_ABIERTAS',
+      };
     },
   };
 }
