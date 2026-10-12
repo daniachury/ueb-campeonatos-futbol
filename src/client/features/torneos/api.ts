@@ -9,8 +9,8 @@ export async function listarTorneos(
   senal?: AbortSignal,
 ): Promise<TorneoResumen[]> {
   const consulta = estado ? `?estado=${encodeURIComponent(estado)}` : '';
-  const { datos } = await pedir<RespuestaLista<TorneoResumen>>(`/torneos${consulta}`, {
+  const respuesta = await pedir<RespuestaLista<TorneoResumen> | TorneoResumen[]>(`/torneos${consulta}`, {
     signal: senal,
   });
-  return datos;
+  return Array.isArray(respuesta) ? respuesta : respuesta.datos ?? [];
 }

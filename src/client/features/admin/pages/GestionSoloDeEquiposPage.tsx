@@ -12,7 +12,7 @@ export function GestionSoloDeEquiposPage() {
   const { usuarioActual, estaComprobando } = useSesion();
   const navegar = useNavigate();
   const [equipos, setEquipos] = useState<Equipo[]>([]);
-  useEffect(() => { if (usuarioActual?.rol === 'admin') void fetch('/api/admin/equipos').then((respuesta) => respuesta.json()).then((respuesta: { datos: Equipo[] }) => setEquipos(respuesta.datos)); }, [usuarioActual]);
+  useEffect(() => { if (usuarioActual?.rol === 'admin') void fetch('/api/admin/equipos').then((respuesta) => respuesta.json()).then((respuesta: { datos?: Equipo[] } | Equipo[]) => setEquipos(Array.isArray(respuesta) ? respuesta : respuesta.datos ?? [])); }, [usuarioActual]);
   async function eliminar(equipo: Equipo) { if (!window.confirm(`¿Eliminar ${equipo.nombre}?`)) return; const respuesta = await fetch(`/api/admin/equipos/${equipo.id}`, { method: 'DELETE' }); if (respuesta.ok) setEquipos((actuales) => actuales.filter((actual) => actual.id !== equipo.id)); }
   if (estaComprobando) return null;
   if (!usuarioActual) return <Navigate to={RUTAS.INICIAR_SESION} replace />;
