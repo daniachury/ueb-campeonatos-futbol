@@ -57,8 +57,8 @@ export async function buscarEquiposDisponibles(
   busqueda = '',
 ): Promise<EquipoDisponibleParaInscripcion[]> {
   const params = busqueda ? `?q=${encodeURIComponent(busqueda)}` : '';
-  const res = await pedir<{ datos: EquipoDisponibleParaInscripcion[] }>(
+  const res = await pedir<{ datos?: EquipoDisponibleParaInscripcion[] } | EquipoDisponibleParaInscripcion[]>(
     `/admin/inscripciones/torneos/${torneoId}/equipos-disponibles${params}`,
   );
-  return res.datos;
+  return Array.isArray(res) ? res : res.datos ?? [];
 }

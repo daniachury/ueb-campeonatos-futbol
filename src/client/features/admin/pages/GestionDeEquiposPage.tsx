@@ -14,7 +14,7 @@ export function GestionDeEquiposPage() {
   const navegar = useNavigate();
   const [equipos, setEquipos] = useState<Equipo[]>([]);
   const [integrantes, setIntegrantes] = useState<Record<string, Integrante[]>>({});
-  useEffect(() => { if (usuarioActual?.rol === 'admin') void fetch('/api/admin/equipos').then((respuesta) => respuesta.json()).then((respuesta: { datos: Equipo[] }) => setEquipos(respuesta.datos)); }, [usuarioActual]);
+  useEffect(() => { if (usuarioActual?.rol === 'admin') void fetch('/api/admin/equipos').then((respuesta) => respuesta.json()).then((respuesta: { datos?: Equipo[] } | Equipo[]) => setEquipos(Array.isArray(respuesta) ? respuesta : respuesta.datos ?? [])); }, [usuarioActual]);
   async function verIntegrantes(id: string) { const respuesta = await fetch(`/api/admin/equipos/${id}/integrantes`); if (respuesta.ok) { const datos = await respuesta.json() as { datos: Integrante[] }; setIntegrantes((actuales) => ({ ...actuales, [id]: datos.datos })); } }
   async function retirar(equipoId: string, integrante: Integrante) { if (!window.confirm(`¿Retirar a ${integrante.nombreCompleto}?`)) return; const respuesta = await fetch(`/api/admin/equipos/${equipoId}/integrantes/${integrante.id}`, { method: 'DELETE' }); if (respuesta.ok) setIntegrantes((actuales) => ({ ...actuales, [equipoId]: actuales[equipoId].filter((actual) => actual.id !== integrante.id) })); }
   if (estaComprobando) return null;

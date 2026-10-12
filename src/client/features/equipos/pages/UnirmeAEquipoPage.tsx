@@ -9,7 +9,7 @@ interface Equipo { id: string; nombre: string; color: string; cantidadIntegrante
 export function UnirmeAEquipoPage() {
   const { usuarioActual, estaComprobando } = useSesion();
   const [equipos, setEquipos] = useState<Equipo[]>([]);
-  useEffect(() => { if (usuarioActual) void fetch('/api/equipos/disponibles').then((respuesta) => respuesta.json()).then((respuesta: { datos: Equipo[] }) => setEquipos(respuesta.datos)); }, [usuarioActual]);
+  useEffect(() => { if (usuarioActual) void fetch('/api/equipos/disponibles').then((respuesta) => respuesta.json()).then((respuesta: { datos?: Equipo[] } | Equipo[]) => setEquipos(Array.isArray(respuesta) ? respuesta : respuesta.datos ?? [])); }, [usuarioActual]);
   async function unirme(id: string) { const respuesta = await fetch(`/api/equipos/${id}/integrantes`, { method: 'POST' }); if (respuesta.ok) setEquipos((actuales) => actuales.filter((equipo) => equipo.id !== id)); }
   if (estaComprobando) return null;
   if (!usuarioActual) return <Navigate to={RUTAS.INICIAR_SESION} replace />;
