@@ -1,20 +1,76 @@
 import { Hono } from 'hono';
+import type { D1Database } from '@cloudflare/workers-types';
 import type { AppEnv } from '../../core/env';
-import { errores } from '../../core/errors';
-import { z } from 'zod';
-import { zValidator } from '@hono/zod-validator';
-import { siFallaLaValidacion } from '../../core/validacion';
+import { SedeRepository } from './sedes.repository';
+import { SedeService } from './sedes.service';
+
+/**
+ * Factory para instanciar el servicio de sedes con la base de datos D1 del contexto.
+ */
+export function crearSedesService(db: D1Database): SedeService {
+  const repo = new SedeRepository(db);
+  return new SedeService(repo);
+}
 
 /**
  * Épica E8 · Sedes y canchas. Montadas en /api/admin/sedes (exigen rol admin).
- * Pendientes:
- * - UEB-Proyect-21 (KAN-34) · Crear lugares de partidos (sedes y canchas)
+ * UEB-Proyect-21 (KAN-34) · Crear lugares de partidos (sedes y canchas).
  */
-const sedeSchema = z.object({ nombre: z.string().trim().min(3).max(80), direccion: z.string().trim().min(3).max(160) });
-const canchaSchema = z.object({ sedeId: z.string().min(1), nombre: z.string().trim().min(2).max(60) });
-
 export const sedesAdminRoutes = new Hono<AppEnv>()
-  .get('/', async (c) => { const { results } = await c.env.DB.prepare('SELECT id, nombre, direccion FROM sedes ORDER BY nombre').all(); return c.json({ datos: results }); })
-  .get('/canchas', async (c) => { const { results } = await c.env.DB.prepare('SELECT id, sede_id AS sedeId, nombre FROM canchas ORDER BY nombre').all(); return c.json({ datos: results }); })
-  .post('/', zValidator('json', sedeSchema, siFallaLaValidacion), async (c) => { const datos = c.req.valid('json'); const id = crypto.randomUUID(); try { await c.env.DB.prepare('INSERT INTO sedes (id, nombre, direccion) VALUES (?, ?, ?)').bind(id, datos.nombre, datos.direccion).run(); } catch (error) { if (error instanceof Error && /unique/i.test(error.message)) throw errores.conflicto('SEDE_DUPLICADA', 'Ya existe una sede con ese nombre'); throw error; } return c.json({ datos: { id, ...datos } }, 201); })
-  .post('/canchas', zValidator('json', canchaSchema, siFallaLaValidacion), async (c) => { const datos = c.req.valid('json'); const sede = await c.env.DB.prepare('SELECT id FROM sedes WHERE id = ?').bind(datos.sedeId).first(); if (!sede) throw errores.noEncontrado('Sede'); const id = crypto.randomUUID(); await c.env.DB.prepare('INSERT INTO canchas (id, sede_id, nombre) VALUES (?, ?, ?)').bind(id, datos.sedeId, datos.nombre).run(); return c.json({ datos: { id, ...datos } }, 201); });
+  .get('/', async (c) => {
+    const service = crearSedesService(c.env.DB);
+    const sedes = await service.obtenerSedes();
+    return c.json(sedes);
+  })
+  .post('/', async (c) => {
+    const body = await c.req.json();
+    const service = crearSedesService(c.env.DB);
+    const sede = await service.crearSede(body);
+    return c.json(sede, 201);
+  })
+  .get('/canchas-disponibles', async (c) => {
+    const service = crearSedesService(c.env.DB);
+    const canchas = await service.obtenerCanchasDisponibles();
+    return c.json(canchas);
+  })
+  .get('/:id', async (c) => {
+    const id = c.req.param('id');
+    const service = crearSedesService(c.env.DB);
+    const sede = await service.obtenerSedePorId(id);
+    return c.json(sede);
+  })
+  .patch('/:id', async (c) => {
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    const service = crearSedesService(c.env.DB);
+    const sede = await service.actualizarSede(id, body);
+    return c.json(sede);
+  })
+  .delete('/:id', async (c) => {
+    const id = c.req.param('id');
+    const service = crearSedesService(c.env.DB);
+    await service.eliminarSede(id);
+    return c.json({ mensaje: 'Sede eliminada con éxito' });
+  })
+  .post('/:sedeId/canchas', async (c) => {
+    const sedeId = c.req.param('sedeId');
+    const body = await c.req.json();
+    const service = crearSedesService(c.env.DB);
+    const cancha = await service.crearCancha(sedeId, body);
+    return c.json(cancha, 201);
+  })
+  .patch('/:sedeId/canchas/:canchaId', async (c) => {
+    const sedeId = c.req.param('sedeId');
+    const canchaId = c.req.param('canchaId');
+    const body = await c.req.json();
+    const service = crearSedesService(c.env.DB);
+    const cancha = await service.actualizarCancha(sedeId, canchaId, body);
+    return c.json(cancha);
+  })
+  .delete('/:sedeId/canchas/:canchaId', async (c) => {
+    const sedeId = c.req.param('sedeId');
+    const canchaId = c.req.param('canchaId');
+    const service = crearSedesService(c.env.DB);
+    await service.eliminarCancha(sedeId, canchaId);
+    return c.json({ mensaje: 'Cancha eliminada con éxito' });
+  });

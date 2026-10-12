@@ -1,25 +1,52 @@
 import { Hono } from 'hono';
+import type { D1Database } from '@cloudflare/workers-types';
 import type { AppEnv } from '../../core/env';
-import { errores } from '../../core/errors';
-import { crearFixture } from './domain/crear-fixture';
+import { SorteoRepository } from './sorteo.repository';
+import { SorteoService } from './sorteo.service';
+
+/**
+ * Factory para instanciar el servicio de sorteo con la base de datos D1 del contexto.
+ */
+export function crearSorteoService(db: D1Database): SorteoService {
+  const repo = new SorteoRepository(db);
+  return new SorteoService(repo);
+}
 
 /**
  * Épica E7 · Sorteo todos contra todos. Montadas en /api/admin/sorteo (exigen rol admin).
- * Pendientes:
- * - UEB-Proyect-20 (KAN-33) · Cerrar inscripciones y generar el fixture
- *   → el algoritmo round-robin va como función pura en sorteo/domain/ (sin base de datos)
+ * UEB-Proyect-20 (KAN-33) · Cerrar inscripciones y generar el sorteo todos contra todos.
  */
 export const sorteoAdminRoutes = new Hono<AppEnv>()
-  .post('/:torneoId/generar', async (c) => {
+  .get('/torneos/:torneoId/vista-previa', async (c) => {
     const torneoId = c.req.param('torneoId');
-    const torneo = await c.env.DB.prepare("SELECT id FROM torneos WHERE id = ? AND estado = 'INSCRIPCIONES_ABIERTAS'").bind(torneoId).first();
-    if (!torneo) throw errores.conflicto('TORNEO_NO_DISPONIBLE', 'El torneo no tiene inscripciones abiertas');
-    const { results } = await c.env.DB.prepare("SELECT equipo_id AS equipoId FROM inscripciones WHERE torneo_id = ? AND estado = 'APROBADA' ORDER BY creado_en").bind(torneoId).all<{ equipoId: string }>();
-    if (results.length < 2) throw errores.conflicto('EQUIPOS_INSUFICIENTES', 'Se necesitan al menos dos equipos aprobados');
-    const partidos = crearFixture(results.map((equipo) => equipo.equipoId));
-    await c.env.DB.batch([
-      ...partidos.map((partido) => c.env.DB.prepare('INSERT INTO partidos (id, torneo_id, equipo_local_id, equipo_visitante_id, jornada) VALUES (?, ?, ?, ?, ?)').bind(crypto.randomUUID(), torneoId, partido.localId, partido.visitanteId, partido.jornada)),
-      c.env.DB.prepare("UPDATE torneos SET estado = 'EN_CURSO', actualizado_en = CURRENT_TIMESTAMP WHERE id = ?").bind(torneoId),
-    ]);
-    return c.json({ datos: { torneoId, partidos: partidos.length, estado: 'EN_CURSO' } }, 201);
+    const service = crearSorteoService(c.env.DB);
+    const vistaPrevia = await service.obtenerVistaPrevia(torneoId);
+    return c.json(vistaPrevia);
+  })
+  .post('/torneos/:torneoId', async (c) => {
+    const torneoId = c.req.param('torneoId');
+    const service = crearSorteoService(c.env.DB);
+    const fixture = await service.ejecutarSorteo(torneoId);
+    return c.json(
+      {
+        mensaje: 'Sorteo generado exitosamente e inscripciones cerradas',
+        fixture,
+      },
+      201,
+    );
+  })
+  .post('/torneos/:torneoId/repetir', async (c) => {
+    const torneoId = c.req.param('torneoId');
+    const service = crearSorteoService(c.env.DB);
+    const fixture = await service.repetirSorteo(torneoId);
+    return c.json({
+      mensaje: 'Sorteo repetido exitosamente con nuevo orden aleatorio',
+      fixture,
+    });
+  })
+  .get('/torneos/:torneoId/fixture', async (c) => {
+    const torneoId = c.req.param('torneoId');
+    const service = crearSorteoService(c.env.DB);
+    const fixture = await service.obtenerFixture(torneoId);
+    return c.json(fixture);
   });

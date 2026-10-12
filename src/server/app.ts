@@ -3,6 +3,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import type { AppEnv } from './core/env';
 import { manejarError, rutaNoEncontrada } from './core/errors';
 import { requireAuth } from './core/middleware/auth';
+import { requireContrasenaActualizada } from './core/middleware/require-contrasena-actualizada';
 import { requireRole } from './core/middleware/require-role';
 import { authRoutes } from './modules/auth/auth.routes';
 import { equiposAdminRoutes, equiposRoutes } from './modules/equipos/equipos.routes';
@@ -16,6 +17,7 @@ import { sedesAdminRoutes } from './modules/sedes/sedes.routes';
 import { sorteoAdminRoutes } from './modules/sorteo/sorteo.routes';
 import { tablaRoutes } from './modules/tabla/tabla.routes';
 import { torneosAdminRoutes, torneosRoutes } from './modules/torneos/torneos.routes';
+import { meRoutes } from './modules/usuarios/me.routes';
 import { usuariosAdminRoutes, usuariosRoutes } from './modules/usuarios/usuarios.routes';
 
 /**
@@ -26,16 +28,23 @@ import { usuariosAdminRoutes, usuariosRoutes } from './modules/usuarios/usuarios
  * TODO(UEB-Proyect-10): la historia pide sesión para ver torneos. Agregar '/torneos'
  * aquí cuando esté listo el inicio de sesión (UEB-Proyect-04).
  */
-const PREFIJOS_CON_SESION = ['/usuarios', '/equipos', '/inscripciones', '/partidos', '/tabla'];
+const PREFIJOS_CON_SESION = [
+  '/usuarios',
+  '/equipos',
+  '/inscripciones',
+  '/partidos',
+  '/tabla',
+  '/me',
+];
 
 export function crearApp() {
   const api = new Hono<AppEnv>();
 
   // 1. Protección por grupos. Va antes de las rutas para que se ejecute primero.
-  api.use('/admin/*', requireAuth, requireRole('admin'));
+  api.use('/admin/*', requireAuth, requireRole('admin'), requireContrasenaActualizada);
   for (const prefijo of PREFIJOS_CON_SESION) {
-    api.use(prefijo, requireAuth);
-    api.use(`${prefijo}/*`, requireAuth);
+    api.use(prefijo, requireAuth, requireContrasenaActualizada);
+    api.use(`${prefijo}/*`, requireAuth, requireContrasenaActualizada);
   }
 
   // 2. Rutas públicas.
@@ -44,6 +53,7 @@ export function crearApp() {
   api.route('/torneos', torneosRoutes);
 
   // 3. Rutas con sesión (jugador o administrador).
+  api.route('/me', meRoutes);
   api.route('/usuarios', usuariosRoutes);
   api.route('/equipos', equiposRoutes);
   api.route('/inscripciones', inscripcionesRoutes);

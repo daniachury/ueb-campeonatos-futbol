@@ -1,29 +1,38 @@
 import type { EstadoTorneo } from '@shared/constants';
-import type { TorneoResumen } from '@shared/torneos';
+import type { TorneoAdminResumen, TorneoResumen } from '@shared/torneos';
 
+export interface ParametrosCrearTorneoRepo {
+  id: string;
+  nombre: string;
+  descripcion?: string | null;
+  fechaInicio: string;
+  cupo: number;
+  modalidad: string;
+  formato: string;
+  estado: EstadoTorneo;
+}
 
+/**
+ * Acceso a datos de torneos en Cloudflare D1 / SQLite.
+ */
 export interface TorneosRepository {
   listarPorEstados(estados: readonly EstadoTorneo[]): Promise<TorneoResumen[]>;
-  listarTodos?(): Promise<TorneoResumen[]>;
-  crear?(datos: { id: string; nombre: string; descripcion: string; fechaInicio: string; cupo: number }): Promise<TorneoResumen>;
-  abrirInscripciones?(id: string): Promise<boolean>;
-  editar?(id: string, datos: { nombre: string; descripcion: string; fechaInicio: string; cupo: number }): Promise<boolean>;
-  eliminar?(id: string): Promise<boolean>;
+  listarAdmin(): Promise<TorneoAdminResumen[]>;
+  buscarPorNombre(nombre: string): Promise<TorneoAdminResumen | null>;
+  obtenerPorId(id: string): Promise<TorneoAdminResumen | null>;
+  crear(datos: ParametrosCrearTorneoRepo): Promise<TorneoAdminResumen>;
+  actualizarEstado(id: string, nuevoEstado: EstadoTorneo): Promise<void>;
 }
 
 export function crearTorneosRepository(db: D1Database): TorneosRepository {
   return {
-    async listarTodos() {
-      const { results } = await db.prepare(`SELECT id, nombre, descripcion, estado, fecha_inicio AS fechaInicio, cupo FROM torneos ORDER BY fecha_inicio ASC`).all<TorneoResumen>();
-      return results;
-    },
     async listarPorEstados(estados) {
       if (estados.length === 0) return [];
 
       const marcadores = estados.map(() => '?').join(', ');
       const { results } = await db
         .prepare(
-          `SELECT id, nombre, descripcion, estado, fecha_inicio AS fechaInicio, cupo
+          `SELECT id, nombre, estado, fecha_inicio AS fechaInicio, cupo
              FROM torneos
             WHERE estado IN (${marcadores})`,
         )
@@ -32,22 +41,94 @@ export function crearTorneosRepository(db: D1Database): TorneosRepository {
 
       return results;
     },
+
+    async listarAdmin() {
+      const { results } = await db
+        .prepare(
+          `SELECT id, nombre, descripcion, modalidad, formato, fecha_inicio AS fechaInicio,
+                  cupo, estado, creado_en AS creadoEn, actualizado_en AS actualizadoEn
+             FROM torneos
+            ORDER BY creado_en DESC`,
+        )
+        .all<TorneoAdminResumen>();
+
+      return results;
+    },
+
+    async buscarPorNombre(nombre) {
+      const resultado = await db
+        .prepare(
+          `SELECT id, nombre, descripcion, modalidad, formato, fecha_inicio AS fechaInicio,
+                  cupo, estado, creado_en AS creadoEn, actualizado_en AS actualizadoEn
+             FROM torneos
+            WHERE LOWER(nombre) = LOWER(?)`,
+        )
+        .bind(nombre.trim())
+        .first<TorneoAdminResumen>();
+
+      return resultado ?? null;
+    },
+
+    async obtenerPorId(id) {
+      const resultado = await db
+        .prepare(
+          `SELECT id, nombre, descripcion, modalidad, formato, fecha_inicio AS fechaInicio,
+                  cupo, estado, creado_en AS creadoEn, actualizado_en AS actualizadoEn
+             FROM torneos
+            WHERE id = ?`,
+        )
+        .bind(id)
+        .first<TorneoAdminResumen>();
+
+      return resultado ?? null;
+    },
+
     async crear(datos) {
-      await db.prepare(`INSERT INTO torneos (id, nombre, descripcion, fecha_inicio, cupo) VALUES (?, ?, ?, ?, ?)`)
-        .bind(datos.id, datos.nombre, datos.descripcion || null, datos.fechaInicio, datos.cupo).run();
-      return { id: datos.id, nombre: datos.nombre, descripcion: datos.descripcion, estado: 'BORRADOR', fechaInicio: datos.fechaInicio, cupo: datos.cupo };
+      const ahora = new Date().toISOString();
+      await db
+        .prepare(
+          `INSERT INTO torneos (
+            id, nombre, descripcion, modalidad, formato, fecha_inicio, cupo, estado, creado_en, actualizado_en
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .bind(
+          datos.id,
+          datos.nombre,
+          datos.descripcion ?? null,
+          datos.modalidad,
+          datos.formato,
+          datos.fechaInicio,
+          datos.cupo,
+          datos.estado,
+          ahora,
+          ahora,
+        )
+        .run();
+
+      return {
+        id: datos.id,
+        nombre: datos.nombre,
+        descripcion: datos.descripcion ?? null,
+        modalidad: datos.modalidad,
+        formato: datos.formato,
+        fechaInicio: datos.fechaInicio,
+        cupo: datos.cupo,
+        estado: datos.estado,
+        creadoEn: ahora,
+        actualizadoEn: ahora,
+      };
     },
-    async abrirInscripciones(id) {
-      const resultado = await db.prepare(`UPDATE torneos SET estado = 'INSCRIPCIONES_ABIERTAS', actualizado_en = CURRENT_TIMESTAMP WHERE id = ? AND estado = 'BORRADOR'`).bind(id).run();
-      return resultado.meta.changes > 0;
-    },
-    async editar(id, datos) {
-      const resultado = await db.prepare(`UPDATE torneos SET nombre = ?, descripcion = ?, fecha_inicio = ?, cupo = ?, actualizado_en = CURRENT_TIMESTAMP WHERE id = ? AND estado IN ('BORRADOR', 'INSCRIPCIONES_ABIERTAS')`).bind(datos.nombre, datos.descripcion || null, datos.fechaInicio, datos.cupo, id).run();
-      return resultado.meta.changes > 0;
-    },
-    async eliminar(id) {
-      const resultado = await db.prepare(`DELETE FROM torneos WHERE id = ? AND estado IN ('BORRADOR', 'INSCRIPCIONES_ABIERTAS')`).bind(id).run();
-      return resultado.meta.changes > 0;
+
+    async actualizarEstado(id, nuevoEstado) {
+      const ahora = new Date().toISOString();
+      await db
+        .prepare(
+          `UPDATE torneos
+              SET estado = ?, actualizado_en = ?
+            WHERE id = ?`,
+        )
+        .bind(nuevoEstado, ahora, id)
+        .run();
     },
   };
 }

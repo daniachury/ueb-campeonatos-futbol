@@ -74,18 +74,6 @@
     font-weight: 700;
   }
 
-  .opcion:first-of-type {
-    margin-bottom: 8px;
-    background: var(--color-grafito);
-    color: var(--color-superficie);
-    box-shadow: 0 8px 18px rgba(28, 34, 29, 0.16);
-  }
-
-  .opcion:first-of-type:hover {
-    background: var(--color-acento);
-    color: var(--color-grafito);
-  }
-
   .opcion:focus-visible,
   .cerrarSesion:focus-visible {
     outline: 3px solid var(--color-grafito);

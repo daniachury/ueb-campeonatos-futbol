@@ -47,15 +47,18 @@ export function PrimerosPasos() {
             <Icono nombre="siguiente" tamano={16} />
           </Link>
         </li>
-        <li>
-          <Link to={RUTAS.TORNEOS} className={estilos.paso}>
-            <span className={`${estilos.marcador} ${estilos.marcadorActual}`}>3</span>
-            <span className={estilos.textos}>
-              <span className={estilos.tituloDelPaso}>Juega tu primer torneo</span>
-              <span className={estilos.detalle}>El capitán inscribe al equipo cuando hay cupos</span>
+        <li className={estilos.paso}>
+          <span className={`${estilos.marcador} ${estilos.marcadorBloqueado}`}>3</span>
+          <span className={estilos.textos}>
+            <span className={`${estilos.tituloDelPaso} ${estilos.tituloBloqueado}`}>
+              Juega tu primer torneo
             </span>
-            <Icono nombre="siguiente" tamano={16} />
-          </Link>
+            <span className={estilos.detalle}>El capitán inscribe al equipo cuando hay cupos</span>
+          </span>
+          <span className={estilos.candado}>
+            <Icono nombre="candado" tamano={16} />
+          </span>
+          <span className="solo-lectores">Bloqueado hasta tener equipo.</span>
         </li>
       </ol>
     </section>

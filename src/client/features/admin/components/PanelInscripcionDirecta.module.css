@@ -1,0 +1,137 @@
+.panel {
+  background: #ffffff;
+  border-radius: var(--radio-tarjeta, 22px);
+  padding: 24px;
+  border: 1px solid var(--color-separador, #f0f2ec);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-grafito, #161a14);
+  letter-spacing: -0.3px;
+}
+
+.descripcion {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-texto-secundario, #6b7066);
+}
+
+.busqueda {
+  display: flex;
+  gap: 8px;
+}
+
+.inputBusqueda {
+  flex: 1;
+  box-sizing: border-box;
+  font-family: var(--fuente-principal, 'Plus Jakarta Sans', sans-serif);
+  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radio-campo, 16px);
+  border: 1px solid var(--color-borde-punteado, #d5d9cf);
+  background: var(--color-campo, #f3f4f0);
+  color: var(--color-grafito, #161a14);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.inputBusqueda:focus {
+  border-color: var(--color-grafito, #161a14);
+}
+
+.listaEquipos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.itemEquipo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--color-separador, #f0f2ec);
+  background: var(--color-fondo-app, #f6f7f3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.itemEquipo:hover:not(.deshabilitado) {
+  border-color: var(--color-grafito, #161a14);
+  background: #ffffff;
+}
+
+.itemEquipo.seleccionado {
+  border-color: var(--color-acento-texto, #3f5200);
+  background: var(--color-tinte-acento, #f1fbd0);
+}
+
+.itemEquipo.deshabilitado {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.infoEquipo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nombreEquipo {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--color-grafito, #161a14);
+}
+
+.detallesEquipo {
+  font-size: 12px;
+  color: var(--color-texto-secundario, #6b7066);
+}
+
+.etiquetaIncompleto {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-error-texto, #b02424);
+  background: var(--color-alerta-fondo, #fcecec);
+  padding: 3px 8px;
+  border-radius: var(--radio-pildora, 999px);
+}
+
+.etiquetaCompleto {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-acento-texto, #3f5200);
+  background: var(--color-tinte-acento, #f1fbd0);
+  padding: 3px 8px;
+  border-radius: var(--radio-pildora, 999px);
+}
+
+.vacio {
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-texto-secundario, #6b7066);
+}
+
+.pie {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
