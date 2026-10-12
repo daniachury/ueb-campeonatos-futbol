@@ -15,14 +15,6 @@ export const JUGADOR_DE_PRUEBA: UsuarioAutenticado = {
   rol: 'jugador',
 };
 
-export const ADMIN_DE_PRUEBA: UsuarioAutenticado = {
-  id: 'admin-001',
-  nombreCompleto: 'Laura Administradora',
-  correo: 'admin@unbosque.edu.co',
-  telefono: '3001234567',
-  rol: 'admin',
-};
-
 /** Servicio de sesión falso: por defecto nadie tiene sesión y cerrar siempre funciona. */
 export function crearServicioDeSesionFalso(cambios: Partial<ServicioDeSesion> = {}) {
   return {

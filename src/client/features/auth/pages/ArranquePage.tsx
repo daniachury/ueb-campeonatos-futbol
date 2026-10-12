@@ -49,18 +49,8 @@ export function ArranquePage() {
               <h1 className={estilos.tituloDeSesion}>Hola de nuevo, {primerNombre}</h1>
             </div>
           </div>
-          <EnlaceBoton
-            ruta={
-              usuarioActual.debeCambiarContrasena
-                ? RUTAS.CAMBIAR_CONTRASENA
-                : rutaDeInicioSegunRol(usuarioActual.rol)
-            }
-          >
-            {usuarioActual.debeCambiarContrasena
-              ? 'Cambiar contraseña'
-              : usuarioActual.rol === 'admin'
-                ? 'Entrar a Gestión de torneos'
-                : 'Entrar a Torneos'}
+          <EnlaceBoton ruta={rutaDeInicioSegunRol(usuarioActual.rol)}>
+            {usuarioActual.rol === 'admin' ? 'Entrar a Gestión de torneos' : 'Entrar a Torneos'}
           </EnlaceBoton>
           <p className={estilos.pieDeLaHoja}>
             ¿No eres {primerNombre}?{' '}

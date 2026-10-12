@@ -68,55 +68,9 @@ describe('RepositorioDeUsuariosD1', () => {
       'valor-guardado',
       'jugador',
       1,
-      0,
       '2026-10-09T14:00:00.000Z',
       '2026-10-09T14:00:00.000Z',
     ]);
-  });
-
-  it('busca un usuario por su identificador (buscarPorId)', async () => {
-    const { db } = crearD1Falsa(() => [
-      {
-        id: 'user-123',
-        nombre_completo: 'Laura Gómez',
-        correo: 'laura@mail.com',
-        telefono: '3001234567',
-        hash_contrasena: 'hash-123',
-        rol: 'admin',
-        activo: 1,
-        debe_cambiar_contrasena: 1,
-        creado_en: '2026-10-09T14:00:00.000Z',
-        actualizado_en: '2026-10-09T14:00:00.000Z',
-      },
-    ]);
-    const repositorio = new RepositorioDeUsuariosD1(db);
-
-    const usuario = await repositorio.buscarPorId('user-123');
-
-    expect(usuario).not.toBeNull();
-    expect(usuario?.id).toBe('user-123');
-    expect(usuario?.esAdministrador()).toBe(true);
-    expect(usuario?.debeCambiarContrasena).toBe(true);
-  });
-
-  it('actualiza el rol de un usuario (actualizarRol)', async () => {
-    const { db, consultas } = crearD1Falsa();
-    const repositorio = new RepositorioDeUsuariosD1(db);
-
-    await repositorio.actualizarRol('user-123', 'admin', FECHA_DE_REGISTRO);
-
-    expect(consultas[0]?.sql).toContain('UPDATE usuarios SET rol = ?');
-    expect(consultas[0]?.parametros).toEqual(['admin', '2026-10-09T14:00:00.000Z', 'user-123']);
-  });
-
-  it('actualiza la bandera debe_cambiar_contrasena', async () => {
-    const { db, consultas } = crearD1Falsa();
-    const repositorio = new RepositorioDeUsuariosD1(db);
-
-    await repositorio.actualizarDebeCambiarContrasena('user-123', false, FECHA_DE_REGISTRO);
-
-    expect(consultas[0]?.sql).toContain('UPDATE usuarios SET debe_cambiar_contrasena = ?');
-    expect(consultas[0]?.parametros).toEqual([0, '2026-10-09T14:00:00.000Z', 'user-123']);
   });
 
   it('traduce la violación del correo único en ErrorCorreoYaRegistrado (Escenario 2)', async () => {

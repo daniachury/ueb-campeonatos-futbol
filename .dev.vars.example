@@ -4,8 +4,3 @@
 # y se declara en Bindings (src/server/core/env.ts).
 #
 # Hoy la app no necesita ninguno: la base D1 llega como binding (DB) desde wrangler.jsonc.
-
-# KAN-18 · Semilla del primer administrador
-ADMIN_NOMBRE=Administrador Liga Bosque
-ADMIN_CORREO=admin@unbosque.edu.co
-ADMIN_TELEFONO=3001234567

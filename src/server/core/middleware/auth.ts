@@ -22,13 +22,8 @@ export const requireAuth = createMiddleware<AppEnv>(async (c, next) => {
   if (resultado.estado === 'expirada') throw errores.sesionExpirada();
   if (resultado.estado === 'invalida') throw errores.noAutenticado();
 
-  const { id, nombreCompleto, rol, debeCambiarContrasena } = resultado.usuario;
-  c.set('usuario', {
-    id,
-    nombre: nombreCompleto,
-    rol,
-    debeCambiarContrasena: Boolean(debeCambiarContrasena),
-  });
+  const { id, nombreCompleto, rol } = resultado.usuario;
+  c.set('usuario', { id, nombre: nombreCompleto, rol });
   // Escenario 6: después de cerrar sesión, «Atrás» no debe mostrar datos privados guardados.
   c.header('Cache-Control', 'no-store');
   await next();

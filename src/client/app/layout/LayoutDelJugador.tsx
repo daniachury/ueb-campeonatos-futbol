@@ -17,17 +17,13 @@ interface MenuDelJugador {
 
 const ContextoDelMenu = createContext<MenuDelJugador | null>(null);
 
-interface PropiedadesLayoutDelJugador {
-  children?: React.ReactNode;
-}
-
 /**
  * Marco de todas las pantallas del jugador con sesión (v3 · M11, M12 y W04).
  * - Móvil: barra inferior fija y menú hamburguesa a pantalla completa.
  * - Escritorio: barra lateral con el menú, el jugador y «Cerrar sesión».
  * Sin sesión va a Iniciar sesión y, al entrar, vuelve aquí (KAN-17).
  */
-export function LayoutDelJugador({ children }: PropiedadesLayoutDelJugador = {}) {
+export function LayoutDelJugador() {
   const { usuarioActual, estaComprobando, cerrarSesion } = useSesion();
   const ubicacion = useLocation();
   const navegar = useNavigate();
@@ -60,7 +56,7 @@ export function LayoutDelJugador({ children }: PropiedadesLayoutDelJugador = {})
       <div className={estilos.pantalla}>
         <BarraLateral jugador={usuarioActual} alCerrarSesion={() => void salirDeLaCuenta()} />
         <div className={estilos.contenido}>
-          {children ?? <Outlet />}
+          <Outlet />
         </div>
         <NavegacionInferior />
         {menuEstaAbierto && (
