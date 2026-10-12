@@ -47,24 +47,4 @@ export const REGLAS = {
   PUNTOS_DERROTA: 0,
   DURACION_PARTIDO_MINUTOS: 120,
   ZONA_HORARIA: 'America/Bogota',
-  MOTIVO_RECHAZO_MIN: 10,
-  MOTIVO_RECHAZO_MAX: 300,
 } as const;
-
-/** Ciclo de vida de una inscripción a un torneo (épica E6). */
-export const ESTADOS_INSCRIPCION = [
-  'PENDIENTE',
-  'APROBADO',
-  'RECHAZADO',
-  'RETIRADO',
-  'CANCELADO',
-] as const;
-export type EstadoInscripcion = (typeof ESTADOS_INSCRIPCION)[number];
-
-export const ETIQUETAS_ESTADO_INSCRIPCION: Record<EstadoInscripcion, string> = {
-  PENDIENTE: 'Pendiente',
-  APROBADO: 'Aprobado',
-  RECHAZADO: 'Rechazado',
-  RETIRADO: 'Retirado',
-  CANCELADO: 'Cancelado',
-};

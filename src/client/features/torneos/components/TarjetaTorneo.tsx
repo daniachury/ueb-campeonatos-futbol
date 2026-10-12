@@ -6,6 +6,7 @@ export function TarjetaTorneo({ torneo }: { torneo: TorneoResumen }) {
   return (
     <article className="tarjeta">
       <h2 className="tarjeta__titulo">{torneo.nombre}</h2>
+      <a className="tarjeta__detalle" href={`/torneos/${torneo.id}`}>Ver detalle <span aria-hidden="true">→</span></a>
       <span className={`etiqueta etiqueta--${torneo.estado.toLowerCase()}`}>
         {ETIQUETAS_ESTADO_TORNEO[torneo.estado]}
       </span>

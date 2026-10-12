@@ -7,19 +7,16 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-shrink: 0;
 }
 
 .nombreCompacto {
   font-size: 19px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  white-space: nowrap;
 }
 
 .nombreMediano {
   font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.6px;
-  white-space: nowrap;
 }

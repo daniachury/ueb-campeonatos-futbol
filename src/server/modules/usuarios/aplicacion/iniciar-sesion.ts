@@ -141,6 +141,5 @@ function convertirEnUsuarioAutenticado(usuario: Usuario): UsuarioAutenticado {
     correo: usuario.correo.valor,
     telefono: usuario.telefono.valor,
     rol: usuario.rol,
-    ...(usuario.debeCambiarContrasena ? { debeCambiarContrasena: true } : {}),
   };
 }

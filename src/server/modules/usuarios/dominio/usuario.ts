@@ -12,23 +12,11 @@ export interface PropiedadesDelUsuario {
   contrasenaCifrada: ContrasenaCifrada;
   rol: Rol;
   activo: boolean;
-  /** KAN-18 · Escenario 2: true para admins creados por otro admin (primer ingreso). */
-  debeCambiarContrasena: boolean;
   creadoEn: Date;
   actualizadoEn: Date;
 }
 
 export interface DatosParaRegistrarJugador {
-  id: string;
-  nombreCompleto: NombreCompleto;
-  correo: CorreoElectronico;
-  telefono: Telefono;
-  contrasenaCifrada: ContrasenaCifrada;
-  fechaDeRegistro: Date;
-}
-
-/** KAN-18 · Datos necesarios para crear un administrador desde el panel de admin. */
-export interface DatosParaRegistrarAdministrador {
   id: string;
   nombreCompleto: NombreCompleto;
   correo: CorreoElectronico;
@@ -49,8 +37,6 @@ export class Usuario {
   readonly contrasenaCifrada: ContrasenaCifrada;
   readonly rol: Rol;
   readonly activo: boolean;
-  /** KAN-18 · Escenario 2: bloquea rutas hasta que el admin cambie su contraseña temporal. */
-  readonly debeCambiarContrasena: boolean;
   readonly creadoEn: Date;
   readonly actualizadoEn: Date;
 
@@ -62,7 +48,6 @@ export class Usuario {
     this.contrasenaCifrada = propiedades.contrasenaCifrada;
     this.rol = propiedades.rol;
     this.activo = propiedades.activo;
-    this.debeCambiarContrasena = propiedades.debeCambiarContrasena;
     this.creadoEn = propiedades.creadoEn;
     this.actualizadoEn = propiedades.actualizadoEn;
   }
@@ -81,47 +66,8 @@ export class Usuario {
       contrasenaCifrada: datos.contrasenaCifrada,
       rol: ROLES.JUGADOR,
       activo: true,
-      debeCambiarContrasena: false,
       creadoEn: datos.fechaDeRegistro,
       actualizadoEn: datos.fechaDeRegistro,
-    });
-  }
-
-  /**
-   * KAN-18 · Crea un administrador desde el panel de admin.
-   * Nace con debeCambiarContrasena=true para forzar el cambio en el primer ingreso.
-   */
-  static registrarAdministrador(datos: DatosParaRegistrarAdministrador): Usuario {
-    return new Usuario({
-      id: datos.id,
-      nombreCompleto: datos.nombreCompleto,
-      correo: datos.correo,
-      telefono: datos.telefono,
-      contrasenaCifrada: datos.contrasenaCifrada,
-      rol: ROLES.ADMINISTRADOR,
-      activo: true,
-      debeCambiarContrasena: true,
-      creadoEn: datos.fechaDeRegistro,
-      actualizadoEn: datos.fechaDeRegistro,
-    });
-  }
-
-  /**
-   * KAN-18 · Promueve este usuario (jugador) a administrador.
-   * Devuelve una nueva instancia inmutable con el rol cambiado.
-   */
-  promoverAAdministrador(fecha: Date): Usuario {
-    return new Usuario({
-      id: this.id,
-      nombreCompleto: this.nombreCompleto,
-      correo: this.correo,
-      telefono: this.telefono,
-      contrasenaCifrada: this.contrasenaCifrada,
-      rol: ROLES.ADMINISTRADOR,
-      activo: this.activo,
-      debeCambiarContrasena: this.debeCambiarContrasena,
-      creadoEn: this.creadoEn,
-      actualizadoEn: fecha,
     });
   }
 
@@ -135,9 +81,5 @@ export class Usuario {
 
   esJugador(): boolean {
     return this.rol === ROLES.JUGADOR;
-  }
-
-  esAdministrador(): boolean {
-    return this.rol === ROLES.ADMINISTRADOR;
   }
 }

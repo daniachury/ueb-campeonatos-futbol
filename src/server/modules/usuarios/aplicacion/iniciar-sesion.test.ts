@@ -31,7 +31,6 @@ function crearUsuario(correo: string, opciones: { rol?: Rol; activo?: boolean } 
     contrasenaCifrada: ContrasenaCifrada.desdeHash(CONTRASENA_DE_LAURA),
     rol: opciones.rol ?? ROLES.JUGADOR,
     activo: opciones.activo ?? true,
-    debeCambiarContrasena: false,
     creadoEn: fecha,
     actualizadoEn: fecha,
   });
@@ -49,10 +48,6 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
     return this.usuarios.find((usuario) => usuario.correo.esIgualA(correo)) ?? null;
   }
 
-  async buscarPorId(id: string): Promise<Usuario | null> {
-    return this.usuarios.find((usuario) => usuario.id === id) ?? null;
-  }
-
   async guardar(): Promise<void> {}
 
   async actualizarContrasena(
@@ -64,12 +59,6 @@ class RepositorioDeUsuariosEnMemoria implements RepositorioDeUsuarios {
     if (!usuario) return;
     this.usuarios[posicion] = Usuario.reconstituir({ ...usuario, contrasenaCifrada });
   }
-
-  async actualizarPerfil(): Promise<void> {}
-
-  async actualizarRol(): Promise<void> {}
-
-  async actualizarDebeCambiarContrasena(): Promise<void> {}
 }
 
 /** Doble de prueba: intentos en un Map por correo. */

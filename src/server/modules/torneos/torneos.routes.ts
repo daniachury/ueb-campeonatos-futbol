@@ -1,27 +1,19 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import type { RespuestaLista } from '@shared/api';
-import {
-  consultaTorneosSchema,
-  esquemaCrearTorneo,
-  type TorneoAdminResumen,
-  type TorneoResumen,
-} from '@shared/torneos';
+import { consultaTorneosSchema, crearTorneoSchema, editarTorneoSchema, type TorneoResumen } from '@shared/torneos';
+import { z } from 'zod';
 import type { AppEnv } from '../../core/env';
 import { siFallaLaValidacion } from '../../core/validacion';
-import { crearSorteoService } from '../sorteo/sorteo.routes';
 import { crearTorneosRepository } from './torneos.repository';
 import { crearTorneosService } from './torneos.service';
 
-/**
- * Épica E3 · Gestión de torneos.
- * Rutas públicas (o con sesión de jugador): /api/torneos
- */
+
 export const torneosRoutes = new Hono<AppEnv>().get(
   '/',
   zValidator('query', consultaTorneosSchema, siFallaLaValidacion),
   async (c) => {
-    // UEB-Proyect-10 (KAN-23) · Ver todos los torneos.
+
     const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
     const { estado } = c.req.valid('query');
 
@@ -31,76 +23,35 @@ export const torneosRoutes = new Hono<AppEnv>().get(
     return c.json(respuesta);
   },
 );
+torneosRoutes.get('/:id', async (c) => {
+  const torneos = await crearTorneosService(crearTorneosRepository(c.env.DB)).listarPublicos();
+  const torneo = torneos.find((item) => item.id === c.req.param('id'));
+  if (!torneo) return c.json({ codigo: 'NO_ENCONTRADO', mensaje: 'Torneo no encontrado' }, 404);
+  return c.json({ datos: torneo });
+});
 
-/**
- * Rutas de administración, montadas en /api/admin/torneos (exigen rol admin).
- * - UEB-Proyect-07 (KAN-20) · Crear torneo y abrir inscripciones
- * - UEB-Proyect-20 (KAN-33) · Sorteo y Fixture
- */
+
 export const torneosAdminRoutes = new Hono<AppEnv>()
   .get('/', async (c) => {
     const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
-    const torneos = await servicio.listarAdmin();
-    const respuesta: RespuestaLista<TorneoAdminResumen> = {
-      datos: torneos,
-    };
-    return c.json(respuesta);
+    return c.json({ datos: await servicio.listarTodos() });
   })
-  .get('/:id', async (c) => {
-    const torneoId = c.req.param('id');
+  .post('/', zValidator('json', crearTorneoSchema, siFallaLaValidacion), async (c) => {
     const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
-    const torneo = await servicio.obtenerPorId(torneoId);
-    return c.json(torneo);
+    return c.json({ datos: await servicio.crear(c.req.valid('json')) }, 201);
   })
-  .post(
-    '/',
-    zValidator('json', esquemaCrearTorneo, siFallaLaValidacion),
-    async (c) => {
-      const datos = c.req.valid('json');
-      const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
-      const torneo = await servicio.crearTorneo(datos);
-      return c.json(
-        {
-          mensaje: 'Torneo creado exitosamente en estado borrador',
-          torneo,
-        },
-        201,
-      );
-    },
-  )
-  .post('/:id/abrir-inscripciones', async (c) => {
-    const torneoId = c.req.param('id');
+  .post('/:id/abrir-inscripciones', zValidator('param', z.object({ id: z.string().min(1) }), siFallaLaValidacion), async (c) => {
     const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
-    const torneo = await servicio.abrirInscripciones(torneoId);
-    return c.json({
-      mensaje: 'Inscripciones abiertas exitosamente',
-      torneo,
-    });
+    await servicio.abrirInscripciones(c.req.valid('param').id);
+    return c.json({ datos: { estado: 'INSCRIPCIONES_ABIERTAS' } });
   })
-  .post('/:id/sorteo', async (c) => {
-    const torneoId = c.req.param('id');
-    const service = crearSorteoService(c.env.DB);
-    const fixture = await service.ejecutarSorteo(torneoId);
-    return c.json(
-      {
-        mensaje: 'Sorteo generado exitosamente e inscripciones cerradas',
-        fixture,
-      },
-      201,
-    );
+  .put('/:id', zValidator('param', z.object({ id: z.string().min(1) }), siFallaLaValidacion), zValidator('json', editarTorneoSchema, siFallaLaValidacion), async (c) => {
+    const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+    await servicio.editar(c.req.valid('param').id, c.req.valid('json'));
+    return c.json({ datos: { actualizado: true } });
   })
-  .post('/:id/sorteo/repetir', async (c) => {
-    const torneoId = c.req.param('id');
-    const service = crearSorteoService(c.env.DB);
-    const fixture = await service.repetirSorteo(torneoId);
-    return c.json({
-      mensaje: 'Sorteo repetido exitosamente con nuevo orden aleatorio',
-      fixture,
-    });
-  })
-  .get('/:id/fixture', async (c) => {
-    const torneoId = c.req.param('id');
-    const service = crearSorteoService(c.env.DB);
-    const fixture = await service.obtenerFixture(torneoId);
-    return c.json(fixture);
+  .delete('/:id', zValidator('param', z.object({ id: z.string().min(1) }), siFallaLaValidacion), async (c) => {
+    const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+    await servicio.eliminar(c.req.valid('param').id);
+    return c.body(null, 204);
   });

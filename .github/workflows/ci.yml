@@ -20,11 +20,11 @@ jobs:
     name: Lint, tipos, pruebas y build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -44,7 +44,7 @@ jobs:
       - name: Comentar la cobertura en el PR
         if: ${{ !cancelled() && hashFiles('coverage/coverage-summary.json') != '' }}
         # Acción de terceros con permiso de escritura en el PR: fijada a un commit (v2.9.3).
-        uses: davelosert/vitest-coverage-report-action@c4bbc33a89b7ace0e63d35f1f7d4bcee31155a73
+        uses: davelosert/vitest-coverage-report-action@2500dafcee7dd64f85ab689c0b83798a8359770e
 
       - name: Build
         run: npm run build

@@ -16,14 +16,11 @@ import {
   esquemaSolicitudRegistroJugador,
   type SolicitudRegistroJugador,
 } from '@shared/usuarios/esquema-registro-jugador';
-import { z } from 'zod';
 import { COOKIE_DE_SESION } from '../../core/cookie-de-sesion';
 import type { AppEnv } from '../../core/env';
 import { AppError, errores } from '../../core/errors';
-import { requireAuth } from '../../core/middleware/auth';
 import { limitarPeticionesPorIp } from '../../core/middleware/limite-de-peticiones';
 import { siFallaLaValidacion } from '../../core/validacion';
-import { REGLAS_CONTRASENA } from '../../../shared/usuarios/reglas-registro-jugador';
 import { ErrorCorreoYaRegistrado } from '../usuarios/aplicacion/errores/error-correo-ya-registrado';
 import {
   ErrorCredencialesIncorrectas,
@@ -33,9 +30,6 @@ import {
 import type { IniciarSesion } from '../usuarios/aplicacion/iniciar-sesion';
 import type { RegistrarJugador } from '../usuarios/aplicacion/registrar-jugador';
 import { ErrorDeValidacionDeDominio } from '../usuarios/dominio/errores/error-de-validacion-dominio';
-import { ContrasenaPlana } from '../usuarios/dominio/objeto-valor/contrasena-plana';
-import { CifradorPbkdf2 } from '../usuarios/infraestructura/cifrador-pbkdf2';
-import { RepositorioDeUsuariosD1 } from '../usuarios/infraestructura/repositorio-de-usuarios-d1';
 import { crearIniciarSesion } from '../usuarios/infraestructura/crear-iniciar-sesion';
 import { crearRegistrarJugador } from '../usuarios/infraestructura/crear-registrar-jugador';
 import { crearSesionesRepository } from './sesiones.repository';
@@ -99,55 +93,7 @@ export const authRoutes = new Hono<AppEnv>()
     }
     const usuario: UsuarioAutenticado = resultado.usuario;
     return c.json(usuario);
-  })
-  .patch(
-    '/cambiar-contrasena',
-    requireAuth,
-    zValidator(
-      'json',
-      z
-        .object({
-          contrasenaActual: z.string().min(1, 'Ingresa tu contraseña actual'),
-          contrasenaNueva: z
-            .string()
-            .min(REGLAS_CONTRASENA.longitudMinima, REGLAS_CONTRASENA.mensajeError)
-            .regex(REGLAS_CONTRASENA.patronAlMenosUnaLetra, REGLAS_CONTRASENA.mensajeError)
-            .regex(REGLAS_CONTRASENA.patronAlMenosUnNumero, REGLAS_CONTRASENA.mensajeError),
-        })
-        .refine((d) => d.contrasenaNueva !== d.contrasenaActual, {
-          message: 'La nueva contraseña debe ser diferente a la actual',
-          path: ['contrasenaNueva'],
-        }),
-      siFallaLaValidacion,
-    ),
-    async (c) => {
-      const usuarioSesion = c.get('usuario');
-      const { contrasenaActual, contrasenaNueva } = c.req.valid('json');
-
-      const repositorio = new RepositorioDeUsuariosD1(c.env.DB);
-      const usuario = await repositorio.buscarPorId(usuarioSesion.id);
-      if (!usuario) {
-        throw errores.noEncontrado('Usuario no encontrado');
-      }
-
-      const cifrador = new CifradorPbkdf2();
-      const coincide = await cifrador.coincide(contrasenaActual, usuario.contrasenaCifrada);
-      if (!coincide) {
-        throw new AppError(
-          401,
-          CODIGOS_ERROR_SESION.CREDENCIALES_INCORRECTAS,
-          'La contraseña actual no es correcta',
-        );
-      }
-
-      const ahora = new Date();
-      const nuevaCifrada = await cifrador.cifrar(ContrasenaPlana.crear(contrasenaNueva));
-      await repositorio.actualizarContrasena(usuario.id, nuevaCifrada, ahora);
-      await repositorio.actualizarDebeCambiarContrasena(usuario.id, false, ahora);
-
-      return c.json({ mensaje: 'Contraseña actualizada' }, 200);
-    },
-  );
+  });
 
 /** Crea la sesión de 24 h y la envía en una cookie que JavaScript no puede leer. */
 async function iniciarSesionConCookie(c: Context<AppEnv>, usuarioId: string): Promise<void> {

@@ -93,3 +93,6 @@
     font-size: 18px;
   }
 }
+.partidos { display: grid; gap: 10px; }
+.partido { display: grid; gap: 4px; padding: 14px; border: 1px solid var(--color-separador); border-radius: 14px; }
+.partido span { color: var(--color-texto-secundario); font-size: 13px; }

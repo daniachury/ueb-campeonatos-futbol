@@ -37,13 +37,6 @@ export function crearD1Falsa(responder: (sql: string, parametros: unknown[]) => 
       };
       return sentencia;
     },
-    async batch(sentencias: Array<{ run: () => Promise<unknown> }>) {
-      const resultados = [];
-      for (const s of sentencias) {
-        resultados.push(await s.run());
-      }
-      return resultados;
-    },
   };
 
   return { db: db as unknown as D1Database, consultas };
