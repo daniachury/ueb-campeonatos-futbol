@@ -17,7 +17,7 @@ import { crearInscripcionesService } from './inscripciones.service';
 export const inscripcionesRoutes = new Hono<AppEnv>().get('/', async (c) => {
   const usuario = c.get('usuario');
   const { results } = await c.env.DB.prepare(
-    'SELECT id, torneo_id AS torneoId, equipo_id AS equipoId, estado FROM inscripciones WHERE solicitada_por = ? OR equipo_id IN (SELECT id FROM equipos WHERE capitan_id = ?) ORDER BY creada_en DESC',
+    "SELECT id, torneo_id AS torneoId, equipo_id AS equipoId, estado FROM inscripciones WHERE estado = 'APROBADO' AND (solicitada_por = ? OR equipo_id IN (SELECT id FROM equipos WHERE capitan_id = ?)) ORDER BY creada_en DESC",
   ).bind(usuario.id, usuario.id).all();
   return c.json({ datos: results });
 });
