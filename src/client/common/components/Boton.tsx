@@ -19,6 +19,7 @@ function clasesDelBoton(variante: VarianteDeBoton, tamano: TamanoDeBoton, anchoC
 }
 
 interface PropiedadesBoton {
+  id?: string;
   children: ReactNode;
   tipo?: 'button' | 'submit';
   variante?: VarianteDeBoton;
@@ -27,11 +28,14 @@ interface PropiedadesBoton {
   estaDeshabilitado?: boolean;
   estaCargando?: boolean;
   idDeLaAyuda?: string | undefined;
+  testId?: string | undefined;
+  'data-testid'?: string | undefined;
   alPulsar?: () => void;
 }
 
 /** Botón en forma de píldora. */
 export function Boton({
+  id,
   children,
   tipo = 'button',
   variante = 'principal',
@@ -40,15 +44,19 @@ export function Boton({
   estaDeshabilitado = false,
   estaCargando = false,
   idDeLaAyuda,
+  testId,
+  'data-testid': dataTestId,
   alPulsar,
 }: PropiedadesBoton) {
   return (
     <button
+      id={id}
       type={tipo}
       className={clasesDelBoton(variante, tamano, anchoCompleto)}
       disabled={estaDeshabilitado || estaCargando}
       aria-busy={estaCargando}
       aria-describedby={idDeLaAyuda}
+      data-testid={dataTestId ?? testId}
       onClick={alPulsar}
     >
       {children}
@@ -57,25 +65,37 @@ export function Boton({
 }
 
 interface PropiedadesEnlaceBoton {
+  id?: string;
   children: ReactNode;
   ruta: string;
   variante?: VarianteDeBoton;
   tamano?: TamanoDeBoton;
   anchoCompleto?: boolean;
+  testId?: string | undefined;
+  'data-testid'?: string | undefined;
   alPulsar?: () => void;
 }
 
 /** Enlace con forma de botón: navega a otra pantalla (v3 usa <a> para estas acciones). */
 export function EnlaceBoton({
+  id,
   children,
   ruta,
   variante = 'principal',
   tamano = 'grande',
   anchoCompleto = true,
+  testId,
+  'data-testid': dataTestId,
   alPulsar,
 }: PropiedadesEnlaceBoton) {
   return (
-    <Link to={ruta} className={clasesDelBoton(variante, tamano, anchoCompleto)} onClick={alPulsar}>
+    <Link
+      id={id}
+      to={ruta}
+      className={clasesDelBoton(variante, tamano, anchoCompleto)}
+      data-testid={dataTestId ?? testId}
+      onClick={alPulsar}
+    >
       {children}
     </Link>
   );

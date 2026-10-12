@@ -38,6 +38,9 @@ const esErrorApi = (valor: unknown): valor is ErrorApi =>
 export async function pedir<T>(ruta: string, opciones: RequestInit = {}): Promise<T> {
   const encabezados = new Headers(opciones.headers);
   encabezados.set('Accept', 'application/json');
+  if (opciones.body && !encabezados.has('Content-Type')) {
+    encabezados.set('Content-Type', 'application/json');
+  }
 
   const respuesta = await fetch(`/api${ruta}`, { ...opciones, headers: encabezados });
   const cuerpo: unknown = await respuesta.json().catch(() => null);
