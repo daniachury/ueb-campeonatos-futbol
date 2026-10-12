@@ -179,7 +179,6 @@ export function GestionDeTorneosPage() {
                     <span>Cupo: {torneo.cupo} equipos</span>
                   </div>
                   <div className={estilos.detalleItem}>
-                    <span>⚽</span>
                     <span>Fútbol 11</span>
                   </div>
                   <div className={estilos.detalleItem}>

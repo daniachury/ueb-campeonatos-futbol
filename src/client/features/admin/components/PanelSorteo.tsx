@@ -51,7 +51,7 @@ export const PanelSorteo: React.FC<PanelSorteoProps> = ({
     <div className={styles.panel} data-testid="panel-sorteo">
       <div className={styles.cabecera}>
         <h3 className={styles.titulo}>
-          <span>⚽</span> Cerrar inscripciones y sortear
+          Cerrar inscripciones y sortear
         </h3>
         <span className={styles.badgeEstado}>Vista previa del fixture</span>
       </div>

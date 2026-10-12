@@ -236,7 +236,7 @@ export function SedesPage() {
                     <div className={estilos.detallesSede}>
                       <span>{sede.direccion}</span>
                       <span>{sede.ciudad}</span>
-                      <span>⚽ {sede.totalCanchas} canchas</span>
+                      <span>{sede.totalCanchas} canchas</span>
                       {sede.totalPartidosProgramados > 0 && (
                         <span>{sede.totalPartidosProgramados} partidos programados</span>
                       )}

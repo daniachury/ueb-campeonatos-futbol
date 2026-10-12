@@ -224,7 +224,7 @@ export function InscripcionesPage() {
 
               {datos.torneoEnCurso && (
                 <div className={estilos.alertaTorneoEnCurso} role="alert">
-                  ⚽ El torneo se encuentra en curso. Las inscripciones están cerradas y el fixture
+                  El torneo se encuentra en curso. Las inscripciones están cerradas y el fixture
                   está activo.
                 </div>
               )}
