@@ -18,6 +18,7 @@ import { CalendarioPage } from '../features/inicio/pages/CalendarioPage';
 import { TablaResultadosPage } from '../features/inicio/pages/TablaResultadosPage';
 import { RutaMiPerfil } from '../features/perfil/pages/RutaMiPerfil';
 import { TorneosPage } from '../features/torneos/pages/TorneosPage';
+import { DetalleTorneoPage } from '../features/torneos/pages/DetalleTorneoPage';
 import { CrearEquipoPage } from '../features/equipos/pages/CrearEquipoPage';
 import { MisEquiposPage } from '../features/equipos/pages/MisEquiposPage';
 import { UnirmeAEquipoPage } from '../features/equipos/pages/UnirmeAEquipoPage';
@@ -68,6 +69,7 @@ export const rutas: RouteObject[] = [
     element: <AppLayout />,
     children: [
       { path: RUTAS.TORNEOS, element: <TorneosPage /> },
+      { path: `${RUTAS.TORNEOS}/:id`, element: <DetalleTorneoPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
