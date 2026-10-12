@@ -1,4 +1,4 @@
-CREATE TABLE equipos (
+CREATE TABLE IF NOT EXISTS equipos (
   id TEXT PRIMARY KEY NOT NULL,
   nombre TEXT NOT NULL,
   color TEXT NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE equipos (
   FOREIGN KEY (capitan_id) REFERENCES usuarios(id)
 );
 
-CREATE TABLE equipo_integrantes (
+CREATE TABLE IF NOT EXISTS equipo_integrantes (
   equipo_id TEXT NOT NULL,
   usuario_id TEXT NOT NULL,
   creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),

@@ -1,4 +1,4 @@
-CREATE TABLE inscripciones (
+CREATE TABLE IF NOT EXISTS inscripciones (
   id TEXT PRIMARY KEY NOT NULL,
   torneo_id TEXT NOT NULL,
   equipo_id TEXT NOT NULL,
@@ -12,4 +12,4 @@ CREATE TABLE inscripciones (
   FOREIGN KEY (solicitante_id) REFERENCES usuarios(id)
 );
 
-CREATE INDEX ix_inscripciones_torneo ON inscripciones (torneo_id);
+CREATE INDEX IF NOT EXISTS ix_inscripciones_torneo ON inscripciones (torneo_id);

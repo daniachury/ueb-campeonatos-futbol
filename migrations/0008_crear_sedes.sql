@@ -1,11 +1,11 @@
-CREATE TABLE sedes (
+CREATE TABLE IF NOT EXISTS sedes (
   id TEXT PRIMARY KEY NOT NULL,
   nombre TEXT NOT NULL UNIQUE COLLATE NOCASE,
   direccion TEXT NOT NULL,
   creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 
-CREATE TABLE canchas (
+CREATE TABLE IF NOT EXISTS canchas (
   id TEXT PRIMARY KEY NOT NULL,
   sede_id TEXT NOT NULL,
   nombre TEXT NOT NULL,

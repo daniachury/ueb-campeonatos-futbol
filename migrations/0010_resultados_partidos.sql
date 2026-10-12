@@ -1,2 +1,1 @@
-ALTER TABLE partidos ADD COLUMN goles_local INTEGER;
-ALTER TABLE partidos ADD COLUMN goles_visitante INTEGER;
+-- No-op: goles_local y goles_visitante ya existen en la migración 0006_crear_tablas_fechas_y_partidos.sql.

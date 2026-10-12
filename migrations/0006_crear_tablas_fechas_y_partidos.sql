@@ -1,7 +1,7 @@
 -- Migración 0006 · Tablas fechas y partidos para sorteo de torneos (KAN-33).
 -- Sorteo todos contra todos (round-robin) para torneos de fútbol.
 
-CREATE TABLE fechas (
+CREATE TABLE IF NOT EXISTS fechas (
   id                  TEXT PRIMARY KEY,
   torneo_id           TEXT NOT NULL REFERENCES torneos(id) ON DELETE CASCADE,
   numero              INTEGER NOT NULL CHECK (numero >= 1),
@@ -10,9 +10,9 @@ CREATE TABLE fechas (
   UNIQUE (torneo_id, numero)
 );
 
-CREATE INDEX ix_fechas_torneo ON fechas (torneo_id, numero);
+CREATE INDEX IF NOT EXISTS ix_fechas_torneo ON fechas (torneo_id, numero);
 
-CREATE TABLE partidos (
+CREATE TABLE IF NOT EXISTS partidos (
   id              TEXT PRIMARY KEY,
   fecha_id        TEXT NOT NULL REFERENCES fechas(id) ON DELETE CASCADE,
   torneo_id       TEXT NOT NULL REFERENCES torneos(id) ON DELETE CASCADE,
@@ -29,5 +29,5 @@ CREATE TABLE partidos (
   CHECK (local_id <> visitante_id)
 );
 
-CREATE INDEX ix_partidos_torneo ON partidos (torneo_id);
-CREATE INDEX ix_partidos_fecha ON partidos (fecha_id);
+CREATE INDEX IF NOT EXISTS ix_partidos_torneo ON partidos (torneo_id);
+CREATE INDEX IF NOT EXISTS ix_partidos_fecha ON partidos (fecha_id);

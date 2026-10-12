@@ -1,4 +1,3 @@
 ALTER TABLE partidos ADD COLUMN sede_id TEXT REFERENCES sedes(id);
-ALTER TABLE partidos ADD COLUMN cancha_id TEXT REFERENCES canchas(id);
 ALTER TABLE partidos ADD COLUMN fecha TEXT;
 ALTER TABLE partidos ADD COLUMN hora TEXT;

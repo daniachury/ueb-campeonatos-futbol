@@ -1,4 +1,4 @@
-CREATE TABLE partidos (
+CREATE TABLE IF NOT EXISTS partidos (
   id TEXT PRIMARY KEY NOT NULL,
   torneo_id TEXT NOT NULL,
   equipo_local_id TEXT NOT NULL,
@@ -10,4 +10,4 @@ CREATE TABLE partidos (
   FOREIGN KEY (equipo_visitante_id) REFERENCES equipos(id)
 );
 
-CREATE INDEX ix_partidos_torneo ON partidos (torneo_id);
+CREATE INDEX IF NOT EXISTS ix_partidos_torneo ON partidos (torneo_id);
