@@ -65,5 +65,6 @@ export const MENU_DEL_JUGADOR: readonly OpcionDelMenu[] = [
   { ruta: RUTAS.INICIO_DEL_JUGADOR, texto: 'Torneos', icono: 'copa' },
   { ruta: RUTAS.MIS_EQUIPOS, texto: 'Mis equipos', icono: 'escudo' },
   { ruta: RUTAS.CALENDARIO, texto: 'Calendario', icono: 'calendario' },
+  { ruta: RUTAS.MI_PERFIL, texto: 'Mi perfil', icono: 'perfil' },
   { ruta: RUTAS.TABLA_RESULTADOS, texto: 'Tabla de posiciones', icono: 'tabla' },
 ];
