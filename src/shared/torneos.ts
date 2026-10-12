@@ -5,6 +5,7 @@ import { ESTADOS_TORNEO_PUBLICOS, type EstadoTorneo } from './constants';
 export interface TorneoResumen {
   id: string;
   nombre: string;
+  descripcion?: string;
   estado: EstadoTorneo;
 
   fechaInicio: string;
@@ -24,3 +25,5 @@ export const crearTorneoSchema = z.object({
   cupo: z.coerce.number().int().min(3).max(20),
 });
 export type CrearTorneo = z.infer<typeof crearTorneoSchema>;
+export const editarTorneoSchema = crearTorneoSchema;
+export type EditarTorneo = z.infer<typeof editarTorneoSchema>;

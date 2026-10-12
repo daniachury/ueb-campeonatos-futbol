@@ -171,6 +171,22 @@ h2 {
   margin: 0;
   font-weight: 600;
 }
+.tarjeta__detalle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  margin-top: 18px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--color-grafito);
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 160ms ease, background 160ms ease;
+}
+.tarjeta__detalle:hover, .tarjeta__detalle:focus-visible { background: var(--color-neon); color: var(--color-grafito); transform: translateY(-2px); }
+.tarjeta__detalle span { font-size: 20px; }
 
 .etiqueta {
   justify-self: start;

@@ -3,7 +3,7 @@ import type { TorneoResumen } from '@shared/torneos';
 import { ordenarParaListado } from './domain/ordenar-torneos';
 import type { TorneosRepository } from './torneos.repository';
 import { errores } from '../../core/errors';
-import type { CrearTorneo } from '@shared/torneos';
+import type { CrearTorneo, EditarTorneo } from '@shared/torneos';
 
 
 export function crearTorneosService(repositorio: TorneosRepository) {
@@ -13,6 +13,10 @@ export function crearTorneosService(repositorio: TorneosRepository) {
       const estados = estado ? [estado] : ESTADOS_TORNEO_PUBLICOS;
       const torneos = await repositorio.listarPorEstados(estados);
       return ordenarParaListado(torneos);
+    },
+    async listarTodos(): Promise<TorneoResumen[]> {
+      if (!repositorio.listarTodos) return [];
+      return repositorio.listarTodos();
     },
     async crear(datos: CrearTorneo): Promise<TorneoResumen> {
       if (!repositorio.crear) throw new Error('Repositorio de torneos no soporta creación');
@@ -28,6 +32,21 @@ export function crearTorneosService(repositorio: TorneosRepository) {
     async abrirInscripciones(id: string): Promise<void> {
       if (!repositorio.abrirInscripciones) throw new Error('Repositorio de torneos no soporta transiciones');
       if (!(await repositorio.abrirInscripciones(id))) throw errores.conflicto('TRANSICION_INVALIDA', 'El torneo no está en estado Borrador');
+    },
+    async editar(id: string, datos: EditarTorneo): Promise<void> {
+      if (!repositorio.editar) throw new Error('Repositorio de torneos no soporta edición');
+      const hoy = new Date().toISOString().slice(0, 10);
+      if (datos.fechaInicio < hoy) throw errores.validacion({ fechaInicio: 'La fecha de inicio no puede ser anterior a hoy' });
+      try {
+        if (!(await repositorio.editar(id, datos))) throw errores.conflicto('EDICION_NO_PERMITIDA', 'Este torneo ya no se puede editar');
+      } catch (error) {
+        if (error instanceof Error && /unique/i.test(error.message)) throw errores.conflicto('TORNEO_NOMBRE_DUPLICADO', 'Ya existe un torneo con ese nombre');
+        throw error;
+      }
+    },
+    async eliminar(id: string): Promise<void> {
+      if (!repositorio.eliminar) throw new Error('Repositorio de torneos no soporta eliminación');
+      if (!(await repositorio.eliminar(id))) throw errores.conflicto('ELIMINACION_NO_PERMITIDA', 'Este torneo ya no se puede eliminar');
     },
   };
 }

@@ -13,6 +13,12 @@
   padding: 18px 16px;
   background: var(--color-superficie);
 }
+.identidad { display: flex; align-items: center; gap: 12px; }
+.identidad > div { display: grid; gap: 2px; }
+.identidad span { color: var(--color-texto-secundario); font-size: 13px; }
+.menu { display: flex; gap: 8px; }
+.menu a { color: var(--color-texto-secundario); padding: 10px 12px; border-radius: 10px; text-decoration: none; }
+.menu a.active { color: var(--color-grafito); background: var(--color-neon); }
 
 .contenido {
   max-width: 1240px;
@@ -49,6 +55,12 @@
 .fijos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .fijos span { display: grid; gap: 4px; color: var(--color-texto-secundario); }
 .fijos strong { color: var(--color-grafito); }
+.lista { display: grid; gap: 12px; }
+.torneo { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px; border: 1px solid #e1e5eb; border-radius: 12px; }
+.torneo div { display: grid; gap: 4px; }
+.torneo span { color: var(--color-texto-secundario); font-size: 14px; }
+.acciones { display: flex; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 600px) { .torneo { display: grid; } }
 
 @media (min-width: 1024px) {
   .encabezado {
@@ -68,4 +80,9 @@
     padding: 36px 24px;
     border-radius: var(--radio-seccion);
   }
+}
+@media (max-width: 760px) {
+  .encabezado { flex-wrap: wrap; }
+  .menu { order: 3; width: 100%; overflow-x: auto; }
+  .menu a { white-space: nowrap; }
 }

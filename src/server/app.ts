@@ -34,6 +34,7 @@ export function crearApp() {
   // 1. Protección por grupos. Va antes de las rutas para que se ejecute primero.
   api.use('/admin/*', requireAuth, requireRole('admin'));
   for (const prefijo of PREFIJOS_CON_SESION) {
+    api.use(prefijo, requireAuth);
     api.use(`${prefijo}/*`, requireAuth);
   }
 
