@@ -23,7 +23,7 @@
       "database_name": "ueb-campeonatos-db",
       // Base de producción en la cuenta de Cloudflare del proyecto (`npx wrangler d1 list`).
       // Para desarrollo local este valor no importa: Wrangler usa la copia en .wrangler/.
-      "database_id": "deeb4815-fffd-4508-a4d7-23b20ae743df",
+      "database_id": "d5d8936f-32c5-4d81-adb8-f7feef47f1ac",
       "migrations_dir": "migrations"
     }
   ],
