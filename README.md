@@ -253,20 +253,21 @@ No hace falta iniciar sesión en Cloudflare para trabajar en local.
 
 ## 8. Scripts
 
-| Comando                                          | Qué hace                                                                  |
-| ------------------------------------------------ | ------------------------------------------------------------------------- |
-| `npm run dev`                                    | Servidor de desarrollo con recarga: React + Worker + D1 local             |
-| `npm run build`                                  | Verifica tipos y genera el build de producción en `dist/`                 |
-| `npm run preview`                                | Build + servidor que imita producción                                     |
-| `npm run deploy`                                 | Migraciones en la D1 remota + build + despliegue manual en Cloudflare     |
-| `npm run lint`                                   | ESLint, incluidas las fronteras entre capas                               |
-| `npm run typecheck`                              | TypeScript en los tres entornos (navegador, Worker y Node)                |
-| `npm run format` / `format:check`                | Prettier                                                                  |
-| `npm test` / `npm run test:watch`                | Pruebas una vez / en modo observación                                     |
-| `npm run test:coverage`                          | Pruebas con reporte de cobertura en `coverage/`                           |
-| `npm run test:ci`                                | Lo que corre el CI: cobertura + resultados en `reports/test-results.json` |
-| `npm run db:migrate:local` / `db:migrate:remote` | Aplica migraciones a la D1 local / de producción                          |
-| `npm run db:seed:local`                          | Carga datos de ejemplo en la D1 local                                     |
+| Comando                                                    | Qué hace                                                                                                               |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                                              | Servidor de desarrollo con recarga: React + Worker + D1 local                                                          |
+| `npm run build`                                            | Verifica tipos y genera el build de producción en `dist/`                                                              |
+| `npm run preview`                                          | Build + servidor que imita producción                                                                                  |
+| `npm run deploy`                                           | Migraciones en la D1 remota + build + despliegue manual en Cloudflare                                                  |
+| `npm run lint`                                             | ESLint, incluidas las fronteras entre capas                                                                            |
+| `npm run typecheck`                                        | TypeScript en los tres entornos (navegador, Worker y Node)                                                             |
+| `npm run format` / `format:check`                          | Prettier                                                                                                               |
+| `npm test` / `npm run test:watch`                          | Pruebas una vez / en modo observación                                                                                  |
+| `npm run test:coverage`                                    | Pruebas con reporte de cobertura en `coverage/`                                                                        |
+| `npm run test:ci`                                          | Lo que corre el CI: cobertura + resultados en `reports/test-results.json`                                              |
+| `npm run db:migrate:local` / `db:migrate:remote`           | Aplica migraciones a la D1 local / de producción                                                                       |
+| `npm run db:seed:local`                                    | Carga datos de ejemplo en la D1 local                                                                                  |
+| `npx wrangler d1 execute DB --local --file=seeds/demo.sql` | Carga la Copa Liga Bosque 2026 (4 equipos, 2 sedes, fixture). Con `--remote`, en producción; no borra ni duplica datos |
 
 ## 9. Pruebas y cobertura
 
