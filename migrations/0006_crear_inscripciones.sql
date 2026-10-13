@@ -1,15 +1,6 @@
-CREATE TABLE inscripciones (
-  id TEXT PRIMARY KEY NOT NULL,
-  torneo_id TEXT NOT NULL,
-  equipo_id TEXT NOT NULL,
-  solicitante_id TEXT NOT NULL,
-  estado TEXT NOT NULL DEFAULT 'SOLICITADA' CHECK (estado IN ('SOLICITADA', 'APROBADA', 'RECHAZADA', 'RETIRADA')),
-  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-  actualizado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-  UNIQUE (torneo_id, equipo_id),
-  FOREIGN KEY (torneo_id) REFERENCES torneos(id) ON DELETE CASCADE,
-  FOREIGN KEY (equipo_id) REFERENCES equipos(id) ON DELETE CASCADE,
-  FOREIGN KEY (solicitante_id) REFERENCES usuarios(id)
-);
-
-CREATE INDEX ix_inscripciones_torneo ON inscripciones (torneo_id);
+-- SIN EFECTO (corrección del esquema, 12/10/2026).
+-- Esta migración pertenecía a un segundo esquema que duplicaba tablas ya creadas por otra
+-- migración con columnas distintas. El código usa el esquema original, así que aquí no se
+-- crea nada. Se conserva el archivo para no cambiar los nombres ya registrados en d1_migrations.
+-- Tabla real: inscripciones en 0005_crear_tablas_equipos_e_inscripciones.sql.
+SELECT 1;

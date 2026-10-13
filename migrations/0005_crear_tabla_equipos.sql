@@ -1,19 +1,6 @@
-CREATE TABLE equipos (
-  id TEXT PRIMARY KEY NOT NULL,
-  nombre TEXT NOT NULL,
-  color TEXT NOT NULL,
-  capitan_id TEXT NOT NULL,
-  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-  actualizado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-  UNIQUE (nombre COLLATE NOCASE),
-  FOREIGN KEY (capitan_id) REFERENCES usuarios(id)
-);
-
-CREATE TABLE equipo_integrantes (
-  equipo_id TEXT NOT NULL,
-  usuario_id TEXT NOT NULL,
-  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-  PRIMARY KEY (equipo_id, usuario_id),
-  FOREIGN KEY (equipo_id) REFERENCES equipos(id) ON DELETE CASCADE,
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-);
+-- SIN EFECTO (corrección del esquema, 12/10/2026).
+-- Esta migración pertenecía a un segundo esquema que duplicaba tablas ya creadas por otra
+-- migración con columnas distintas. El código usa el esquema original, así que aquí no se
+-- crea nada. Se conserva el archivo para no cambiar los nombres ya registrados en d1_migrations.
+-- Tablas reales: equipos y equipo_jugadores en 0005_crear_tablas_equipos_e_inscripciones.sql.
+SELECT 1;

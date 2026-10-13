@@ -1,13 +1,6 @@
-CREATE TABLE partidos (
-  id TEXT PRIMARY KEY NOT NULL,
-  torneo_id TEXT NOT NULL,
-  equipo_local_id TEXT NOT NULL,
-  equipo_visitante_id TEXT NOT NULL,
-  jornada INTEGER NOT NULL,
-  estado TEXT NOT NULL DEFAULT 'PENDIENTE' CHECK (estado IN ('PENDIENTE', 'JUGADO')),
-  FOREIGN KEY (torneo_id) REFERENCES torneos(id) ON DELETE CASCADE,
-  FOREIGN KEY (equipo_local_id) REFERENCES equipos(id),
-  FOREIGN KEY (equipo_visitante_id) REFERENCES equipos(id)
-);
-
-CREATE INDEX ix_partidos_torneo ON partidos (torneo_id);
+-- SIN EFECTO (corrección del esquema, 12/10/2026).
+-- Esta migración pertenecía a un segundo esquema que duplicaba tablas ya creadas por otra
+-- migración con columnas distintas. El código usa el esquema original, así que aquí no se
+-- crea nada. Se conserva el archivo para no cambiar los nombres ya registrados en d1_migrations.
+-- Tabla real: partidos (con fecha_hora, goles y estado) en 0006_crear_tablas_fechas_y_partidos.sql.
+SELECT 1;

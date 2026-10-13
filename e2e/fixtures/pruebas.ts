@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test';
+import { test as base, type Page } from '@playwright/test';
 import { ENTORNO } from '../configuracion/entorno';
 import { PreparadorDeEscenarios } from '../dominio/escenarios/preparador-de-escenarios';
 import type { AlmacenDeDatosDePrueba } from '../dominio/puertos/almacen-de-datos';
@@ -13,6 +13,7 @@ import { InscripcionesPagina } from '../paginas/inscripciones.pagina';
 import { MiPerfilPagina } from '../paginas/mi-perfil.pagina';
 import { RegistrarAdministradorPagina } from '../paginas/registrar-administrador.pagina';
 import { SedesPagina } from '../paginas/sedes.pagina';
+import { TorneosPublicosPagina } from '../paginas/torneos-publicos.pagina';
 
 interface Paginas {
   iniciarSesion: IniciarSesionPagina;
@@ -27,6 +28,9 @@ interface Paginas {
 }
 
 interface Contexto {
+  /** Una persona sin sesión, en su propio navegador: ve solo lo público. */
+  visitante: Page;
+  torneosPublicosDelVisitante: TorneosPublicosPagina;
   /** «Dado que…»: prepara datos de partida en lenguaje del negocio. */
   escenarios: PreparadorDeEscenarios;
   sesion: FlujoDeSesion;
@@ -58,6 +62,13 @@ export const test = base.extend<Paginas & Contexto, ContextoDelTrabajador>({
   ],
   escenarios: async ({ almacen }, usar) => usar(new PreparadorDeEscenarios(almacen)),
   sesion: async ({ page }, usar) => usar(new FlujoDeSesion(page)),
+  visitante: async ({ browser, baseURL }, usar) => {
+    const contexto = await browser.newContext({ baseURL });
+    await usar(await contexto.newPage());
+    await contexto.close();
+  },
+  torneosPublicosDelVisitante: async ({ visitante }, usar) =>
+    usar(new TorneosPublicosPagina(visitante)),
 
   iniciarSesion: async ({ page }, usar) => usar(new IniciarSesionPagina(page)),
   crearCuenta: async ({ page }, usar) => usar(new CrearCuentaPagina(page)),

@@ -39,20 +39,27 @@ export class GestionDeTorneosPagina extends PaginaBase {
   async irASedesYCanchas(): Promise<void> {
     if (await this.botonMenuMovil.isVisible()) {
       await this.botonMenuMovil.click();
-      await this.page.getByTestId('menu-movil-admin').getByRole('link', { name: /sedes y canchas/i }).click();
+      await this.page
+        .getByTestId('menu-movil-admin')
+        .getByRole('link', { name: /sedes y canchas/i })
+        .click();
     } else {
       await this.enlaceSedesYCanchas.click();
     }
   }
 
   async irARegistrarAdministrador(): Promise<void> {
-    await this.page.getByRole('button', { name: 'Registrar administrador' }).click();
+    // El encabezado de administración lo muestra como «Registrar admin».
+    await this.page.getByRole('button', { name: /^Registrar admin/ }).click();
   }
 
   async cerrarSesion(): Promise<void> {
     if (await this.botonMenuMovil.isVisible()) {
       await this.botonMenuMovil.click();
-      await this.page.getByTestId('menu-movil-admin').getByRole('button', { name: /cerrar sesión/i }).click();
+      await this.page
+        .getByTestId('menu-movil-admin')
+        .getByRole('button', { name: /cerrar sesión/i })
+        .click();
     } else {
       await this.botonCerrarSesion.click();
     }
