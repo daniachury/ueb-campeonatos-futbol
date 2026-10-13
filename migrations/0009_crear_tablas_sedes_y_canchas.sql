@@ -1,4 +1,4 @@
--- Migración 0007 · Tablas sedes y canchas para lugares de partidos (KAN-34).
+-- Migración 0009 · Tablas sedes y canchas para lugares de partidos (KAN-34).
 -- Épica E8 · Programación y fixture.
 
 CREATE TABLE sedes (

@@ -7,6 +7,7 @@ test.describe('KAN-20 · Crear torneo de fútbol 11 en formato liga y abrir insc
     escenarios,
     sesion,
     gestionDeTorneos,
+    torneosPublicosDelVisitante,
   }) => {
     const sufijo = sufijoEnLetras();
     const nombreTorneo = `Copa El Bosque ${sufijo}`;
@@ -32,17 +33,17 @@ test.describe('KAN-20 · Crear torneo de fútbol 11 en formato liga y abrir insc
 
       // Debe aparecer con la etiqueta "Borrador"
       await expect(page.getByRole('heading', { name: nombreTorneo })).toBeVisible();
-      const tarjetaTorneo = page.locator(`[data-testid^="tarjeta-torneo-"]`).filter({ hasText: nombreTorneo });
+      const tarjetaTorneo = page
+        .locator(`[data-testid^="tarjeta-torneo-"]`)
+        .filter({ hasText: nombreTorneo });
       await expect(tarjetaTorneo).toBeVisible();
       await expect(tarjetaTorneo.getByText('Borrador')).toBeVisible();
     });
 
-    // 3. Comprobar que NO es visible para jugadores en /torneos
+    // 3. Una persona sin sesión no lo ve en el listado público
     await test.step('El torneo en borrador no aparece en el listado público', async () => {
-      await page.goto('/torneos');
-      await expect(page.getByRole('heading', { name: nombreTorneo })).not.toBeVisible();
-      // Regresar a administración
-      await page.goto('/admin/torneos');
+      await torneosPublicosDelVisitante.abrirYEsperarListado();
+      await expect(torneosPublicosDelVisitante.tarjetaDe(nombreTorneo)).toHaveCount(0);
     });
 
     // 4. Escenario 3: Rechazo por nombre duplicado insensible a mayúsculas
@@ -60,7 +61,9 @@ test.describe('KAN-20 · Crear torneo de fútbol 11 en formato liga y abrir insc
 
     // 5. Escenario 2: Abrir inscripciones (irreversible)
     await test.step('Admin abre las inscripciones del torneo con confirmación', async () => {
-      const tarjetaTorneo = page.locator(`[data-testid^="tarjeta-torneo-"]`).filter({ hasText: nombreTorneo });
+      const tarjetaTorneo = page
+        .locator(`[data-testid^="tarjeta-torneo-"]`)
+        .filter({ hasText: nombreTorneo });
       const botonAbrir = tarjetaTorneo.getByRole('button', { name: 'Abrir inscripciones' });
       await botonAbrir.click();
 
@@ -71,11 +74,12 @@ test.describe('KAN-20 · Crear torneo de fútbol 11 en formato liga y abrir insc
       await expect(tarjetaTorneo.getByText('Inscripciones abiertas')).toBeVisible();
     });
 
-    // 6. Ahora SÍ debe aparecer en el listado público /torneos
+    // 6. Ahora SÍ aparece en el listado público, con inscripciones abiertas
     await test.step('El torneo ahora aparece en el listado público de jugadores', async () => {
-      await page.goto('/torneos');
-      await expect(page.getByRole('heading', { name: nombreTorneo })).toBeVisible();
-      await expect(page.getByText('Inscripciones abiertas')).toBeVisible();
+      await torneosPublicosDelVisitante.abrirYEsperarListado();
+      const tarjeta = torneosPublicosDelVisitante.tarjetaDe(nombreTorneo);
+      await expect(tarjeta).toBeVisible();
+      await expect(tarjeta.getByText('Inscripciones abiertas')).toBeVisible();
     });
 
     // 7. Responsividad: Cero scroll horizontal en resolución móvil (375px)

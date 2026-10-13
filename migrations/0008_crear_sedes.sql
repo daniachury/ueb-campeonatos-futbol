@@ -1,15 +1,7 @@
-CREATE TABLE sedes (
-  id TEXT PRIMARY KEY NOT NULL,
-  nombre TEXT NOT NULL UNIQUE COLLATE NOCASE,
-  direccion TEXT NOT NULL,
-  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
-);
-
-CREATE TABLE canchas (
-  id TEXT PRIMARY KEY NOT NULL,
-  sede_id TEXT NOT NULL,
-  nombre TEXT NOT NULL,
-  creado_en TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-  UNIQUE (sede_id, nombre),
-  FOREIGN KEY (sede_id) REFERENCES sedes(id) ON DELETE CASCADE
-);
+-- SIN EFECTO (corrección del esquema, 12/10/2026).
+-- Esta migración pertenecía a un segundo esquema que duplicaba tablas ya creadas por otra
+-- migración con columnas distintas. El código usa el esquema original, así que aquí no se
+-- crea nada. Se conserva el archivo para no cambiar los nombres ya registrados en d1_migrations.
+-- Tablas reales: sedes y canchas (con ciudad, indicaciones y superficie) en
+-- 0009_crear_tablas_sedes_y_canchas.sql.
+SELECT 1;

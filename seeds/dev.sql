@@ -1,15 +1,19 @@
 -- Datos de ejemplo SOLO para desarrollo local:  npm run db:seed:local
 -- Nunca ejecutar contra la base remota.
 
+-- Esquema: migraciones 0005 (equipos, equipo_jugadores, inscripciones), 0006 (fechas, partidos)
+-- y 0009 (sedes, canchas). Se puede ejecutar varias veces.
+
 DELETE FROM partidos;
+DELETE FROM fechas;
 DELETE FROM inscripciones;
 DELETE FROM canchas;
 DELETE FROM sedes;
-DELETE FROM equipo_integrantes;
+DELETE FROM equipo_jugadores;
 DELETE FROM equipos;
 DELETE FROM torneos;
 
-INSERT INTO usuarios (id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, creado_en, actualizado_en) VALUES
+INSERT OR IGNORE INTO usuarios (id, nombre_completo, correo, telefono, hash_contrasena, rol, activo, creado_en, actualizado_en) VALUES
   ('dev-jugador-1', 'Miguel Alvarado', 'miguel@mail.com', '3000000001', 'balon2026', 'jugador', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   ('dev-jugador-2', 'Laura Gomez', 'laura@mail.com', '3000000002', 'balon2026', 'jugador', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
   ('dev-jugador-3', 'Carlos Rojas', 'carlos@mail.com', '3000000003', 'balon2026', 'jugador', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -52,18 +56,18 @@ INSERT INTO equipos (id, nombre, color, capitan_id) VALUES
   ('demo-e12', 'Halcones', 'Vinotinto', 'dev-jugador-21'),
   ('demo-e13', 'Universidad FC', 'Blanco y azul', 'dev-jugador-23');
 
-INSERT INTO equipo_integrantes (equipo_id, usuario_id) VALUES
+INSERT INTO equipo_jugadores (equipo_id, usuario_id) VALUES
   ('demo-e1', 'dev-jugador-1'), ('demo-e1', 'dev-jugador-2'),
   ('demo-e2', 'dev-jugador-3'), ('demo-e2', 'dev-jugador-4'),
   ('demo-e3', 'dev-jugador-5'), ('demo-e3', 'dev-jugador-6');
 
-INSERT INTO equipo_integrantes (equipo_id, usuario_id) VALUES
+INSERT INTO equipo_jugadores (equipo_id, usuario_id) VALUES
   ('demo-e4', 'dev-jugador-7'), ('demo-e4', 'dev-jugador-10'),
   ('demo-e5', 'dev-jugador-9'), ('demo-e5', 'dev-jugador-12'),
   ('demo-e6', 'dev-jugador-11'), ('demo-e6', 'dev-jugador-14'),
   ('demo-e7', 'dev-jugador-13'), ('demo-e8', 'dev-jugador-8');
 
-INSERT INTO equipo_integrantes (equipo_id, usuario_id) VALUES
+INSERT INTO equipo_jugadores (equipo_id, usuario_id) VALUES
   ('demo-e9', 'dev-jugador-15'), ('demo-e9', 'dev-jugador-16'),
   ('demo-e10', 'dev-jugador-17'), ('demo-e10', 'dev-jugador-18'),
   ('demo-e11', 'dev-jugador-19'), ('demo-e11', 'dev-jugador-20'),
@@ -80,32 +84,35 @@ INSERT INTO torneos (id, nombre, descripcion, fecha_inicio, cupo, estado) VALUES
   ('demo-t5', 'Copa de Bienestar Universitario', 'Torneo amistoso entre facultades', '2026-10-25', 8, 'INSCRIPCIONES_ABIERTAS'),
   ('demo-t6', 'Copa de Fin de Año', 'Cierre deportivo del semestre', '2026-12-12', 10, 'BORRADOR');
 
-INSERT INTO sedes (id, nombre, direccion) VALUES
-  ('demo-sede-1', 'Campus El Bosque', 'Avenida 127 # 12-20'),
-  ('demo-sede-2', 'Complejo La Floresta', 'Carrera 45 # 80-15');
+INSERT INTO sedes (id, nombre, direccion, ciudad) VALUES
+  ('demo-sede-1', 'Campus El Bosque', 'Avenida 127 # 12-20', 'Bogotá'),
+  ('demo-sede-2', 'Complejo La Floresta', 'Carrera 45 # 80-15', 'Bogotá');
 
-INSERT INTO canchas (id, sede_id, nombre) VALUES
-  ('demo-cancha-1', 'demo-sede-1', 'Cancha principal'),
-  ('demo-cancha-2', 'demo-sede-1', 'Cancha auxiliar'),
-  ('demo-cancha-3', 'demo-sede-2', 'Cancha norte');
+INSERT INTO canchas (id, sede_id, nombre, superficie) VALUES
+  ('demo-cancha-1', 'demo-sede-1', 'Cancha principal', 'Sintética'),
+  ('demo-cancha-2', 'demo-sede-1', 'Cancha auxiliar', 'Natural'),
+  ('demo-cancha-3', 'demo-sede-2', 'Cancha norte', 'Sintética');
 
-INSERT INTO inscripciones (id, torneo_id, equipo_id, solicitante_id, estado) VALUES
-  ('demo-i1', 'demo-t1', 'demo-e1', 'dev-jugador-1', 'APROBADA'),
-  ('demo-i2', 'demo-t1', 'demo-e2', 'dev-jugador-3', 'APROBADA'),
-  ('demo-i3', 'demo-t1', 'demo-e3', 'dev-jugador-5', 'SOLICITADA');
+INSERT INTO inscripciones (id, torneo_id, equipo_id, solicitada_por, estado) VALUES
+  ('demo-i1', 'demo-t1', 'demo-e1', 'dev-jugador-1', 'APROBADO'),
+  ('demo-i2', 'demo-t1', 'demo-e2', 'dev-jugador-3', 'APROBADO'),
+  ('demo-i3', 'demo-t1', 'demo-e3', 'dev-jugador-5', 'PENDIENTE'),
+  ('demo-i4', 'demo-t1', 'demo-e4', 'dev-jugador-7', 'APROBADO'),
+  ('demo-i5', 'demo-t1', 'demo-e5', 'dev-jugador-9', 'APROBADO'),
+  ('demo-i6', 'demo-t5', 'demo-e6', 'dev-jugador-11', 'APROBADO'),
+  ('demo-i7', 'demo-t5', 'demo-e7', 'dev-jugador-13', 'PENDIENTE'),
+  ('demo-i8', 'demo-t5', 'demo-e8', 'dev-jugador-8', 'RECHAZADO');
 
-INSERT INTO inscripciones (id, torneo_id, equipo_id, solicitante_id, estado) VALUES
-  ('demo-i4', 'demo-t1', 'demo-e4', 'dev-jugador-7', 'APROBADA'),
-  ('demo-i5', 'demo-t1', 'demo-e5', 'dev-jugador-9', 'APROBADA'),
-  ('demo-i6', 'demo-t5', 'demo-e6', 'dev-jugador-11', 'APROBADA'),
-  ('demo-i7', 'demo-t5', 'demo-e7', 'dev-jugador-13', 'SOLICITADA'),
-  ('demo-i8', 'demo-t5', 'demo-e8', 'dev-jugador-8', 'RECHAZADA');
+-- Cada partido pertenece a una fecha (jornada) del torneo.
+INSERT INTO fechas (id, torneo_id, numero) VALUES
+  ('demo-f1-1', 'demo-t1', 1),
+  ('demo-f1-2', 'demo-t1', 2),
+  ('demo-f1-3', 'demo-t1', 3),
+  ('demo-f5-1', 'demo-t5', 1);
 
-INSERT INTO partidos (id, torneo_id, equipo_local_id, equipo_visitante_id, jornada, sede_id, cancha_id, fecha, hora, goles_local, goles_visitante, estado) VALUES
-  ('demo-p1', 'demo-t1', 'demo-e1', 'demo-e2', 1, 'demo-sede-1', 'demo-cancha-1', '2026-11-08', '09:00', 2, 1, 'JUGADO'),
-  ('demo-p2', 'demo-t1', 'demo-e2', 'demo-e3', 2, 'demo-sede-1', 'demo-cancha-2', '2026-11-15', '09:00', 1, 1, 'JUGADO'),
-  ('demo-p3', 'demo-t1', 'demo-e3', 'demo-e1', 3, 'demo-sede-2', 'demo-cancha-3', '2026-11-22', '11:00', NULL, NULL, 'PENDIENTE');
-
-INSERT INTO partidos (id, torneo_id, equipo_local_id, equipo_visitante_id, jornada, sede_id, cancha_id, fecha, hora, goles_local, goles_visitante, estado) VALUES
-  ('demo-p4', 'demo-t1', 'demo-e4', 'demo-e5', 1, 'demo-sede-2', 'demo-cancha-3', '2026-11-08', '11:00', 3, 2, 'JUGADO'),
-  ('demo-p5', 'demo-t5', 'demo-e6', 'demo-e7', 1, 'demo-sede-1', 'demo-cancha-1', '2026-10-26', '15:00', NULL, NULL, 'PENDIENTE');
+INSERT INTO partidos (id, fecha_id, torneo_id, local_id, visitante_id, cancha_id, fecha_hora, goles_local, goles_visitante, estado) VALUES
+  ('demo-p1', 'demo-f1-1', 'demo-t1', 'demo-e1', 'demo-e2', 'demo-cancha-1', '2026-11-08T09:00', 2, 1, 'JUGADO'),
+  ('demo-p2', 'demo-f1-2', 'demo-t1', 'demo-e2', 'demo-e3', 'demo-cancha-2', '2026-11-15T09:00', 1, 1, 'JUGADO'),
+  ('demo-p3', 'demo-f1-3', 'demo-t1', 'demo-e3', 'demo-e1', 'demo-cancha-3', '2026-11-22T11:00', NULL, NULL, 'PROGRAMADO'),
+  ('demo-p4', 'demo-f1-1', 'demo-t1', 'demo-e4', 'demo-e5', 'demo-cancha-3', '2026-11-08T11:00', 3, 2, 'JUGADO'),
+  ('demo-p5', 'demo-f5-1', 'demo-t5', 'demo-e6', 'demo-e7', 'demo-cancha-1', '2026-10-26T15:00', NULL, NULL, 'PROGRAMADO');

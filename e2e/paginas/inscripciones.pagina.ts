@@ -106,4 +106,3 @@ export class InscripcionesPagina extends PaginaBase {
     await this.page.getByTestId('btn-desprogramar-partido').click();
   }
 }
-
