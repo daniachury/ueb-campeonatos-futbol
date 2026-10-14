@@ -36,23 +36,43 @@ export function ModalEliminarTorneo({
   const [eliminando, setEliminando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const [estabaAbierto, setEstabaAbierto] = useState(estaAbierto);
+  const [torneoAnterior, setTorneoAnterior] = useState(torneo);
+
+  if (estaAbierto !== estabaAbierto || torneo !== torneoAnterior) {
+    setEstabaAbierto(estaAbierto);
+    setTorneoAnterior(torneo);
     if (estaAbierto && torneo) {
       setTextoConfirmacion('');
       setError(null);
+      setImpacto(null);
       setCargandoImpacto(true);
+    }
+  }
 
+  useEffect(() => {
+    if (estaAbierto && torneo) {
+      let cancelado = false;
       const fn = obtenerImpactoFn ?? torneosAdminApi.obtenerImpactoEliminacion;
       fn(torneo.id)
-        .then((res) => setImpacto(res))
-        .catch(() =>
-          setImpacto({
-            equiposInscritos: 0,
-            partidos: 0,
-            resultados: 0,
-          }),
-        )
-        .finally(() => setCargandoImpacto(false));
+        .then((res) => {
+          if (!cancelado) setImpacto(res);
+        })
+        .catch(() => {
+          if (!cancelado) {
+            setImpacto({
+              equiposInscritos: 0,
+              partidos: 0,
+              resultados: 0,
+            });
+          }
+        })
+        .finally(() => {
+          if (!cancelado) setCargandoImpacto(false);
+        });
+      return () => {
+        cancelado = true;
+      };
     }
   }, [estaAbierto, torneo, obtenerImpactoFn]);
 

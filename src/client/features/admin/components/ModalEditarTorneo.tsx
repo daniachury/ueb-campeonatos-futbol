@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Boton } from '../../../common/components/Boton';
 import {
   obtenerFechaHoyBogota,
@@ -27,10 +27,10 @@ export function ModalEditarTorneo({
   editarFn,
 }: ModalEditarTorneoProps) {
   const hoy = obtenerFechaHoyBogota();
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [fechaInicio, setFechaInicio] = useState(hoy);
-  const [cupo, setCupo] = useState<number | ''>(8);
+  const [nombre, setNombre] = useState(torneo?.nombre ?? '');
+  const [descripcion, setDescripcion] = useState(torneo?.descripcion ?? '');
+  const [fechaInicio, setFechaInicio] = useState(torneo?.fechaInicio ?? hoy);
+  const [cupo, setCupo] = useState<number | ''>(torneo?.cupo ?? 8);
   const [guardando, setGuardando] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
 
@@ -38,7 +38,10 @@ export function ModalEditarTorneo({
   const [errorFecha, setErrorFecha] = useState<string | null>(null);
   const [errorCupo, setErrorCupo] = useState<string | null>(null);
 
-  useEffect(() => {
+  const [torneoAnterior, setTorneoAnterior] = useState(torneo);
+
+  if (torneo !== torneoAnterior) {
+    setTorneoAnterior(torneo);
     if (torneo) {
       setNombre(torneo.nombre);
       setDescripcion(torneo.descripcion ?? '');
@@ -49,7 +52,7 @@ export function ModalEditarTorneo({
       setErrorFecha(null);
       setErrorCupo(null);
     }
-  }, [torneo]);
+  }
 
   if (!estaAbierto || !torneo) return null;
 
