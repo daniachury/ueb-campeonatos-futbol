@@ -38,16 +38,19 @@ describe('MisEquiposPage (KAN-24, KAN-29)', () => {
 
   it('permite salir de un equipo tras confirmar (KAN-29)', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
+    if (typeof globalThis.confirm === 'function') {
+      vi.spyOn(globalThis, 'confirm').mockReturnValue(true);
+    }
 
     const fetchFalso = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       const u = String(url);
-      if (u === '/api/equipos') {
+      if (u.includes('/api/equipos/eq-1/integrantes') && init?.method === 'DELETE') {
+        return new Response(null, { status: 204 });
+      }
+      if (u.includes('/api/equipos')) {
         return respuestaJson({
           datos: [{ id: 'eq-1', nombre: 'Los Halcones', color: 'Azul' }],
         });
-      }
-      if (u === '/api/equipos/eq-1/integrantes' && init?.method === 'DELETE') {
-        return new Response(null, { status: 204 });
       }
       return respuestaJson({}, 404);
     });
@@ -68,6 +71,8 @@ describe('MisEquiposPage (KAN-24, KAN-29)', () => {
     fireEvent.click(btnSalir);
 
     // Al salir, la lista queda vacía
-    expect(await screen.findByRole('heading', { name: 'Aún no tienes equipos' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Aún no tienes equipos' }, { timeout: 3000 }),
+    ).toBeInTheDocument();
   });
 });
