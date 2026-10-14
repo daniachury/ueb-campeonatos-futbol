@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { UsuarioAutenticado } from '@shared/usuarios/contrato-inicio-de-sesion';
 import { RUTAS } from '../../../common/navegacion';
 import {
@@ -12,6 +12,7 @@ import {
   crearServicioDeSesionFalso,
   renderizarAppEn,
 } from '../../../test/renderizar-app';
+import { respuestaJson } from '../../../test/fetch-falso';
 
 const ADMINISTRADORA: UsuarioAutenticado = {
   ...JUGADOR_DE_PRUEBA,
@@ -70,13 +71,16 @@ describe('IniciarSesionPage (KAN-17 · v3 · M01 / W03)', () => {
     });
   });
 
-  it('el administrador entra a Gestión de torneos (Escenario 2)', async () => {
+  it('el administrador entra al Panel de administración (Escenario 2)', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respuestaJson({})));
     renderizarIniciarSesion(async () => ADMINISTRADORA);
     escribirCredenciales('admin@mail.com', 'admin2026');
 
     fireEvent.click(botonIniciarSesion());
 
-    expect(await screen.findByRole('heading', { name: 'Gestión de torneos' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Panel de administración' }),
+    ).toBeInTheDocument();
   });
 
   it('vuelve a la pantalla protegida desde la que lo enviaron', async () => {

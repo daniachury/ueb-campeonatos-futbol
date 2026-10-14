@@ -49,4 +49,45 @@ describe('UnirmeAEquipoPage (KAN-27)', () => {
     // Al unirse, desaparece de disponibles
     await screen.findByText('No hay equipos disponibles.');
   });
+
+  it('permite enviar una solicitud de ingreso al capitán del equipo', async () => {
+    let solicitudEnviada = false;
+    const fetchFalso = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      if (u.includes('/api/equipos/disponibles')) {
+        return respuestaJson({
+          datos: [
+            { id: 'eq-1', nombre: 'Los Halcones', color: 'Azul', cantidadIntegrantes: 10 },
+          ],
+        });
+      }
+      if (u.includes('/api/equipos/eq-1/solicitudes') && init?.method === 'POST') {
+        solicitudEnviada = true;
+        return respuestaJson({ datos: { id: 'sol-1', estado: 'PENDIENTE' } }, 201);
+      }
+      return respuestaJson({}, 404);
+    });
+
+    vi.stubGlobal('fetch', fetchFalso);
+
+    render(
+      <MemoryRouter initialEntries={['/mis-equipos/unirme']}>
+        <Routes>
+          <Route path="/mis-equipos/unirme" element={<UnirmeAEquipoPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await screen.findByRole('heading', { name: 'Los Halcones' });
+
+    const btnSolicitar = screen.getByRole('button', { name: 'Solicitar ingreso' });
+    fireEvent.click(btnSolicitar);
+
+    expect(
+      await screen.findByText(/¡Solicitud de ingreso enviada al capitán de Los Halcones!/i),
+    ).toBeInTheDocument();
+    expect(solicitudEnviada).toBe(true);
+    expect(screen.getByText('Solicitud enviada')).toBeInTheDocument();
+  });
 });
+

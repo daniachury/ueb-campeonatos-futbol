@@ -5,7 +5,7 @@ import { IniciarSesionPagina } from '../paginas/iniciar-sesion.pagina';
 /** Pantalla a la que la app lleva a cada rol después de iniciar sesión (KAN-17 · Escenarios 1 y 2). */
 export const INICIO_SEGUN_ROL = {
   jugador: /\/inicio$/,
-  admin: /\/admin\/torneos$/,
+  admin: /\/admin$/,
 } as const;
 
 /**

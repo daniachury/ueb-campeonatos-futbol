@@ -1,0 +1,385 @@
+.fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 22, 28, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.modal {
+  background: var(--color-superficie, #ffffff);
+  border: 1px solid var(--color-separador, #e1e5eb);
+  border-radius: var(--radio-seccion, 28px);
+  width: min(100%, 640px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-separador, #f0f2ec);
+}
+
+.tituloConColor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colorMuestra {
+  width: 14px;
+  height: 38px;
+  border-radius: var(--radio-pildora, 999px);
+  flex-shrink: 0;
+}
+
+.tituloConColor h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--color-grafito, #161a14);
+}
+
+.rolBadge {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-acento-texto, #3f5200);
+  background: var(--color-tinte-acento, #f1fbd0);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.botonCerrar {
+  border: none;
+  background: transparent;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--color-texto-secundario, #6b7066);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.botonCerrar:hover {
+  background: var(--color-campo, #f3f4f0);
+}
+
+.pestanas {
+  display: flex;
+  gap: 8px;
+  padding: 8px 24px;
+  border-bottom: 1px solid var(--color-separador, #f0f2ec);
+  background: var(--color-campo, #f6f7f3);
+}
+
+.pestana {
+  border: none;
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: var(--radio-pildora, 999px);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-texto-secundario, #6b7066);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.pestanaActiva {
+  background: var(--color-grafito, #161a14);
+  color: #ffffff;
+}
+
+.conteoBadge {
+  background: var(--color-acento, #b7f000);
+  color: var(--color-acento-texto, #3f5200);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.cuerpo {
+  padding: 24px;
+  overflow-y: auto;
+  display: grid;
+  gap: 20px;
+}
+
+.formulario {
+  display: grid;
+  gap: 14px;
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-grafito, #161a14);
+}
+
+.campo input {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--color-borde-punteado, #d5d9cf);
+  border-radius: var(--radio-campo, 16px);
+  font: inherit;
+  background: var(--color-campo, #f3f4f0);
+  color: var(--color-grafito, #161a14);
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: var(--color-grafito, #161a14);
+  background: #ffffff;
+}
+
+.botonPrimario {
+  min-height: 44px;
+  border: none;
+  border-radius: var(--radio-pildora, 999px);
+  background: var(--color-grafito, #161a14);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.botonPrimario:hover {
+  opacity: 0.9;
+}
+
+.botonAprobar {
+  border: none;
+  border-radius: var(--radio-pildora, 999px);
+  background: #147231;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.botonAprobar:hover {
+  opacity: 0.88;
+}
+
+.botonRechazar {
+  border: 1px solid #d93a3a;
+  border-radius: var(--radio-pildora, 999px);
+  background: transparent;
+  color: #b02424;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.botonRechazar:hover {
+  background: #fcecec;
+}
+
+.botonRetirar {
+  border: 1px solid #d93a3a;
+  border-radius: var(--radio-pildora, 999px);
+  background: transparent;
+  color: #b02424;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.botonRetirar:hover {
+  background: #fcecec;
+}
+
+.alertaExito {
+  padding: 12px 16px;
+  border-radius: var(--radio-campo, 16px);
+  background: var(--color-tinte-acento, #f1fbd0);
+  color: var(--color-acento-texto, #3f5200);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(183, 240, 0, 0.4);
+}
+
+.alertaError {
+  padding: 12px 16px;
+  border-radius: var(--radio-campo, 16px);
+  background: var(--color-alerta-fondo, #fcecec);
+  color: var(--color-alerta-texto, #8f1f1f);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--color-error-borde, #d93a3a);
+}
+
+.alertaAviso {
+  padding: 12px 16px;
+  border-radius: var(--radio-campo, 16px);
+  background: #fff8e6;
+  color: #7a5400;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #ffcc00;
+}
+
+.plantillaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.contadorJugadores {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-grafito, #161a14);
+}
+
+.cajaAgregar {
+  background: var(--color-campo, #f3f4f0);
+  border-radius: var(--radio-tarjeta, 22px);
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.cajaAgregar h4 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-grafito, #161a14);
+}
+
+.filasInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.listaItems {
+  display: grid;
+  gap: 8px;
+}
+
+.itemJugador, .itemSolicitud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: var(--radio-campo, 16px);
+  border: 1px solid var(--color-separador, #e1e5eb);
+  background: #ffffff;
+  gap: 12px;
+}
+
+.datosJugador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-campo, #e4e7df);
+  color: var(--color-grafito, #161a14);
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nombre {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-grafito, #161a14);
+}
+
+.correo {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--color-texto-secundario, #6b7066);
+}
+
+.capitanTag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-acento, #b7f000);
+  color: var(--color-acento-texto, #3f5200);
+}
+
+.accionesSolicitud {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.vacio {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--color-texto-secundario, #6b7066);
+  font-size: 14px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 520px) {
+  .filasInputs {
+    grid-template-columns: 1fr;
+  }
+  .itemJugador, .itemSolicitud {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .accionesSolicitud {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

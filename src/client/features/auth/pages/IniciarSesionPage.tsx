@@ -26,14 +26,7 @@ export function IniciarSesionPage() {
 
   function entrar(usuario: UsuarioAutenticado): void {
     establecerSesion(usuario);
-    // Escenario 1 y 2: el jugador va a Torneos; el administrador, siempre a Gestión de torneos.
-    // Si tiene debeCambiarContrasena, el modal obligatorio se despliega sobre la pantalla de torneos.
-    const destino =
-      usuario.rol === 'admin'
-        ? RUTAS.GESTION_DE_TORNEOS
-        : estadoRecibido?.desde
-          ? estadoRecibido.desde
-          : rutaDeInicioSegunRol(usuario.rol);
+    const destino = estadoRecibido?.desde ?? rutaDeInicioSegunRol(usuario.rol);
     void navegar(destino, { replace: true });
   }
 

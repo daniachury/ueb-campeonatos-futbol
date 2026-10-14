@@ -1,7 +1,187 @@
-.pantalla { min-height: 100dvh; padding: 24px 16px; background: var(--color-fondo-app); }
-.tarjeta { width: min(100%, 620px); margin: 0 auto; padding: 28px; border-radius: 24px; background: var(--color-superficie); }
-.tarjeta h1 { margin-bottom: 8px; }
-.tarjeta form { display: grid; gap: 16px; margin-top: 24px; }
-.tarjeta label { display: grid; gap: 6px; font-weight: 700; }
-.tarjeta input { min-height: 48px; padding: 0 14px; border: 1px solid #d7dce5; border-radius: 12px; font: inherit; }
-.tarjeta button { min-height: 50px; border: 0; border-radius: 999px; background: var(--color-grafito); color: white; font: inherit; font-weight: 700; cursor: pointer; }
+.pantalla {
+  min-height: 100dvh;
+  padding: 24px 16px 56px;
+  background: var(--color-fondo-app, #f6f7f3);
+}
+
+.tarjeta {
+  width: min(100%, 640px);
+  margin: 0 auto;
+  padding: 32px;
+  border-radius: var(--radio-seccion, 28px);
+  background: var(--color-superficie, #ffffff);
+  border: 1px solid var(--color-separador, #e1e5eb);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.enlaceVolver {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--color-texto-secundario, #6b7066);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.enlaceVolver:hover {
+  color: var(--color-grafito, #161a14);
+}
+
+.tarjeta h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  color: var(--color-grafito, #161a14);
+}
+
+.subtitulo {
+  margin: 0 0 24px;
+  color: var(--color-texto-secundario, #6b7066);
+  font-size: 14px;
+}
+
+.formulario {
+  display: grid;
+  gap: 18px;
+}
+
+.tarjeta label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-grafito, #161a14);
+}
+
+.tarjeta input {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--color-borde-punteado, #d5d9cf);
+  border-radius: var(--radio-campo, 16px);
+  font: inherit;
+  background: var(--color-campo, #f3f4f0);
+}
+
+.tarjeta input:focus {
+  outline: none;
+  border-color: var(--color-grafito, #161a14);
+  background: #ffffff;
+}
+
+.seccionJugadores {
+  background: var(--color-campo, #f3f4f0);
+  border-radius: var(--radio-tarjeta, 22px);
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.seccionJugadores h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-grafito, #161a14);
+}
+
+.seccionJugadores p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-texto-secundario, #6b7066);
+}
+
+.filaAgregarJugador {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.botonAgregarJugador {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--color-grafito, #161a14);
+  border-radius: var(--radio-pildora, 999px);
+  background: #ffffff;
+  color: var(--color-grafito, #161a14);
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.botonAgregarJugador:hover {
+  background: var(--color-tinte-acento, #f1fbd0);
+}
+
+.listaJugadoresAgregados {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.itemJugadorAgregado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #ffffff;
+  border-radius: var(--radio-campo, 16px);
+  border: 1px solid var(--color-separador, #e1e5eb);
+  font-size: 13px;
+}
+
+.datosJugadorAgregado {
+  display: flex;
+  flex-direction: column;
+}
+
+.nombreJugadorAgregado {
+  font-weight: 700;
+  color: var(--color-grafito, #161a14);
+}
+
+.correoJugadorAgregado {
+  color: var(--color-texto-secundario, #6b7066);
+  font-size: 12px;
+}
+
+.botonQuitarJugador {
+  border: none;
+  background: transparent;
+  color: #b02424;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.alertaError {
+  padding: 12px 16px;
+  border-radius: var(--radio-campo, 16px);
+  background: var(--color-alerta-fondo, #fcecec);
+  color: var(--color-alerta-texto, #8f1f1f);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--color-error-borde, #d93a3a);
+}
+
+.botonPrincipal {
+  min-height: 50px;
+  border: 0;
+  border-radius: var(--radio-pildora, 999px);
+  background: var(--color-grafito, #161a14);
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.botonPrincipal:hover {
+  opacity: 0.92;
+}
+
+@media (max-width: 580px) {
+  .filaAgregarJugador {
+    grid-template-columns: 1fr;
+  }
+}

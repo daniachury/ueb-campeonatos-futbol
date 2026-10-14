@@ -46,7 +46,7 @@ test.describe('KAN-18 · Registro de administradores', () => {
     await test.step('Entonces la app lo obliga a cambiarla antes de continuar', async () => {
       await expect(cambiarContrasena.titulo).toBeVisible();
       await cambiarContrasena.cambiar(contrasenaTemporal, 'Arbitro2026');
-      await expect(page).toHaveURL(/\/admin\/torneos$/);
+      await expect(page).toHaveURL(/\/admin$/);
     });
   });
 
