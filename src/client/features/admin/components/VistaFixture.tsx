@@ -59,6 +59,12 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
   const canchas = propCanchas ?? canchasCargadas;
   const [partidoAProgramar, setPartidoAProgramar] = useState<PartidoFixtureResumen | null>(null);
   const [numeroFechaSeleccionada, setNumeroFechaSeleccionada] = useState<number | undefined>();
+  const [soloPorProgramar, setSoloPorProgramar] = useState(false);
+
+  // Métrica de partidos programados vs total (KAN-35 · Escenario 7)
+  const todosLosPartidos = fixture.fechas.flatMap((f) => f.partidos);
+  const totalPartidosCalculado = fixture.totalPartidos || todosLosPartidos.length;
+  const totalProgramados = todosLosPartidos.filter((p) => p.estado === 'PROGRAMADO').length;
 
   useEffect(() => {
     if (!propCanchas) {
@@ -110,9 +116,7 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
     <div className={styles.contenedor} data-testid="vista-fixture">
       <div className={styles.cabeceraFixture}>
         <div>
-          <h3 className={styles.titulo}>
-            Calendario y Fixture del Torneo
-          </h3>
+          <h3 className={styles.titulo}>Calendario y Fixture del Torneo</h3>
           <div className={styles.resumenMetricas}>
             <span className={styles.metricaItem}>
               Fechas: <strong>{fixture.totalFechas}</strong>
@@ -120,22 +124,40 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
             <span className={styles.metricaItem}>
               Partidos: <strong>{fixture.totalPartidos}</strong>
             </span>
+            <span className={styles.metricaItem} data-testid="indicador-programados">
+              Programados:{' '}
+              <strong>
+                {totalProgramados}/{totalPartidosCalculado}
+              </strong>
+            </span>
             <span className={styles.metricaItem}>
               Equipos: <strong>{fixture.totalEquipos}</strong>
             </span>
           </div>
         </div>
 
-        {fixture.puedeRepetirSorteo && (
-          <button
-            type="button"
-            className={styles.botonRepetir}
-            onClick={() => setModalRepetirAbierto(true)}
-            disabled={procesando}
-          >
-            Repetir sorteo
-          </button>
-        )}
+        <div className={styles.barraAcciones}>
+          <label className={styles.controlFiltro} data-testid="filtro-solo-por-programar">
+            <input
+              type="checkbox"
+              id="filtro-solo-por-programar"
+              checked={soloPorProgramar}
+              onChange={(e) => setSoloPorProgramar(e.target.checked)}
+            />
+            <span>Solo por programar</span>
+          </label>
+
+          {fixture.puedeRepetirSorteo && (
+            <button
+              type="button"
+              className={styles.botonRepetir}
+              onClick={() => setModalRepetirAbierto(true)}
+              disabled={procesando}
+            >
+              Repetir sorteo
+            </button>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -152,109 +174,133 @@ export const VistaFixture: React.FC<VistaFixtureProps> = ({
       )}
 
       <div className={styles.grillaFechas}>
-        {fixture.fechas.map((fecha) => (
-          <div key={fecha.id} className={styles.tarjetaFecha}>
-            <h4 className={styles.tituloFecha}>
-              <span>Fecha {fecha.numero}</span>
-              <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                {fecha.partidos.length} partido{fecha.partidos.length !== 1 ? 's' : ''}
-              </span>
-            </h4>
+        {fixture.fechas.map((fecha) => {
+          const partidosAMostrar = soloPorProgramar
+            ? fecha.partidos.filter((p) => p.estado === 'POR_PROGRAMAR')
+            : fecha.partidos;
 
-            {fecha.equipoDescansa && (
-              <div className={styles.cajaDescanso}>
-                <span>
-                  Descansa: <strong>{fecha.equipoDescansa.nombre}</strong>
+          return (
+            <div key={fecha.id} className={styles.tarjetaFecha}>
+              <h4 className={styles.tituloFecha}>
+                <span>Fecha {fecha.numero}</span>
+                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  {fecha.partidos.length} partido{fecha.partidos.length !== 1 ? 's' : ''}
                 </span>
-              </div>
-            )}
+              </h4>
 
-            <div className={styles.listaPartidos}>
-              {fecha.partidos.map((partido) => {
-                const esProgramado = partido.estado === 'PROGRAMADO';
-                const puedeProgramar = partido.estado !== 'JUGADO' && partido.estado !== 'CANCELADO';
+              {fecha.equipoDescansa && (
+                <div className={styles.cajaDescanso}>
+                  <span>
+                    Descansa: <strong>{fecha.equipoDescansa.nombre}</strong>
+                  </span>
+                </div>
+              )}
 
-                const textoLugar = partido.sedeNombre
-                  ? `${partido.sedeNombre} · ${partido.canchaNombre || partido.cancha}`
-                  : partido.cancha;
+              <div className={styles.listaPartidos}>
+                {partidosAMostrar.length === 0 ? (
+                  <div className={styles.sinPartidosFiltro}>
+                    No hay partidos pendientes por programar en esta fecha.
+                  </div>
+                ) : (
+                  partidosAMostrar.map((partido) => {
+                    const esProgramado = partido.estado === 'PROGRAMADO';
+                    const puedeProgramar =
+                      partido.estado !== 'JUGADO' && partido.estado !== 'CANCELADO';
 
-                return (
-                  <div key={partido.id} className={styles.tarjetaPartido} data-testid={`tarjeta-partido-${partido.id}`}>
-                    <div className={styles.cuerpoPartido}>
-                      <div className={styles.cabeceraPartido}>
-                        <div className={styles.enfrentamiento}>
-                          <span className={styles.equipoLocal}>
-                            {partido.local.color && (
+                    const textoLugar = partido.sedeNombre
+                      ? `${partido.sedeNombre} · ${partido.canchaNombre || partido.cancha}`
+                      : partido.cancha;
+
+                    return (
+                      <div
+                        key={partido.id}
+                        className={styles.tarjetaPartido}
+                        data-testid={`tarjeta-partido-${partido.id}`}
+                      >
+                        <div className={styles.cuerpoPartido}>
+                          <div className={styles.cabeceraPartido}>
+                            <div className={styles.enfrentamiento}>
+                              <span className={styles.equipoLocal}>
+                                {partido.local.color && (
+                                  <span
+                                    className={styles.puntoColor}
+                                    style={{ backgroundColor: partido.local.color }}
+                                  />
+                                )}
+                                <span>{partido.local.nombre}</span>
+                              </span>
+
+                              <span className={styles.versus}>vs</span>
+
+                              <span className={styles.equipoVisitante}>
+                                {partido.visitante.color && (
+                                  <span
+                                    className={styles.puntoColor}
+                                    style={{ backgroundColor: partido.visitante.color }}
+                                  />
+                                )}
+                                <span>{partido.visitante.nombre}</span>
+                              </span>
+                            </div>
+
+                            <div className={styles.accionesPartido}>
                               <span
-                                className={styles.puntoColor}
-                                style={{ backgroundColor: partido.local.color }}
-                              />
-                            )}
-                            <span>{partido.local.nombre}</span>
-                          </span>
+                                className={`${styles.badgeEstadoPartido} ${
+                                  partido.estado === 'POR_PROGRAMAR'
+                                    ? styles.badgePorProgramar
+                                    : partido.estado === 'PROGRAMADO'
+                                      ? styles.badgeProgramado
+                                      : ''
+                                }`}
+                              >
+                                {ETIQUETAS_ESTADO_PARTIDO[partido.estado] || partido.estado}
+                              </span>
 
-                          <span className={styles.versus}>vs</span>
+                              {puedeProgramar && (
+                                <button
+                                  type="button"
+                                  id={`btn-programar-partido-${partido.id}`}
+                                  data-testid={`btn-programar-partido-${partido.id}`}
+                                  className={
+                                    esProgramado ? styles.botonReprogramar : styles.botonProgramar
+                                  }
+                                  onClick={() => abrirModalProgramar(partido, fecha.numero)}
+                                >
+                                  <span>{esProgramado ? 'Reprogramar' : 'Programar'}</span>
+                                </button>
+                              )}
+                            </div>
+                          </div>
 
-                          <span className={styles.equipoVisitante}>
-                            {partido.visitante.color && (
-                              <span
-                                className={styles.puntoColor}
-                                style={{ backgroundColor: partido.visitante.color }}
-                              />
-                            )}
-                            <span>{partido.visitante.nombre}</span>
-                          </span>
-                        </div>
-
-                        <div className={styles.accionesPartido}>
-                          <span
-                            className={`${styles.badgeEstadoPartido} ${
-                              partido.estado === 'POR_PROGRAMAR'
-                                ? styles.badgePorProgramar
-                                : partido.estado === 'PROGRAMADO'
-                                  ? styles.badgeProgramado
-                                  : ''
-                            }`}
-                          >
-                            {ETIQUETAS_ESTADO_PARTIDO[partido.estado] || partido.estado}
-                          </span>
-
-                          {puedeProgramar && (
-                            <button
-                              type="button"
-                              id={`btn-programar-partido-${partido.id}`}
-                              data-testid={`btn-programar-partido-${partido.id}`}
-                              className={esProgramado ? styles.botonReprogramar : styles.botonProgramar}
-                              onClick={() => abrirModalProgramar(partido, fecha.numero)}
+                          {esProgramado && (partido.fechaHora || textoLugar) && (
+                            <div
+                              className={styles.detallesProgramacion}
+                              data-testid={`detalles-programacion-${partido.id}`}
                             >
-                              <span>{esProgramado ? 'Reprogramar' : 'Programar'}</span>
-                            </button>
+                              {textoLugar && (
+                                <div className={styles.itemProgramacion}>
+                                  <span>{textoLugar}</span>
+                                </div>
+                              )}
+                              {partido.fechaHora && (
+                                <div className={styles.itemProgramacion}>
+                                  <span className={styles.iconoProgramacion}>⏰</span>
+                                  <span>
+                                    {formatearFechaHoraPartido(partido.fechaHora)} (Duración: 2h)
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
                       </div>
-
-                      {esProgramado && (partido.fechaHora || textoLugar) && (
-                        <div className={styles.detallesProgramacion} data-testid={`detalles-programacion-${partido.id}`}>
-                          {textoLugar && (
-                            <div className={styles.itemProgramacion}>
-                              <span>{textoLugar}</span>
-                            </div>
-                          )}
-                          {partido.fechaHora && (
-                            <div className={styles.itemProgramacion}>
-                              <span className={styles.iconoProgramacion}>⏰</span>
-                              <span>{formatearFechaHoraPartido(partido.fechaHora)} (Duración: 2h)</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                    );
+                  })
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <ModalConfirmarSorteo

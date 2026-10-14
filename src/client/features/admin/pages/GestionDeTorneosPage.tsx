@@ -15,6 +15,8 @@ import { torneosAdminApi } from '../api/torneos-api';
 import { EncabezadoAdmin } from '../components/EncabezadoAdmin';
 import { ModalConfirmarApertura } from '../components/ModalConfirmarApertura';
 import { ModalCrearTorneo } from '../components/ModalCrearTorneo';
+import { ModalEditarTorneo } from '../components/ModalEditarTorneo';
+import { ModalEliminarTorneo } from '../components/ModalEliminarTorneo';
 import estilos from './GestionDeTorneosPage.module.css';
 
 function formatearFecha(fechaIso: string): string {
@@ -54,6 +56,10 @@ export function GestionDeTorneosPage() {
 
   const [modalCrearAbierto, setModalCrearAbierto] = useState(false);
   const [torneoParaAbrir, setTorneoParaAbrir] = useState<TorneoAdminResumen | null>(null);
+  const [torneoParaEditar, setTorneoParaEditar] = useState<TorneoAdminResumen | null>(null);
+  const [torneoParaEliminar, setTorneoParaEliminar] = useState<TorneoAdminResumen | null>(null);
+
+
 
   useEffect(() => {
     let activo = true;
@@ -104,6 +110,31 @@ export function GestionDeTorneosPage() {
     setMensajeExito(`Inscripciones abiertas exitosamente para «${torneoActualizado.nombre}».`);
     setTimeout(() => setMensajeExito(null), 5000);
   }
+
+  function alEditarTorneoExitoso(torneoActualizado: TorneoAdminResumen) {
+    setTorneos((prev) =>
+      prev.map((t) => (t.id === torneoActualizado.id ? torneoActualizado : t)),
+    );
+    setTorneoParaEditar(null);
+    setMensajeExito(`Torneo «${torneoActualizado.nombre}» actualizado exitosamente.`);
+    setTimeout(() => setMensajeExito(null), 5000);
+  }
+
+  function alEliminarTorneoExitoso(id: string, tipo: 'DEFINITIVA' | 'LOGICA') {
+    if (tipo === 'DEFINITIVA') {
+      setTorneos((prev) => prev.filter((t) => t.id !== id));
+      setMensajeExito('Torneo y todos sus registros asociados eliminados definitivamente.');
+    } else {
+      setTorneos((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, estado: 'CANCELADO' as const } : t)),
+      );
+      setMensajeExito('Torneo cancelado exitosamente conservando su histórico de resultados.');
+    }
+    setTorneoParaEliminar(null);
+    setTimeout(() => setMensajeExito(null), 5000);
+  }
+
+
 
   return (
     <div className={estilos.pantalla}>
@@ -187,6 +218,30 @@ export function GestionDeTorneosPage() {
                 </div>
 
                 <div className={estilos.tarjetaPie}>
+                  {torneo.estado !== 'FINALIZADO' && torneo.estado !== 'CANCELADO' && (
+                    <Boton
+                      id={`btn-editar-torneo-${torneo.id}`}
+                      tipo="button"
+                      variante="secundario"
+                      tamano="mediano"
+                      anchoCompleto={false}
+                      alPulsar={() => setTorneoParaEditar(torneo)}
+                    >
+                      Editar
+                    </Boton>
+                  )}
+                  {torneo.estado !== 'CANCELADO' && (
+                    <Boton
+                      id={`btn-eliminar-torneo-${torneo.id}`}
+                      tipo="button"
+                      variante="secundario"
+                      tamano="mediano"
+                      anchoCompleto={false}
+                      alPulsar={() => setTorneoParaEliminar(torneo)}
+                    >
+                      Eliminar
+                    </Boton>
+                  )}
                   {torneo.estado === 'BORRADOR' ? (
                     <Boton
                       id={`btn-abrir-inscripciones-${torneo.id}`}
@@ -228,6 +283,24 @@ export function GestionDeTorneosPage() {
         alCerrar={() => setTorneoParaAbrir(null)}
         alConfirmado={alConfirmarAperturaExitoso}
       />
+
+      {/* Modal para editar torneo (KAN-21) */}
+      <ModalEditarTorneo
+        estaAbierto={Boolean(torneoParaEditar)}
+        torneo={torneoParaEditar}
+        alCerrar={() => setTorneoParaEditar(null)}
+        alEditado={alEditarTorneoExitoso}
+      />
+
+      {/* Modal para eliminar torneo (KAN-22) */}
+      <ModalEliminarTorneo
+        estaAbierto={Boolean(torneoParaEliminar)}
+        torneo={torneoParaEliminar}
+        alCerrar={() => setTorneoParaEliminar(null)}
+        alEliminado={alEliminarTorneoExitoso}
+      />
+
+
 
       {usuarioActual.debeCambiarContrasena && (
         <ModalCambioObligatorioContrasena isOpen={true} />

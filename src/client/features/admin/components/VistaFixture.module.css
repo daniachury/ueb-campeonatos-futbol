@@ -57,6 +57,48 @@
   background: var(--color-separador, #f0f2ec);
 }
 
+.barraAcciones {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.controlFiltro {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-grafito, #161a14);
+  cursor: pointer;
+  user-select: none;
+  background: var(--color-campo, #f3f4f0);
+  border: 1px solid var(--color-separador, #f0f2ec);
+  padding: 6px 14px;
+  border-radius: var(--radio-pildora, 999px);
+  transition: all 0.15s ease;
+}
+
+.controlFiltro:hover {
+  background: var(--color-separador, #f0f2ec);
+}
+
+.controlFiltro input[type='checkbox'] {
+  cursor: pointer;
+  accent-color: var(--color-acento, #00875a);
+}
+
+.sinPartidosFiltro {
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-texto-secundario, #6b7066);
+  font-style: italic;
+  background: var(--color-campo, #f3f4f0);
+  border-radius: 12px;
+}
+
 .grillaFechas {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

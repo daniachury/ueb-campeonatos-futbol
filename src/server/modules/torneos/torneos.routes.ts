@@ -4,6 +4,8 @@ import type { RespuestaLista } from '@shared/api';
 import {
   consultaTorneosSchema,
   esquemaCrearTorneo,
+  esquemaEditarTorneo,
+  esquemaEliminarTorneo,
   type TorneoAdminResumen,
   type TorneoResumen,
 } from '@shared/torneos';
@@ -70,6 +72,37 @@ export const torneosAdminRoutes = new Hono<AppEnv>()
         },
         201,
       );
+    },
+  )
+  .patch(
+    '/:id',
+    zValidator('json', esquemaEditarTorneo, siFallaLaValidacion),
+    async (c) => {
+      const torneoId = c.req.param('id');
+      const datos = c.req.valid('json');
+      const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+      const torneo = await servicio.editarTorneo(torneoId, datos);
+      return c.json({
+        mensaje: 'Torneo actualizado exitosamente',
+        torneo,
+      });
+    },
+  )
+  .get('/:id/impacto-eliminacion', async (c) => {
+    const torneoId = c.req.param('id');
+    const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+    const impacto = await servicio.obtenerImpactoEliminacion(torneoId);
+    return c.json(impacto);
+  })
+  .delete(
+    '/:id',
+    zValidator('json', esquemaEliminarTorneo, siFallaLaValidacion),
+    async (c) => {
+      const torneoId = c.req.param('id');
+      const { confirmacionNombre } = c.req.valid('json');
+      const servicio = crearTorneosService(crearTorneosRepository(c.env.DB));
+      const resultado = await servicio.eliminarTorneo(torneoId, confirmacionNombre);
+      return c.json(resultado);
     },
   )
   .post('/:id/abrir-inscripciones', async (c) => {

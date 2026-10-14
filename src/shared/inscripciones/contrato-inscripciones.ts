@@ -21,6 +21,12 @@ export const inscribirDirectamenteSchema = z.object({
 });
 export type InscribirDirectamenteDTO = z.infer<typeof inscribirDirectamenteSchema>;
 
+export const solicitarInscripcionSchema = z.object({
+  torneoId: z.string().trim().min(1, 'Selecciona un torneo'),
+  equipoId: z.string().trim().min(1, 'Selecciona un equipo'),
+});
+export type SolicitarInscripcionDTO = z.infer<typeof solicitarInscripcionSchema>;
+
 export interface SolicitudInscripcionResumen {
   id: string;
   torneoId: string;

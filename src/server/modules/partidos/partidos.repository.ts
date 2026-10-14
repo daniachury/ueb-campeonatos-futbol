@@ -150,4 +150,12 @@ export class PartidoRepository {
       .bind(ahora, id)
       .run();
   }
+
+  async obtenerTorneoFechaInicio(torneoId: string): Promise<string | null> {
+    const fila = await this.db
+      .prepare(`SELECT fecha_inicio FROM torneos WHERE id = ?`)
+      .bind(torneoId)
+      .first<{ fecha_inicio: string }>();
+    return fila?.fecha_inicio ?? null;
+  }
 }

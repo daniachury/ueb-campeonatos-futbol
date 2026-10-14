@@ -55,8 +55,18 @@ export const equiposRoutes = new Hono<AppEnv>()
     const usuario = c.get('usuario');
     if (!usuario) throw errores.noAutenticado();
     if (usuario.rol !== 'jugador') throw errores.sinPermiso();
+    const equipo = await c.env.DB.prepare('SELECT id, capitan_id AS capitanId FROM equipos WHERE id = ?').bind(c.req.param('id')).first<{ id: string; capitanId: string | null }>();
+    if (!equipo) throw errores.noEncontrado('Equipo');
+
     try {
-      await c.env.DB.prepare('INSERT INTO equipo_jugadores (equipo_id, usuario_id) VALUES (?, ?)').bind(c.req.param('id'), usuario.id).run();
+      if (!equipo.capitanId) {
+        await c.env.DB.batch([
+          c.env.DB.prepare('INSERT INTO equipo_jugadores (equipo_id, usuario_id) VALUES (?, ?)').bind(c.req.param('id'), usuario.id),
+          c.env.DB.prepare('UPDATE equipos SET capitan_id = ?, actualizado_en = CURRENT_TIMESTAMP WHERE id = ?').bind(usuario.id, c.req.param('id')),
+        ]);
+      } else {
+        await c.env.DB.prepare('INSERT INTO equipo_jugadores (equipo_id, usuario_id) VALUES (?, ?)').bind(c.req.param('id'), usuario.id).run();
+      }
     } catch (error) {
       if (error instanceof Error && /unique/i.test(error.message)) throw errores.conflicto('YA_ES_INTEGRANTE', 'Ya haces parte de este equipo');
       if (error instanceof Error && /foreign key/i.test(error.message)) throw errores.noEncontrado('Equipo');
@@ -113,6 +123,79 @@ export const equiposAdminRoutes = new Hono<AppEnv>()
   .get('/:id/integrantes', async (c) => {
     const { results } = await c.env.DB.prepare('SELECT u.id, u.nombre_completo AS nombreCompleto, u.correo FROM equipo_jugadores i JOIN usuarios u ON u.id = i.usuario_id WHERE i.equipo_id = ? ORDER BY i.fecha_ingreso').bind(c.req.param('id')).all();
     return c.json({ datos: results });
+  })
+  .post('/', zValidator('json', z.object({
+    nombre: z.string().trim().min(3).max(60),
+    color: z.string().trim().min(3).max(30),
+    capitanId: z.string().optional().nullable(),
+  }), siFallaLaValidacion), async (c) => {
+    const datos = c.req.valid('json');
+    const id = crypto.randomUUID();
+    const capitanId = datos.capitanId ? datos.capitanId.trim() : null;
+
+    if (capitanId) {
+      const usuario = await c.env.DB.prepare('SELECT id, rol FROM usuarios WHERE id = ?').bind(capitanId).first<{ id: string; rol: string }>();
+      if (!usuario || usuario.rol !== 'jugador') {
+        throw errores.validacion([{ campo: 'capitanId', mensaje: 'Selecciona un jugador válido' }]);
+      }
+    }
+
+    try {
+      const queries = [
+        c.env.DB.prepare('INSERT INTO equipos (id, nombre, color, capitan_id) VALUES (?, ?, ?, ?)').bind(id, datos.nombre, datos.color, capitanId),
+      ];
+      if (capitanId) {
+        queries.push(
+          c.env.DB.prepare('INSERT INTO equipo_jugadores (equipo_id, usuario_id) VALUES (?, ?)').bind(id, capitanId),
+        );
+      }
+      await c.env.DB.batch(queries);
+    } catch (error) {
+      if (error instanceof Error && /unique/i.test(error.message)) {
+        throw errores.conflicto('NOMBRE_EQUIPO_DUPLICADO', 'Ya existe un equipo con ese nombre');
+      }
+      throw error;
+    }
+
+    return c.json({ datos: { id, nombre: datos.nombre, color: datos.color, capitanId } }, 201);
+  })
+  .put('/:id', zValidator('json', z.object({
+    nombre: z.string().trim().min(3).max(60).optional(),
+    color: z.string().trim().min(3).max(30).optional(),
+    capitanId: z.string().optional().nullable(),
+  }), siFallaLaValidacion), async (c) => {
+    const datos = c.req.valid('json');
+    const equipo = await c.env.DB.prepare('SELECT id FROM equipos WHERE id = ?').bind(c.req.param('id')).first();
+    if (!equipo) throw errores.noEncontrado('Equipo');
+
+    const asignaciones: string[] = [];
+    const valores: (string | null)[] = [];
+    if (datos.nombre) {
+      asignaciones.push('nombre = ?');
+      valores.push(datos.nombre);
+    }
+    if (datos.color) {
+      asignaciones.push('color = ?');
+      valores.push(datos.color);
+    }
+    if (datos.capitanId !== undefined) {
+      asignaciones.push('capitan_id = ?');
+      valores.push(datos.capitanId);
+    }
+
+    if (asignaciones.length > 0) {
+      asignaciones.push('actualizado_en = CURRENT_TIMESTAMP');
+      valores.push(c.req.param('id'));
+      try {
+        await c.env.DB.prepare(`UPDATE equipos SET ${asignaciones.join(', ')} WHERE id = ?`).bind(...valores).run();
+      } catch (error) {
+        if (error instanceof Error && /unique/i.test(error.message)) {
+          throw errores.conflicto('NOMBRE_EQUIPO_DUPLICADO', 'Ya existe un equipo con ese nombre');
+        }
+        throw error;
+      }
+    }
+    return c.json({ datos: { id: c.req.param('id'), ...datos } });
   })
   .delete('/:id', async (c) => {
     const resultado = await c.env.DB.prepare('DELETE FROM equipos WHERE id = ?').bind(c.req.param('id')).run();
