@@ -278,4 +278,58 @@ describe('Rutas HTTP /api/admin/partidos (KAN-35)', () => {
     const res = await cliente.pedir('/partidos/p-1');
     expect(res.status).toBe(200);
   });
+
+  it('PATCH /admin/partidos/:id/programacion programa exitosamente a través del alias de ruta (200)', async () => {
+    const { db } = crearD1Falsa((sql) => {
+      if (sql.includes('FROM partidos p') && sql.includes('WHERE p.id = ?')) {
+        return [
+          {
+            id: 'p-1',
+            fecha_id: 'f-1',
+            torneo_id: 't-1',
+            local_id: 'eq-1',
+            visitante_id: 'eq-2',
+            estado: 'POR_PROGRAMAR',
+            fecha_hora: null,
+            cancha: null,
+            cancha_id: null,
+            local_nombre: 'Halcones',
+            local_color: null,
+            visitante_nombre: 'Cóndores',
+            visitante_color: null,
+            cancha_nombre: null,
+            sede_nombre: null,
+          },
+        ];
+      }
+      if (sql.includes('FROM canchas c') && sql.includes('WHERE c.id = ?')) {
+        return [
+          {
+            id: 'cancha-1',
+            nombre: 'Cancha 1',
+            activa: 1,
+            superficie: 'Sintética',
+            sede_id: 'sede-1',
+            sede_nombre: 'Complejo El Bosque',
+          },
+        ];
+      }
+      if (sql.includes("WHERE p.estado = 'PROGRAMADO'")) {
+        return [];
+      }
+      return [];
+    });
+
+    const cliente = crearTestApp(db, adminSesion);
+    const res = await cliente.pedir('/admin/partidos/p-1/programacion', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        canchaId: 'cancha-1',
+        fechaHora: '2026-10-25T14:00:00.000Z',
+      }),
+    });
+
+    expect(res.status).toBe(200);
+  });
 });

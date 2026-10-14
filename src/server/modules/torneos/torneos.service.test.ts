@@ -57,7 +57,33 @@ function crearMockRepositorio(iniciales: TorneoAdminResumen[] = []) {
         encontrado.actualizadoEn = new Date().toISOString();
       }
     },
+    async contarEquiposAprobados(_id) {
+      return 0;
+    },
+    async actualizar(id, datos) {
+      const encontrado = torneos.find((t) => t.id === id);
+      if (!encontrado) throw new Error('No encontrado');
+      if (datos.nombre !== undefined) encontrado.nombre = datos.nombre;
+      if (datos.descripcion !== undefined) encontrado.descripcion = datos.descripcion;
+      if (datos.fechaInicio !== undefined) encontrado.fechaInicio = datos.fechaInicio;
+      if (datos.cupo !== undefined) encontrado.cupo = datos.cupo;
+      encontrado.actualizadoEn = new Date().toISOString();
+      return encontrado;
+    },
+    async obtenerImpactoEliminacion(_id) {
+      return { equiposInscritos: 0, partidos: 0, resultados: 0 };
+    },
+    async eliminarDefinitiva(id) {
+      const idx = torneos.findIndex((t) => t.id === id);
+      if (idx !== -1) torneos.splice(idx, 1);
+    },
+    async eliminarLogica(id) {
+      const encontrado = torneos.find((t) => t.id === id);
+      if (encontrado) encontrado.estado = 'CANCELADO';
+    },
   };
+
+
 
   return { repositorio, estadosPedidos, torneos };
 }

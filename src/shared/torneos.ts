@@ -80,6 +80,33 @@ export const esquemaCrearTorneo = z.object({
 
 export type CrearTorneoDto = z.infer<typeof esquemaCrearTorneo>;
 
+/** Esquema de validación para editar un torneo (KAN-21). */
+export const esquemaEditarTorneo = z.object({
+  nombre: z
+    .string()
+    .trim()
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(80, 'Máximo 80 caracteres')
+    .optional(),
+  descripcion: z
+    .string()
+    .max(500, 'Máximo 500 caracteres')
+    .optional()
+    .nullable(),
+  fechaInicio: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha debe tener formato YYYY-MM-DD')
+    .optional(),
+  cupo: z.coerce
+    .number()
+    .int('El cupo debe ser un número entero')
+    .min(REGLAS.EQUIPOS_POR_TORNEO_MIN, 'El cupo debe estar entre 3 y 20 equipos')
+    .max(REGLAS.EQUIPOS_POR_TORNEO_MAX, 'El cupo debe estar entre 3 y 20 equipos')
+    .optional(),
+});
+
+export type EditarTorneoDto = z.infer<typeof esquemaEditarTorneo>;
+
 export interface RespuestaCrearTorneo {
   mensaje: string;
   torneo: TorneoAdminResumen;
@@ -89,3 +116,12 @@ export interface RespuestaAbrirInscripciones {
   mensaje: string;
   torneo: TorneoAdminResumen;
 }
+
+/** Esquema de confirmación para eliminar torneo (KAN-22). */
+export const esquemaEliminarTorneo = z.object({
+  confirmacionNombre: z.string().min(1, 'La confirmación del nombre es requerida'),
+});
+
+export type EliminarTorneoDto = z.infer<typeof esquemaEliminarTorneo>;
+
+

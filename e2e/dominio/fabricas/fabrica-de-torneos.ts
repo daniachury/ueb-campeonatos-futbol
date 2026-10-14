@@ -6,10 +6,15 @@ export class ConstructorDeTorneo {
   #torneo: TorneoDePrueba = {
     id: nuevoId('torneo-e2e'),
     nombre: `Copa E2E ${sufijoEnLetras()}`,
-    fechaInicio: '2026-12-05',
+    fechaInicio: '2026-10-15',
     cupo: 8,
     estado: 'INSCRIPCIONES_ABIERTAS',
   };
+
+  conFechaInicio(fechaInicio: string): this {
+    this.#torneo = { ...this.#torneo, fechaInicio };
+    return this;
+  }
 
   conNombre(nombre: string): this {
     this.#torneo = { ...this.#torneo, nombre };

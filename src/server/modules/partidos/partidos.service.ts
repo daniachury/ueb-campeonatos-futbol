@@ -4,7 +4,7 @@ import {
   type PartidoDetalleProgramacion,
   type ProgramarPartidoDto,
 } from '../../../shared/partidos/contrato-partidos';
-import { verificarCrucesHorarios } from './domain/validador-cruces';
+import { obtenerFechaCalendarioBogota, verificarCrucesHorarios } from './domain/validador-cruces';
 import type { PartidoRepository } from './partidos.repository';
 
 export class PartidoService {
@@ -39,7 +39,40 @@ export class PartidoService {
       );
     }
 
-    // 3. Verificar que la cancha exista y esté activa
+    // 3. Validar fecha contra inicio del torneo (KAN-35 · Escenario 4)
+    if (partido.torneoId && this.repo.obtenerTorneoFechaInicio) {
+      const fechaInicioTorneo = await this.repo.obtenerTorneoFechaInicio(partido.torneoId);
+      if (fechaInicioTorneo) {
+        const fechaPartidoBogota = obtenerFechaCalendarioBogota(new Date(fechaHora));
+        if (fechaPartidoBogota < fechaInicioTorneo) {
+          const partes = fechaInicioTorneo.split('-').map(Number);
+          const dia = partes[2];
+          const mes = partes[1];
+          const mesesAbrev = [
+            'ene',
+            'feb',
+            'mar',
+            'abr',
+            'may',
+            'jun',
+            'jul',
+            'ago',
+            'sep',
+            'oct',
+            'nov',
+            'dic',
+          ];
+          const mesTexto = mesesAbrev[(mes || 1) - 1];
+          throw new AppError(
+            400,
+            'FECHA_ANTERIOR_A_TORNEO',
+            `La fecha no puede ser anterior al inicio del torneo (${dia} ${mesTexto})`,
+          );
+        }
+      }
+    }
+
+    // 4. Verificar que la cancha exista y esté activa
     const cancha = await this.repo.obtenerCanchaConSede(canchaId);
     if (!cancha || !cancha.activa) {
       throw new AppError(
@@ -49,7 +82,7 @@ export class PartidoService {
       );
     }
 
-    // 4. Validar cruces de horarios en el dominio puro
+    // 5. Validar cruces de horarios en el dominio puro
     const otrosPartidos = await this.repo.obtenerPartidosProgramadosActivos();
     const resultadoCruces = verificarCrucesHorarios({
       partidoId: partido.id,
@@ -68,7 +101,7 @@ export class PartidoService {
       );
     }
 
-    // 5. Guardar programación
+    // 6. Guardar programación
     const canchaTexto = `${cancha.sede_nombre} - ${cancha.nombre}`;
     await this.repo.programarPartido({
       id: partidoId,
@@ -77,7 +110,7 @@ export class PartidoService {
       fechaHora,
     });
 
-    // 6. Retornar partido actualizado
+    // 7. Retornar partido actualizado
     return await this.obtenerPartidoPorId(partidoId);
   }
 

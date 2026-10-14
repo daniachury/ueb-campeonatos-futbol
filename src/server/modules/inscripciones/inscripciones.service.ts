@@ -2,7 +2,7 @@ import type {
   BandejaInscripcionesResponse,
   EquipoDisponibleParaInscripcion,
 } from '@shared/inscripciones/contrato-inscripciones';
-import { errores } from '../../core/errors';
+import { AppError, errores } from '../../core/errors';
 import {
   validarCondicionesDeInscripcion,
   validarTorneoPermiteModificacion,
@@ -19,6 +19,8 @@ export interface InscripcionesService {
     torneoId: string,
     busqueda?: string,
   ): Promise<EquipoDisponibleParaInscripcion[]>;
+  solicitarInscripcion(torneoId: string, equipoId: string, usuarioId: string): Promise<string>;
+  cancelarSolicitud(inscripcionId: string, usuarioId: string): Promise<void>;
 }
 
 export function crearInscripcionesService(
@@ -238,6 +240,112 @@ export function crearInscripcionesService(
         throw errores.noEncontrado('Torneo');
       }
       return repository.listarEquiposDisponibles({ torneoId, busqueda });
+    },
+
+    async solicitarInscripcion(
+      torneoId: string,
+      equipoId: string,
+      usuarioId: string,
+    ): Promise<string> {
+      const equipo = await repository.buscarDetalleEquipo(equipoId);
+      if (!equipo) {
+        throw errores.noEncontrado('Equipo');
+      }
+
+      if (equipo.capitanId !== usuarioId) {
+        throw new AppError(403, 'SIN_PERMISO', 'Solo el capitán del equipo puede solicitar la inscripción');
+      }
+
+      const torneo = await repository.buscarTorneoPorId(torneoId);
+      if (!torneo) {
+        throw errores.noEncontrado('Torneo');
+      }
+
+      if (torneo.estado !== 'INSCRIPCIONES_ABIERTAS') {
+        throw errores.conflicto(
+          'INSCRIPCIONES_CERRADAS',
+          'Las inscripciones de este torneo no están abiertas',
+        );
+      }
+
+      const solicitudes = await repository.listarInscripcionesPorTorneo(torneoId);
+      const yaInscrito = solicitudes.some(
+        (s) => s.equipoId === equipoId && (s.estado === 'PENDIENTE' || s.estado === 'APROBADO'),
+      );
+      if (yaInscrito) {
+        throw errores.conflicto(
+          'EQUIPO_YA_INSCRITO',
+          'Tu equipo ya tiene una solicitud en este torneo',
+        );
+      }
+
+      const equiposAprobados = await repository.contarEquiposAprobados(torneoId);
+      if (equiposAprobados >= torneo.cupo) {
+        throw errores.conflicto(
+          'CUPO_COMPLETO',
+          'El torneo ya completó su cupo de equipos',
+        );
+      }
+
+      if (equipo.cantidadJugadores < 11) {
+        throw errores.conflicto(
+          'PLANTILLA_INCOMPLETA',
+          `Se necesitan al menos 11 jugadores para inscribirse (tienes ${equipo.cantidadJugadores})`,
+        );
+      }
+
+      if (equipo.cantidadJugadores > 25) {
+        throw errores.conflicto(
+          'PLANTILLA_EXCEDIDA',
+          `El equipo tiene ${equipo.cantidadJugadores} jugadores; el máximo permitido es 25`,
+        );
+      }
+
+      const conflictos = await repository.buscarConflictosJugadores(torneoId, equipoId);
+      if (conflictos.length > 0) {
+        const nombres = conflictos
+          .map((c) => `${c.nombreJugador} (${c.otroEquipoNombre})`)
+          .join(', ');
+        throw errores.conflicto(
+          'CONFLICTO_JUGADORES',
+          `Jugadores en conflicto: ${nombres}`,
+        );
+      }
+
+      const nuevoId = crypto.randomUUID();
+      await repository.crearInscripcion({
+        id: nuevoId,
+        torneoId,
+        equipoId,
+        estado: 'PENDIENTE',
+        solicitadaPor: usuarioId,
+      });
+
+      return nuevoId;
+    },
+
+    async cancelarSolicitud(inscripcionId: string, usuarioId: string): Promise<void> {
+      const inscripcion = await repository.buscarInscripcionPorId(inscripcionId);
+      if (!inscripcion) {
+        throw errores.noEncontrado('Solicitud de inscripción');
+      }
+
+      const equipo = await repository.buscarDetalleEquipo(inscripcion.equipo_id);
+      if (!equipo || equipo.capitanId !== usuarioId) {
+        throw new AppError(403, 'SIN_PERMISO', 'Solo el capitán puede cancelar la solicitud');
+      }
+
+      if (inscripcion.estado !== 'PENDIENTE') {
+        throw errores.conflicto(
+          'ESTADO_INVALIDO',
+          'No se puede cancelar una solicitud que ya fue procesada',
+        );
+      }
+
+      await repository.actualizarEstadoInscripcion({
+        id: inscripcion.id,
+        estado: 'CANCELADO',
+      });
     },
   };
 }

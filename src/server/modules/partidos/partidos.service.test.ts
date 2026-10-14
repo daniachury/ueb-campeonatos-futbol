@@ -85,6 +85,10 @@ function crearRepoMock(partidoInicial?: Partial<PartidoDetalleProgramacion>): Pa
         };
       }
     }),
+    obtenerTorneoFechaInicio: vi.fn(async (torneoId: string) => {
+      if (torneoId === 't-15-oct') return '2026-10-15';
+      return null;
+    }),
   } as unknown as PartidoRepository;
 }
 
@@ -199,5 +203,18 @@ describe('PartidoService (KAN-35)', () => {
     const service = new PartidoService(repo);
 
     await expect(service.desprogramarPartido('p-1')).rejects.toThrow(/ya ha sido jugado/i);
+  });
+
+  it('programarPartido lanza error si la fecha es anterior al inicio del torneo (Escenario 4)', async () => {
+    const repo = crearRepoMock({ id: 'p-1', torneoId: 't-15-oct' });
+    const service = new PartidoService(repo);
+
+    // Intentar programar para el 14 de octubre (torneo inicia 15 de octubre)
+    await expect(
+      service.programarPartido('p-1', {
+        canchaId: 'cancha-activa',
+        fechaHora: '2026-10-14T14:00:00-05:00',
+      }),
+    ).rejects.toThrow(/La fecha no puede ser anterior al inicio del torneo/i);
   });
 });

@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import {
   inscribirDirectamenteSchema,
   motivoAccionSchema,
+  solicitarInscripcionSchema,
 } from '@shared/inscripciones/contrato-inscripciones';
 import type { AppEnv } from '../../core/env';
 import { siFallaLaValidacion } from '../../core/validacion';
@@ -11,16 +12,34 @@ import { crearInscripcionesService } from './inscripciones.service';
 
 /**
  * Épica E6 · Inscripción de equipos en torneos. Montadas en /api/inscripciones (exigen sesión).
- * Pendientes:
- * - UEB-Proyect-18 (KAN-31) · El capitán solicita la inscripción de su equipo
+ * UEB-Proyect-18 (KAN-31) · El capitán solicita la inscripción de su equipo
  */
-export const inscripcionesRoutes = new Hono<AppEnv>().get('/', async (c) => {
-  const usuario = c.get('usuario');
-  const { results } = await c.env.DB.prepare(
-    "SELECT i.id, i.torneo_id AS torneoId, i.equipo_id AS equipoId, 'APROBADA' AS estado, t.nombre AS torneoNombre, t.estado AS torneoEstado, t.fecha_inicio AS fechaInicio, e.nombre AS equipoNombre FROM inscripciones i JOIN torneos t ON t.id = i.torneo_id JOIN equipos e ON e.id = i.equipo_id WHERE i.estado = 'APROBADO' AND (i.solicitada_por = ? OR i.equipo_id IN (SELECT id FROM equipos WHERE capitan_id = ?)) ORDER BY t.fecha_inicio DESC",
-  ).bind(usuario.id, usuario.id).all();
-  return c.json({ datos: results });
-});
+export const inscripcionesRoutes = new Hono<AppEnv>()
+  .get('/', async (c) => {
+    const usuario = c.get('usuario');
+    const { results } = await c.env.DB.prepare(
+      "SELECT i.id, i.torneo_id AS torneoId, i.equipo_id AS equipoId, 'APROBADA' AS estado, t.nombre AS torneoNombre, t.estado AS torneoEstado, t.fecha_inicio AS fechaInicio, e.nombre AS equipoNombre FROM inscripciones i JOIN torneos t ON t.id = i.torneo_id JOIN equipos e ON e.id = i.equipo_id WHERE i.estado = 'APROBADO' AND (i.solicitada_por = ? OR i.equipo_id IN (SELECT id FROM equipos WHERE capitan_id = ?)) ORDER BY t.fecha_inicio DESC",
+    ).bind(usuario.id, usuario.id).all();
+    return c.json({ datos: results });
+  })
+  .post('/', zValidator('json', solicitarInscripcionSchema, siFallaLaValidacion), async (c) => {
+    const { torneoId, equipoId } = c.req.valid('json');
+    const usuario = c.get('usuario');
+    const repo = crearInscripcionesRepository(c.env.DB);
+    const service = crearInscripcionesService(repo);
+
+    const id = await service.solicitarInscripcion(torneoId, equipoId, usuario.id);
+    return c.json({ id, mensaje: 'Solicitud enviada' }, 201);
+  })
+  .post('/:id/cancelar', async (c) => {
+    const id = c.req.param('id');
+    const usuario = c.get('usuario');
+    const repo = crearInscripcionesRepository(c.env.DB);
+    const service = crearInscripcionesService(repo);
+
+    await service.cancelarSolicitud(id, usuario.id);
+    return c.json({ mensaje: 'Solicitud cancelada exitosamente' });
+  });
 
 /**
  * Montadas en /api/admin/inscripciones (exigen rol admin).

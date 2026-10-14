@@ -31,4 +31,40 @@ export const torneosAdminApi = {
       },
     );
   },
+
+  editar(
+    id: string,
+    dto: import('../../../../shared/torneos').EditarTorneoDto,
+  ): Promise<{ mensaje: string; torneo: TorneoAdminResumen }> {
+    return pedir<{ mensaje: string; torneo: TorneoAdminResumen }>(
+      `/admin/torneos/${encodeURIComponent(id)}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dto),
+      },
+    );
+  },
+
+  obtenerImpactoEliminacion(
+    id: string,
+  ): Promise<{ equiposInscritos: number; partidos: number; resultados: number }> {
+    return pedir<{ equiposInscritos: number; partidos: number; resultados: number }>(
+      `/admin/torneos/${encodeURIComponent(id)}/impacto-eliminacion`,
+    );
+  },
+
+  eliminar(
+    id: string,
+    confirmacionNombre: string,
+  ): Promise<{ tipo: 'DEFINITIVA' | 'LOGICA'; mensaje: string }> {
+    return pedir<{ tipo: 'DEFINITIVA' | 'LOGICA'; mensaje: string }>(
+      `/admin/torneos/${encodeURIComponent(id)}`,
+      {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmacionNombre }),
+      },
+    );
+  },
 };

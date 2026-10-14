@@ -26,15 +26,17 @@ export const partidosRoutes = new Hono<AppEnv>()
        JOIN equipos local ON local.id = p.local_id
        JOIN equipos visitante ON visitante.id = p.visitante_id
        WHERE p.torneo_id = ? ORDER BY f.numero, p.fecha_hora`,
-    ).bind(c.req.param('torneoId')).all();
+    )
+      .bind(c.req.param('torneoId'))
+      .all();
     return c.json({ datos: results });
   })
   .get('/:id', async (c) => {
-  const id = c.req.param('id');
-  const service = crearPartidosService(c.env.DB);
-  const partido = await service.obtenerPartidoPorId(id);
-  return c.json(partido);
-});
+    const id = c.req.param('id');
+    const service = crearPartidosService(c.env.DB);
+    const partido = await service.obtenerPartidoPorId(id);
+    return c.json(partido);
+  });
 
 /**
  * Montadas en /api/admin/partidos (exigen rol admin).
@@ -62,6 +64,13 @@ export const partidosAdminRoutes = new Hono<AppEnv>()
     const partido = await service.obtenerPartidoPorId(id);
     return c.json(partido);
   })
+  .patch('/:id/programacion', async (c) => {
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    const service = crearPartidosService(c.env.DB);
+    const partido = await service.programarPartido(id, body);
+    return c.json(partido);
+  })
   .patch('/:id/programar', async (c) => {
     const id = c.req.param('id');
     const body = await c.req.json();
@@ -80,12 +89,21 @@ export const partidosAdminRoutes = new Hono<AppEnv>()
     const body = await c.req.json<{ golesLocal?: number; golesVisitante?: number }>();
     const golesLocal = body.golesLocal;
     const golesVisitante = body.golesVisitante;
-    if (typeof golesLocal !== 'number' || typeof golesVisitante !== 'number' || !Number.isInteger(golesLocal) || !Number.isInteger(golesVisitante) || golesLocal < 0 || golesVisitante < 0) {
+    if (
+      typeof golesLocal !== 'number' ||
+      typeof golesVisitante !== 'number' ||
+      !Number.isInteger(golesLocal) ||
+      !Number.isInteger(golesVisitante) ||
+      golesLocal < 0 ||
+      golesVisitante < 0
+    ) {
       return c.json({ mensaje: 'Los goles deben ser números enteros positivos' }, 400);
     }
     await c.env.DB.prepare(
       `UPDATE partidos SET goles_local = ?, goles_visitante = ?, estado = 'JUGADO', actualizado_en = ? WHERE id = ?`,
-    ).bind(golesLocal, golesVisitante, new Date().toISOString(), id).run();
+    )
+      .bind(golesLocal, golesVisitante, new Date().toISOString(), id)
+      .run();
     const service = crearPartidosService(c.env.DB);
     return c.json(await service.obtenerPartidoPorId(id));
   });

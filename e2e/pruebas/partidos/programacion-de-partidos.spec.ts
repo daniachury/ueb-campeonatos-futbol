@@ -78,6 +78,25 @@ test.describe('KAN-35 · Programar partido: lugar, fecha, hora y cancha', () => 
       await expect(inscripciones.vistaFixture).toContainText('16:30');
     });
 
+    // 8.1 Verificar métrica de programados y filtro "Solo por programar" (Escenario 7)
+    await test.step('Y el indicador muestra los partidos programados y permite filtrar', async () => {
+      const indicador = page.getByTestId('indicador-programados');
+      await expect(indicador).toBeVisible();
+      await expect(indicador).toContainText(/Programados: 2\//i);
+
+      // Activar filtro solo por programar
+      const filtro = page.getByTestId('filtro-solo-por-programar');
+      await filtro.click();
+      // Los dos partidos ya programados deben ocultarse en la vista
+      await expect(page.getByText('14:00')).toBeHidden();
+      await expect(page.getByText('16:30')).toBeHidden();
+
+      // Desactivar filtro para restaurar vista completa
+      await filtro.click();
+      await expect(page.getByText('14:00')).toBeVisible();
+      await expect(page.getByText('16:30')).toBeVisible();
+    });
+
     // 9. Verificar responsividad y ausencia de scroll horizontal
     await test.step('Y no presenta scroll horizontal en resolución móvil de 375px', async () => {
       await page.setViewportSize({ width: 375, height: 667 });
