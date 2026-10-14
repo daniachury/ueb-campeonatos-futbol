@@ -24,7 +24,7 @@ export function MisEquiposPage() {
         .then((datos: { datos: Equipo[] }) => setEquipos(datos.datos ?? []))
         .catch(() => undefined);
     }
-  }, [usuarioActual]);
+  }, [usuarioActual?.id]);
 
   if (estaComprobando) return null;
   if (!usuarioActual) return <Navigate to={RUTAS.INICIAR_SESION} replace />;
