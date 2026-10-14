@@ -59,7 +59,7 @@ export function ArranquePage() {
             {usuarioActual.debeCambiarContrasena
               ? 'Cambiar contraseña'
               : usuarioActual.rol === 'admin'
-                ? 'Entrar a Gestión de torneos'
+                ? 'Entrar al Panel de administración'
                 : 'Entrar a Torneos'}
           </EnlaceBoton>
           <p className={estilos.pieDeLaHoja}>

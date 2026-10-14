@@ -31,6 +31,7 @@ function renderizarPagina(usuario: UsuarioAutenticado | null = ADMIN_TEMP) {
         <Routes>
           <Route path={RUTAS.CAMBIAR_CONTRASENA} element={<CambiarContrasenaPage />} />
           <Route path={RUTAS.INICIAR_SESION} element={<div>Pantalla Iniciar Sesion</div>} />
+          <Route path={RUTAS.PANEL_ADMIN} element={<div>Pantalla Panel Admin</div>} />
           <Route path={RUTAS.GESTION_DE_TORNEOS} element={<div>Pantalla Gestion Torneos</div>} />
         </Routes>
       </MemoryRouter>
@@ -114,7 +115,7 @@ describe('CambiarContrasenaPage (KAN-18 · Escenario 2)', () => {
     fireEvent.click(screen.getByRole('button', { name: /Actualizar contraseña/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Pantalla Gestion Torneos')).toBeInTheDocument();
+      expect(screen.getByText('Pantalla Panel Admin')).toBeInTheDocument();
     });
     expect(adminApi.cambiarContrasena).toHaveBeenCalledWith({
       contrasenaActual: 'temporal123',

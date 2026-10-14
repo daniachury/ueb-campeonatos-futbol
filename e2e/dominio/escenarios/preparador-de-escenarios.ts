@@ -50,7 +50,7 @@ export class PreparadorDeEscenarios {
     const equipos: EquipoDePrueba[] = [];
     const inscripciones: InscripcionDePrueba[] = [];
     for (let numero = 1; numero <= cantidadDeEquipos; numero++) {
-      const equipo = await this.#equipoConPlantillaCompleta(`Equipo ${numero} ${sufijoEnLetras()}`);
+      const equipo = await this.equipoConPlantillaCompleta(`Equipo ${numero} ${sufijoEnLetras()}`);
       const inscripcion: InscripcionDePrueba = {
         id: nuevoId('inscripcion-e2e'),
         torneoId: torneo.id,
@@ -68,7 +68,7 @@ export class PreparadorDeEscenarios {
   async torneoListoParaSortear(cantidadDeEquipos: number): Promise<TorneoConSolicitudes> {
     const escenario = await this.torneoConSolicitudesPendientes(0);
     for (let numero = 1; numero <= cantidadDeEquipos; numero++) {
-      const equipo = await this.#equipoConPlantillaCompleta(`Equipo ${numero} ${sufijoEnLetras()}`);
+      const equipo = await this.equipoConPlantillaCompleta(`Equipo ${numero} ${sufijoEnLetras()}`);
       const inscripcion: InscripcionDePrueba = {
         id: nuevoId('inscripcion-e2e'),
         torneoId: escenario.torneo.id,
@@ -87,7 +87,7 @@ export class PreparadorDeEscenarios {
     const jugador = await this.jugadorRegistrado();
     const torneo = unTorneo().enEstado('EN_CURSO').construir();
     await this.#almacen.guardarTorneo(torneo);
-    const equipo = await this.#equipoConPlantillaCompleta(`Equipo ${sufijoEnLetras()}`, jugador);
+    const equipo = await this.equipoConPlantillaCompleta(`Equipo ${sufijoEnLetras()}`, jugador);
     await this.#almacen.guardarInscripcion({
       id: nuevoId('inscripcion-e2e'),
       torneoId: torneo.id,
@@ -97,7 +97,7 @@ export class PreparadorDeEscenarios {
     return jugador;
   }
 
-  async #equipoConPlantillaCompleta(
+  async equipoConPlantillaCompleta(
     nombre: string,
     capitan?: UsuarioDePrueba,
   ): Promise<EquipoDePrueba> {

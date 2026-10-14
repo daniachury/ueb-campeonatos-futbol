@@ -38,7 +38,7 @@ export function rutaAdminInscripciones(torneoId: string): string {
 
 /** KAN-17 · Escenarios 1 y 2: cada rol entra a su propia pantalla de inicio. */
 export function rutaDeInicioSegunRol(rol: Rol): string {
-  return rol === 'admin' ? RUTAS.GESTION_DE_TORNEOS : RUTAS.INICIO_DEL_JUGADOR;
+  return rol === 'admin' ? RUTAS.PANEL_ADMIN : RUTAS.INICIO_DEL_JUGADOR;
 }
 
 /** Lo que una pantalla protegida le envía a Iniciar sesión: a dónde volver después. */

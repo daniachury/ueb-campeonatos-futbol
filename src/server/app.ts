@@ -19,6 +19,7 @@ import { tablaRoutes } from './modules/tabla/tabla.routes';
 import { torneosAdminRoutes, torneosRoutes } from './modules/torneos/torneos.routes';
 import { meRoutes } from './modules/usuarios/me.routes';
 import { usuariosAdminRoutes, usuariosRoutes } from './modules/usuarios/usuarios.routes';
+import { estadisticasAdminRoutes } from './modules/admin/estadisticas.routes';
 
 /**
  * Prefijos de /api que exigen sesión. Las rutas de /api/admin además exigen rol admin.
@@ -68,6 +69,7 @@ export function crearApp() {
   api.route('/admin/sorteo', sorteoAdminRoutes);
   api.route('/admin/sedes', sedesAdminRoutes);
   api.route('/admin/partidos', partidosAdminRoutes);
+  api.route('/admin/estadisticas', estadisticasAdminRoutes);
 
   const app = new Hono<AppEnv>();
   // Cabeceras de seguridad en todas las respuestas de la API (nosniff, HSTS, sin iframes…).
