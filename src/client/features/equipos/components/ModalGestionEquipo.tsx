@@ -54,9 +54,8 @@ export function ModalGestionEquipo({
   const [mensajeExito, setMensajeExito] = useState('');
   const [mensajeError, setMensajeError] = useState('');
 
-  const cargarDatos = async () => {
+  const recargarDatos = async () => {
     try {
-      setCargando(true);
       const resInt = await fetch(`/api/equipos/${equipo.id}/integrantes`);
       if (resInt.ok) {
         const datosInt = (await resInt.json()) as { datos: Integrante[] };
@@ -72,14 +71,39 @@ export function ModalGestionEquipo({
       }
     } catch {
       // Ignorar errores de conexión
-    } finally {
-      setCargando(false);
     }
   };
 
   useEffect(() => {
-    void cargarDatos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    let cancelado = false;
+
+    async function cargarInicial() {
+      try {
+        const resInt = await fetch(`/api/equipos/${equipo.id}/integrantes`);
+        if (resInt.ok) {
+          const datosInt = (await resInt.json()) as { datos: Integrante[] };
+          if (!cancelado) setIntegrantes(datosInt.datos ?? []);
+        }
+
+        if (esCapitan) {
+          const resSol = await fetch(`/api/equipos/${equipo.id}/solicitudes`);
+          if (resSol.ok) {
+            const datosSol = (await resSol.json()) as { datos: Solicitud[] };
+            if (!cancelado) setSolicitudes(datosSol.datos ?? []);
+          }
+        }
+      } catch {
+        // Ignorar errores de conexión
+      } finally {
+        if (!cancelado) setCargando(false);
+      }
+    }
+
+    void cargarInicial();
+
+    return () => {
+      cancelado = true;
+    };
   }, [equipo.id, esCapitan]);
 
   const limpiarMensajes = () => {
@@ -139,7 +163,7 @@ export function ModalGestionEquipo({
       setNuevoNombre('');
       setNuevoCorreo('');
       setNuevoTelefono('');
-      void cargarDatos();
+      void recargarDatos();
     } catch {
       setMensajeError('Error de conexión al agregar el jugador.');
     } finally {
@@ -165,7 +189,7 @@ export function ModalGestionEquipo({
       }
 
       setMensajeExito(`Jugador ${integrante.nombreCompleto} retirado.`);
-      void cargarDatos();
+      void recargarDatos();
     } catch {
       setMensajeError('Error de red al retirar al jugador.');
     }
@@ -185,7 +209,7 @@ export function ModalGestionEquipo({
       }
 
       setMensajeExito(`Solicitud de ${solicitud.nombreCompleto} aprobada.`);
-      void cargarDatos();
+      void recargarDatos();
     } catch {
       setMensajeError('Error de conexión al aprobar la solicitud.');
     }
@@ -205,7 +229,7 @@ export function ModalGestionEquipo({
       }
 
       setMensajeExito(`Solicitud de ${solicitud.nombreCompleto} rechazada.`);
-      void cargarDatos();
+      void recargarDatos();
     } catch {
       setMensajeError('Error de conexión al negar la solicitud.');
     }

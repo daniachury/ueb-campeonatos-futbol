@@ -17,7 +17,6 @@ export function PanelAdminPage() {
   useEffect(() => {
     if (!usuarioActual || usuarioActual.rol !== 'admin') return;
     let cancelado = false;
-    setCargando(true);
     obtenerEstadisticasAdmin()
       .then((datos) => {
         if (!cancelado) {
