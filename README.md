@@ -236,21 +236,54 @@ erDiagram
 Requisitos: **Node.js 22** (ver `.nvmrc`), npm y Git. Para desplegar, además, una cuenta gratuita de Cloudflare.
 
 ```bash
-git clone https://github.com/<usuario>/ueb-campeonatos-futbol.git
+# 1. Clonar el repositorio
+git clone https://github.com/daniachury/ueb-campeonatos-futbol.git
 cd ueb-campeonatos-futbol
-npm install                # la primera vez genera package-lock.json
-npm run db:migrate:local   # crea la base D1 local (SQLite en .wrangler/)
-npm run db:seed:local      # carga torneos de ejemplo
-npm run dev                # frontend + API en http://localhost:5173
+
+# 2. Si estás revisando la historia KAN-50 antes del merge:
+git checkout feature/KAN-50-recuperar-cuenta
+
+# 3. Instalar dependencias
+npm install
+
+# 4. Sincronizar Base de Datos Cloudflare D1 local (Aplica migraciones 0001 a 0013)
+npm run db:migrate:local
+
+# 5. Cargar datos de prueba (usuarios, equipos, torneos y canchas)
+npm run db:seed:local
+
+# 6. Iniciar servidor de desarrollo (Frontend Vite SPA + Backend Worker Hono)
+npm run dev
 ```
 
 Comprobar que todo responde:
 
-- App: <http://localhost:5173> → redirige a `/torneos` y muestra los torneos de ejemplo (el torneo en borrador no aparece).
-- API: <http://localhost:5173/api/health> → `{"estado":"ok","baseDeDatos":"ok"}`
-- API: <http://localhost:5173/api/torneos?estado=EN_CURSO>
+- **Frontend:** <http://localhost:5173>
+- **Iniciar sesión:** <http://localhost:5173/iniciar-sesion>
+- **Recuperar cuenta (KAN-50):** <http://localhost:5173/recuperar-cuenta>
+- **Health Check API:** <http://localhost:5173/api/health> → `{"estado":"ok","baseDeDatos":"ok"}`
+
+### Usuarios y Credenciales de Prueba (Semillas Locales)
+
+Al ejecutar `npm run db:seed:local`, se crean los siguientes usuarios con los que puedes ingresar o probar el flujo de recuperación de contraseña:
+
+| Rol | Correo Electrónico | Contraseña por Defecto | Notas |
+| :--- | :--- | :--- | :--- |
+| **Administrador** | `admin@unbosque.edu.co` | `balon2026` | Acceso directo a `/admin` y gestión de torneos |
+| **Capitán / Jugador** | `carlos@mail.com` | `balon2026` | Capitán de equipo con acceso a `/mis-equipos` |
+| **Jugador Registrado** | `santiago.rincon@unbosque.edu.co` | `balon2026` | Integrante de plantilla fútbol 11 (Bosque FC) |
+| **Aspirante** | `esteban.ospina@unbosque.edu.co` | `balon2026` | Solicitud de ingreso pendiente |
+
+> [!NOTE]
+> Para probar **KAN-50** en local:
+> 1. Ve a <http://localhost:5173/recuperar-cuenta> o pulsa "¿Olvidaste tu contraseña?" en el login.
+> 2. Ingresa `admin@unbosque.edu.co` o `carlos@mail.com`.
+> 3. Pulsa "Recuperar cuenta" y haz clic en "Ir a restablecer contraseña".
+> 4. Ingresa tu nueva contraseña (ej. `NuevaClave2026`, mínimo 8 caracteres alfanumérica).
+> 5. Al guardar, serás redirigido a `/iniciar-sesion` para ingresar con tu nueva credencial.
 
 No hace falta iniciar sesión en Cloudflare para trabajar en local.
+
 
 ## 8. Scripts
 
