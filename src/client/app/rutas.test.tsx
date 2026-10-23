@@ -53,4 +53,11 @@ describe('rutas de la aplicación', () => {
     expect(screen.getByRole('heading', { name: /Crea tu ficha/ })).toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Principal' })).not.toBeInTheDocument();
   });
+
+  it('Recuperar cuenta se muestra como pantalla completa, sin el menú principal (KAN-50)', () => {
+    renderizarEn(RUTAS.RECUPERAR_CUENTA);
+
+    expect(screen.getByRole('heading', { name: 'Recuperar cuenta' })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Principal' })).not.toBeInTheDocument();
+  });
 });

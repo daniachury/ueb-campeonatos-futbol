@@ -6,6 +6,7 @@ Proyecto de la materia _Tendencias Avanzadas en Ingeniería de Software Asistida
 
 - Backlog y tablero: [Jira · UEB-IngSoftware2026 (KAN)](https://unbosque-team-ing-soft-2026.atlassian.net/jira/software/projects/KAN/boards/1)
 - Convención: cada historia se llama `UEB-Proyect-##` en su título y tiene una clave de Jira `KAN-##`.
+- **Guía de desarrollo para el equipo:** Consulta [DEVELOPMENT.md](./DEVELOPMENT.md) para el estándar de ramas, commits, migraciones y Definition of Done.
 
 ## Contenido
 
@@ -395,3 +396,29 @@ Ejemplo: **UEB-Proyect-14 · Unirme a un equipo** (`KAN-27`).
 - El menú por rol y el menú hamburguesa son parte de UEB-Proyect-01.
 - Las pruebas de repositorio contra una D1 real se pueden agregar con `@cloudflare/vitest-pool-workers`.
 - Las reglas de `src/shared/constants.ts` (11 a 25 jugadores, 3 a 20 equipos, puntos 3/1/0, partidos de 2 horas) están pendientes de validar con el docente.
+
+## 15. Módulo de Recuperación de Cuenta y Gobernanza (KAN-50)
+
+### 15.1. Funcionalidad del Módulo
+La historia **KAN-50** (`UEB-Proyect-50 · Recuperación de cuenta y restablecimiento de contraseña con redirección inmediata`) implementa el flujo de autoservicio para usuarios con roles autorizados (`jugador`, `capitan`, `admin`) que no recuerdan sus credenciales:
+1. **Solicitud de Recuperación (`/recuperar-cuenta`):** El usuario ingresa su correo institucional UEB. El sistema valida la existencia y rol permitido. Al no requerir servicio de correo externo (SMTP), genera un token criptográfico seguro de 32 bytes hexadecimales, presenta el enlace en pantalla y ofrece un botón de redirección inmediata a `/restablecer-contrasena?token=...`.
+2. **Validación de Token:** El token expira en 15 minutos, es de un solo uso (`usado_en IS NULL`) y cuenta con verificación previa vía `GET /api/auth/validar-token-recuperacion?token=...`.
+3. **Restablecimiento Seguro (`/restablecer-contrasena`):** Permite ingresar y confirmar la nueva contraseña, validando de forma estricta $\ge 8$ caracteres alfanuméricos con letras y números obligatorios (`REGLAS_CONTRASENA`). La nueva clave es cifrada mediante PBKDF2-SHA256 (100.000 iteraciones con sal criptográfica única) e invalida de inmediato el token consumido.
+4. **Diseño Visual:** Interfaz desarrollada con el sistema *v3 · Neón minimal*, consumiendo tokens oficiales de `tema.css`, diseño mobile-first y estados accesibles (ARIA).
+
+### 15.2. Gobernanza y Automatización con Skills y Hooks
+El desarrollo del módulo se ejecutó bajo la disciplina de ingeniería de software definida en `.agents/`:
+
+- **Skills Utilizadas:**
+  - `ueb-control-proyecto`: Orquestación del ciclo de 9 pasos, trazabilidad con historias Jira KAN, ramificación `feature/KAN-50-recuperar-cuenta` y compuertas de aprobación obligatoria.
+  - `ueb-controles-ci-cd`: Ejecución estricta de los 4 controles de calidad locales (`npm run lint`, `npm run typecheck`, `npm run test:coverage` con cobertura $\ge 80\%$, y `npm run build`).
+  - `ueb-stack-arquitectura`: Adhesión a la arquitectura hexagonal en Cloudflare Workers + Hono v4, esquemas Zod en `src/shared/` y persistencia SQL en D1.
+  - `ueb-restricciones-negocio`: Restricción estricta de roles autorizados (`jugador`, `capitan`, `admin`), contraseñas alfanuméricas $\ge 8$ caracteres y auditoría.
+  - `ueb-diseno-v3-neon`: Paleta Neón minimal, CSS Modules, móvil primero y prevención de renders en cascada en React.
+
+- **Hooks Activos en el Ciclo:**
+  - `validar-inmutabilidad-migraciones.cjs`: Garantiza que las migraciones aplicadas `0001_` a `0012_` sean de sólo lectura, forzando la creación de `0013_crear_tokens_recuperacion.sql`.
+  - `validar-seguridad-git.cjs`: Intercepta comandos de consola para impedir `git commit`, `git push` o bypass de hooks (`--no-verify`) sin autorización humana explícita.
+  - `verificar-diseno-react.cjs`: Analiza estáticamente archivos `.tsx` y `.css` para bloquear antipatrones visuales (como usar `--color-acento` como color de texto o llamadas a `setState` síncronas en `useEffect`).
+  - `recordatorio-protocolo.cjs`: Emite recordatorios de cumplimiento al planificar o ejecutar tareas críticas.
+

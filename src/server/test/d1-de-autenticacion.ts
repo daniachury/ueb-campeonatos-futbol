@@ -32,6 +32,15 @@ interface IntentosGuardados {
   bloqueado_hasta: string | null;
 }
 
+interface TokenRecuperacionGuardado {
+  id: string;
+  usuario_id: string;
+  token_hash: string;
+  expira_en: string;
+  usado: number;
+  creado_en: string;
+}
+
 /**
  * D1 falsa con memoria para las pruebas de integración de autenticación (KAN-16, KAN-17 y KAN-18).
  * Entiende las consultas de los repositorios de usuarios, intentos, sesiones, auditoría y equipos.
@@ -42,6 +51,7 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
   const intentos = new Map<string, IntentosGuardados>();
   const auditoria: AuditoriaGuardada[] = [];
   const equiposEnTorneo = new Set<string>(); // usuario_ids con torneo EN_CURSO
+  const tokensRecuperacion: TokenRecuperacionGuardado[] = [];
 
   const buscarUsuarioPorCorreo = (correo: unknown) =>
     usuarios.find((usuario) => usuario.correo === String(correo).toLowerCase());
@@ -98,11 +108,14 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       }
       return [];
     }
-    if (sql.includes('UPDATE usuarios SET hash_contrasena = ?,')) {
+    if (sql.includes('UPDATE usuarios') && sql.includes('hash_contrasena = ?')) {
       const usuario = usuarios.find((guardado) => guardado.id === tercero);
       if (usuario) {
         usuario.hash_contrasena = String(primero);
         usuario.actualizado_en = String(segundo);
+        if (sql.includes('debe_cambiar_contrasena = 0')) {
+          usuario.debe_cambiar_contrasena = 0;
+        }
       }
       return [];
     }
@@ -154,7 +167,7 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       return [];
     }
 
-    if (sql.includes('UPDATE usuarios SET') && !sql.includes('hash_contrasena = ?,')) {
+    if (sql.includes('UPDATE usuarios SET') && !sql.includes('hash_contrasena')) {
       const idUsuario = parametros[parametros.length - 1];
       const usuario = usuarios.find((guardado) => guardado.id === idUsuario);
       if (usuario) {
@@ -219,6 +232,14 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       }
       return [];
     }
+    if (sql.includes('DELETE FROM sesiones WHERE usuario_id = ?')) {
+      for (let i = sesiones.length - 1; i >= 0; i--) {
+        if (sesiones[i].usuario_id === primero) {
+          sesiones.splice(i, 1);
+        }
+      }
+      return [];
+    }
     if (sql.includes('DELETE FROM sesiones')) {
       const posicion = sesiones.findIndex((guardada) => guardada.hash_token === primero);
       if (posicion >= 0) sesiones.splice(posicion, 1);
@@ -230,6 +251,43 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
       const usuario = usuarios.find((guardado) => guardado.id === sesion?.usuario_id);
       if (!sesion || !usuario) return [];
       return [{ ...usuario, usuario_id: usuario.id, expira_en: sesion.expira_en }];
+    }
+
+    if (sql.includes('INSERT INTO tokens_recuperacion_contrasena')) {
+      const [id, usuarioId, tokenHash, expiraEn, creadoEn] = parametros;
+      tokensRecuperacion.push({
+        id: String(id),
+        usuario_id: String(usuarioId),
+        token_hash: String(tokenHash),
+        expira_en: String(expiraEn),
+        usado: 0,
+        creado_en: String(creadoEn),
+      });
+      return [];
+    }
+
+    if (sql.includes('FROM tokens_recuperacion_contrasena')) {
+      const token = tokensRecuperacion.find((t) => t.token_hash === primero);
+      if (!token) return [];
+      const usuario = usuarios.find((u) => u.id === token.usuario_id);
+      if (!usuario) return [];
+      return [
+        {
+          ...token,
+          u_id: usuario.id,
+          u_correo: usuario.correo,
+          u_activo: usuario.activo,
+          u_rol: usuario.rol,
+        },
+      ];
+    }
+
+    if (sql.includes('UPDATE tokens_recuperacion_contrasena SET usado = 1 WHERE id = ?')) {
+      const token = tokensRecuperacion.find((t) => t.id === primero);
+      if (token) {
+        token.usado = 1;
+      }
+      return [];
     }
 
     return [];
@@ -245,6 +303,7 @@ export function crearD1DeAutenticacion(usuariosIniciales: UsuarioGuardado[] = []
     consultas,
     usuarios,
     sesiones,
+    tokensRecuperacion,
     intentos,
     auditoria,
     equiposEnTorneo,

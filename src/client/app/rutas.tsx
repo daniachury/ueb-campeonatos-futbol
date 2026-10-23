@@ -13,6 +13,8 @@ import { ArranquePage } from '../features/auth/pages/ArranquePage';
 import { CambiarContrasenaPage } from '../features/auth/pages/CambiarContrasenaPage';
 import { CrearCuentaPage } from '../features/auth/pages/CrearCuentaPage';
 import { IniciarSesionPage } from '../features/auth/pages/IniciarSesionPage';
+import { RecuperarCuentaPage } from '../features/auth/pages/RecuperarCuentaPage';
+import { RestablecerContrasenaPage } from '../features/auth/pages/RestablecerContrasenaPage';
 import { InicioPage } from '../features/inicio/pages/InicioPage';
 import { CalendarioPage } from '../features/inicio/pages/CalendarioPage';
 import { TablaResultadosPage } from '../features/inicio/pages/TablaResultadosPage';
@@ -35,6 +37,8 @@ export const rutas: RouteObject[] = [
   { path: RUTAS.INICIO, element: <ArranquePage /> },
   { path: RUTAS.INICIAR_SESION, element: <IniciarSesionPage /> },
   { path: RUTAS.CREAR_CUENTA, element: <CrearCuentaPage /> },
+  { path: RUTAS.RECUPERAR_CUENTA, element: <RecuperarCuentaPage /> },
+  { path: RUTAS.RESTABLECER_CONTRASENA, element: <RestablecerContrasenaPage /> },
 
   // Jugador con sesión (v3 · M11, M12 y W04).
   {

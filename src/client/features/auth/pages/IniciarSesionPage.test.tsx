@@ -53,6 +53,9 @@ describe('IniciarSesionPage (KAN-17 · v3 · M01 / W03)', () => {
       'href',
       RUTAS.CREAR_CUENTA,
     );
+    expect(
+      screen.getByRole('link', { name: '¿Olvidaste tu contraseña?' }),
+    ).toHaveAttribute('href', RUTAS.RECUPERAR_CUENTA);
   });
 
   it('el jugador entra a Torneos con el menú de jugador (Escenario 1)', async () => {

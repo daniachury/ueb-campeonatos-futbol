@@ -30,7 +30,14 @@ export const RUTAS = {
   /** KAN-18 · Registro de administradores. */
   REGISTRAR_ADMIN: '/admin/usuarios/nuevo',
   CAMBIAR_CONTRASENA: '/cambiar-contrasena',
+  /** KAN-50 · Recuperación de cuenta y restablecimiento de contraseña. */
+  RECUPERAR_CUENTA: '/recuperar-cuenta',
+  RESTABLECER_CONTRASENA: '/restablecer-contrasena',
 } as const;
+
+export function rutaRestablecerContrasena(token: string): string {
+  return `${RUTAS.RESTABLECER_CONTRASENA}?token=${encodeURIComponent(token)}`;
+}
 
 export function rutaAdminInscripciones(torneoId: string): string {
   return `/admin/torneos/${torneoId}/inscripciones`;
