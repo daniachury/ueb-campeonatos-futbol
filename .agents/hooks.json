@@ -1,0 +1,53 @@
+{
+  "seguridad-git-paso9": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .agents/scripts/validar-seguridad-git.cjs",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "inmutabilidad-migraciones": {
+    "PreToolUse": [
+      {
+        "matcher": "replace_file_content|write_to_file|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .agents/scripts/validar-inmutabilidad-migraciones.cjs",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "control-calidad-diseno-react": {
+    "PreToolUse": [
+      {
+        "matcher": "replace_file_content|write_to_file|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .agents/scripts/verificar-diseno-react.cjs",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "recordatorio-protocolo-pasos": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "node .agents/scripts/recordatorio-protocolo.cjs",
+        "timeout": 10
+      }
+    ]
+  }
+}

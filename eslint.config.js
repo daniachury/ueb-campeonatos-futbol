@@ -10,7 +10,7 @@ const frontera = (mensaje, patrones) => ({
 });
 
 export default defineConfig([
-  globalIgnores(['dist', 'coverage', 'reports', '.wrangler', 'node_modules']),
+  globalIgnores(['dist', 'coverage', 'reports', '.wrangler', 'node_modules', '.agents']),
   js.configs.recommended,
   tseslint.configs.recommended,
   {

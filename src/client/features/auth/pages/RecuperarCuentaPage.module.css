@@ -1,0 +1,90 @@
+/* v3 · M01 / W03 · Recuperación de cuenta (KAN-50) */
+.encabezadoNeon {
+  height: 264px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 0 0 48px 48px;
+  background: var(--color-acento);
+}
+
+.nombreDeLaLiga {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--color-grafito);
+}
+
+.lemaDeLaLiga {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-grafito);
+}
+
+.formulario {
+  padding: 26px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: var(--color-grafito);
+}
+
+.descripcion {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-texto-secundario);
+}
+
+.acciones {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resultadoExito {
+  padding: 16px;
+  border-radius: var(--radio-campo);
+  background: var(--color-tinte-acento);
+  border: 1px solid var(--color-borde-punteado);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.textoResultado {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-acento-texto);
+  font-weight: 600;
+}
+
+.pie {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+  text-align: center;
+}
+
+.enlace {
+  color: var(--color-grafito);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.enlace:hover {
+  color: var(--color-acento-texto);
+}

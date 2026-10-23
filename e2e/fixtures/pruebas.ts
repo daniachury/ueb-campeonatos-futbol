@@ -12,6 +12,8 @@ import { InicioDelJugadorPagina } from '../paginas/inicio-del-jugador.pagina';
 import { InscripcionesPagina } from '../paginas/inscripciones.pagina';
 import { MiPerfilPagina } from '../paginas/mi-perfil.pagina';
 import { RegistrarAdministradorPagina } from '../paginas/registrar-administrador.pagina';
+import { RecuperarCuentaPagina } from '../paginas/recuperar-cuenta.pagina';
+import { RestablecerContrasenaPagina } from '../paginas/restablecer-contrasena.pagina';
 import { SedesPagina } from '../paginas/sedes.pagina';
 import { TorneosPublicosPagina } from '../paginas/torneos-publicos.pagina';
 
@@ -25,6 +27,8 @@ interface Paginas {
   cambiarContrasena: CambiarContrasenaPagina;
   inscripciones: InscripcionesPagina;
   sedes: SedesPagina;
+  recuperarCuenta: RecuperarCuentaPagina;
+  restablecerContrasena: RestablecerContrasenaPagina;
 }
 
 interface Contexto {
@@ -79,6 +83,8 @@ export const test = base.extend<Paginas & Contexto, ContextoDelTrabajador>({
   cambiarContrasena: async ({ page }, usar) => usar(new CambiarContrasenaPagina(page)),
   inscripciones: async ({ page }, usar) => usar(new InscripcionesPagina(page)),
   sedes: async ({ page }, usar) => usar(new SedesPagina(page)),
+  recuperarCuenta: async ({ page }, usar) => usar(new RecuperarCuentaPagina(page)),
+  restablecerContrasena: async ({ page }, usar) => usar(new RestablecerContrasenaPagina(page)),
 });
 
 export { expect } from '@playwright/test';

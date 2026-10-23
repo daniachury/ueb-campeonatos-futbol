@@ -40,6 +40,14 @@ import { crearIniciarSesion } from '../usuarios/infraestructura/crear-iniciar-se
 import { crearRegistrarJugador } from '../usuarios/infraestructura/crear-registrar-jugador';
 import { crearSesionesRepository } from './sesiones.repository';
 import { crearSesionesService } from './sesiones.service';
+import {
+  esquemaConsultaTokenRecuperacion,
+  esquemaSolicitudRecuperacionCuenta,
+  esquemaSolicitudRestablecerContrasena,
+  MENSAJES_RECUPERACION,
+} from '@shared/usuarios/contrato-recuperacion-cuenta';
+import { crearTokensRecuperacionRepository } from './tokens-recuperacion.repository';
+import { crearTokensRecuperacionService } from './tokens-recuperacion.service';
 
 /**
  * Épica E2 · Autenticación. Rutas públicas en /api/auth.
@@ -146,6 +154,49 @@ export const authRoutes = new Hono<AppEnv>()
       await repositorio.actualizarDebeCambiarContrasena(usuario.id, false, ahora);
 
       return c.json({ mensaje: 'Contraseña actualizada' }, 200);
+    },
+  )
+  .post(
+    '/recuperar-cuenta',
+    limitarPeticionesPorIp('LIMITE_DE_REGISTRO'),
+    zValidator('json', esquemaSolicitudRecuperacionCuenta, siFallaLaValidacion),
+    async (c) => {
+      const { correo } = c.req.valid('json');
+      const servicio = crearTokensRecuperacionService(
+        crearTokensRecuperacionRepository(c.env.DB),
+        new RepositorioDeUsuariosD1(c.env.DB),
+        new CifradorPbkdf2(),
+      );
+      const resultado = await servicio.solicitarRecuperacion(correo);
+      return c.json(resultado, 200);
+    },
+  )
+  .get(
+    '/validar-token-recuperacion',
+    zValidator('query', esquemaConsultaTokenRecuperacion, siFallaLaValidacion),
+    async (c) => {
+      const { token } = c.req.valid('query');
+      const servicio = crearTokensRecuperacionService(
+        crearTokensRecuperacionRepository(c.env.DB),
+        new RepositorioDeUsuariosD1(c.env.DB),
+        new CifradorPbkdf2(),
+      );
+      const resultado = await servicio.validarToken(token);
+      return c.json(resultado, 200);
+    },
+  )
+  .post(
+    '/restablecer-contrasena',
+    zValidator('json', esquemaSolicitudRestablecerContrasena, siFallaLaValidacion),
+    async (c) => {
+      const { token, nuevaContrasena } = c.req.valid('json');
+      const servicio = crearTokensRecuperacionService(
+        crearTokensRecuperacionRepository(c.env.DB),
+        new RepositorioDeUsuariosD1(c.env.DB),
+        new CifradorPbkdf2(),
+      );
+      await servicio.restablecerContrasena(token, nuevaContrasena);
+      return c.json({ mensaje: MENSAJES_RECUPERACION.EXITO_RESTABLECIMIENTO }, 200);
     },
   );
 

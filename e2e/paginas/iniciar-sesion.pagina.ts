@@ -32,7 +32,15 @@ export class IniciarSesionPagina extends PaginaBase {
     await this.botonIniciarSesion.click();
   }
 
+  get enlaceOlvidoContrasena(): Locator {
+    return this.page.getByRole('link', { name: '¿Olvidaste tu contraseña?' });
+  }
+
   async irACrearCuenta(): Promise<void> {
     await this.page.locator('form').getByRole('link', { name: 'Crear cuenta' }).click();
+  }
+
+  async irARecuperarCuenta(): Promise<void> {
+    await this.enlaceOlvidoContrasena.click();
   }
 }

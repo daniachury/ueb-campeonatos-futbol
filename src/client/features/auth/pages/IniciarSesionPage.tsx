@@ -65,6 +65,12 @@ export function IniciarSesionPage() {
           permitirVerContrasena
         />
 
+        <div className={estilos.olvidoContrasena}>
+          <Link to={RUTAS.RECUPERAR_CUENTA} className={estilos.enlaceOlvido}>
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </div>
+
         <div className={estilos.acciones}>
           <Boton
             tipo="submit"

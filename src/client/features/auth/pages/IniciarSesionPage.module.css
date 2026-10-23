@@ -58,6 +58,24 @@
   color: var(--color-acento-texto);
 }
 
+.olvidoContrasena {
+  margin: -4px 0 2px;
+  text-align: right;
+}
+
+.enlaceOlvido {
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.enlaceOlvido:hover {
+  color: var(--color-grafito);
+}
+
 /* Escritorio (W03): el panel de la liga reemplaza el bloque neón y las pestañas llevan a Crear cuenta. */
 @media (min-width: 1024px) {
   .encabezadoNeon,
